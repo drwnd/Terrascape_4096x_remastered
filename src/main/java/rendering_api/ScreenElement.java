@@ -1,6 +1,5 @@
 package rendering_api;
 
-import main_menu.MainMenuInput;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -10,10 +9,10 @@ public abstract class ScreenElement {
 
     public final Input input;
 
-    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent) {
+    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent, Input input) {
         this.sizeToParent = sizeToParent;
         this.offsetToParent = offsetToParent;
-        input = new MainMenuInput();
+        this.input = input;
     }
 
 
@@ -44,6 +43,6 @@ public abstract class ScreenElement {
 
 
     private final ArrayList<ScreenElement> children = new ArrayList<>();
-    private final Vector2f sizeToParent;
-    private final Vector2f offsetToParent;
+    protected final Vector2f sizeToParent;
+    protected final Vector2f offsetToParent;
 }

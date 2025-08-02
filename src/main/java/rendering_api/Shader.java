@@ -14,14 +14,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public final class ShaderManager {
+public class Shader {
 
-    public ShaderManager(String vertexShaderFilePath, String fragmentShaderFilePath) throws Exception {
+    public Shader(String vertexShaderFilePath, String fragmentShaderFilePath) {
         uniforms = new HashMap<>();
         this.vertexShaderFilePath = vertexShaderFilePath;
         this.fragmentShaderFilePath = fragmentShaderFilePath;
 
-        load();
+        try {
+            load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -74,9 +78,12 @@ public final class ShaderManager {
 
     public void reload() {
         try {
+            String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
+            String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
+
             int newProgramID = createProgram();
-            int newVertexShaderID = createVertexShader(loadShaderCode(vertexShaderFilePath), newProgramID);
-            int newFragmentShaderID = createFragmentShader(loadShaderCode(fragmentShaderFilePath), newProgramID);
+            int newVertexShaderID = createVertexShader(vertexShaderCode, newProgramID);
+            int newFragmentShaderID = createFragmentShader(fragmentShaderCode, newProgramID);
 
             link(newProgramID, newVertexShaderID, newFragmentShaderID);
 
@@ -85,19 +92,21 @@ public final class ShaderManager {
             programID = newProgramID;
             vertexShaderID = newVertexShaderID;
             fragmentShaderID = newFragmentShaderID;
+
+            createUniforms(vertexShaderCode);
+            createUniforms(fragmentShaderCode);
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
+    }
+
+    public void cleanUp() {
         uniforms.clear();
+        if (programID != 0) GL46.glDeleteProgram(programID);
     }
 
     public void bind() {
         GL46.glUseProgram(programID);
-    }
-
-    public void cleanUp() {
-        if (programID != 0) GL46.glDeleteProgram(programID);
     }
 
 
@@ -192,6 +201,7 @@ public final class ShaderManager {
 
     private final String vertexShaderFilePath, fragmentShaderFilePath;
 
-    private int programID, vertexShaderID, fragmentShaderID;
+    protected int programID;
+    private int vertexShaderID, fragmentShaderID;
     private final HashMap<String, Integer> uniforms;
 }

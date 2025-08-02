@@ -1,6 +1,7 @@
 package rendering_api;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -9,20 +10,21 @@ import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 
 
-public final class WindowManager {
+public final class Window {
 
-    public WindowManager(String title, int width, int height, boolean vSync, boolean maximized) {
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.vSync = vSync;
-        this.maximized = maximized;
+    private Window() {
+    }
+
+    public static void init(String title, int width, int height, boolean vSync, boolean maximized) {
+        Window.width = width;
+        Window.height = height;
+        Window.maximized = maximized;
 
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!GLFW.glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
 
-        createWindow();
+        createWindow(title, vSync);
         GL.createCapabilities();
 
         GL46.glClearColor(0, 0, 0, 1);
@@ -32,7 +34,7 @@ public final class WindowManager {
         GL46.glCullFace(GL46.GL_BACK);
     }
 
-    private void createWindow() {
+    private static void createWindow(String title, boolean vSync) {
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL46.GL_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL46.GL_TRUE);
@@ -56,8 +58,10 @@ public final class WindowManager {
         if (window == MemoryUtil.NULL) throw new RuntimeException("Failed to create GLFW window");
 
         GLFW.glfwSetFramebufferSizeCallback(window, (long window, int width, int height) -> {
-            this.width = width;
-            this.height = height;
+            Window.width = width;
+            Window.height = height;
+            if (screenElement != null)
+                screenElement.resize(new Vector2i(width, height), new Vector2f(1.0f, 1.0f));
         });
 
         GLFW.glfwMakeContextCurrent(window);
@@ -65,19 +69,21 @@ public final class WindowManager {
         GLFW.glfwShowWindow(window);
     }
 
-    public void renderLoop() {
-        while (!windowShouldClose()) {
+    public static void renderLoop() {
+        while (!GLFW.glfwWindowShouldClose(window)) {
+            GL46.glViewport(0, 0, width, height);
             screenElement.render(new Vector2f(0.0f, 0.0f));
-            update();
+            GLFW.glfwSwapBuffers(window);
+            GLFW.glfwPollEvents();
         }
     }
 
-    public void setScreenElement(ScreenElement element) {
+    public static void setScreenElement(ScreenElement element) {
         screenElement = element;
         setInput(element.input);
     }
 
-    public void toggleFullScreen() {
+    public static void toggleFullScreen() {
         maximized = !maximized;
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
         if (vidMode == null) throw new RuntimeException("Could not get video mode");
@@ -86,38 +92,23 @@ public final class WindowManager {
         else GLFW.glfwSetWindowMonitor(window, MemoryUtil.NULL, 0, 0, width, height, GLFW.GLFW_DONT_CARE);
     }
 
-    public void cleanUp() {
+    public static void cleanUp() {
         GLFW.glfwDestroyWindow(window);
     }
 
-    public boolean isKeyPressed(int keycode) {
-        if ((keycode & IS_MOUSE_BUTTON) == 0) return GLFW.glfwGetKey(window, keycode & 0x7FFFFFFF) == GLFW.GLFW_PRESS;
-        else return GLFW.glfwGetMouseButton(window, keycode & 0x7FFFFFFF) == GLFW.GLFW_PRESS;
-    }
-
-    public int getWidth() {
+    public static int getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public static int getHeight() {
         return height;
     }
 
-    public long getWindow() {
+    public static long getWindow() {
         return window;
     }
 
-
-    private void update() {
-        GLFW.glfwSwapBuffers(window);
-        GLFW.glfwPollEvents();
-    }
-
-    private boolean windowShouldClose() {
-        return GLFW.glfwWindowShouldClose(window);
-    }
-
-    private void setInput(Input input) {
+    private static void setInput(Input input) {
         input.setInputMode();
         GLFW.glfwSetCursorPosCallback(window, input::cursorPosCallback);
         GLFW.glfwSetMouseButtonCallback(window, input::mouseButtonCallback);
@@ -125,14 +116,9 @@ public final class WindowManager {
         GLFW.glfwSetKeyCallback(window, input::keyCallback);
     }
 
-    private final String title;
-    private int width, height;
-    private long window;
+    private static int width, height;
+    private static long window;
+    private static boolean maximized;
 
-    private final boolean vSync;
-    private boolean maximized;
-
-    private ScreenElement screenElement;
-
-    public static final int IS_MOUSE_BUTTON = 0x80000000;
+    private static ScreenElement screenElement;
 }

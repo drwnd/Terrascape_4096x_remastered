@@ -1,12 +1,13 @@
 import main_menu.MainMenu;
-import rendering_api.WindowManager;
+import rendering_api.Window;
 
 public class Launcher {
 
     public static void main(String[] args) {
-        WindowManager window = new WindowManager("", 1000, 1000, true, false);
+        Window.init("", 1000, 1000, true, false);
         MainMenu menu = new MainMenu();
-        window.setScreenElement(menu);
-        window.renderLoop();
+        Window.setScreenElement(menu);
+        Window.renderLoop();
+        Window.cleanUp();
     }
 }

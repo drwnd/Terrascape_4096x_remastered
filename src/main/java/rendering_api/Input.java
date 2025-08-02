@@ -1,6 +1,21 @@
 package rendering_api;
 
+import org.lwjgl.glfw.GLFW;
+
 public abstract class Input {
+
+    public static final int IS_MOUSE_BUTTON = 0x80000000;
+    public static final int BUTTON_MASK = 0x7FFFFFFF;
+
+    protected Input() {
+    }
+
+    public static boolean isKeyPressed(int keycode) {
+        if ((keycode & Input.IS_MOUSE_BUTTON) == 0)
+            return GLFW.glfwGetKey(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
+        else
+            return GLFW.glfwGetMouseButton(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
+    }
 
     public abstract void setInputMode();
 
