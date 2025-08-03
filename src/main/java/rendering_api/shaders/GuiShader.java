@@ -28,7 +28,7 @@ public class GuiShader extends Shader {
         GL46.glEnableVertexAttribArray(1);
 
         GL46.glActiveTexture(GL46.GL_TEXTURE0);
-        GL46.glBindTexture(GL46.GL_TEXTURE_2D, texture.getTextureID());
+        GL46.glBindTexture(GL46.GL_TEXTURE_2D, texture.getID());
 
         setUniform("textureAtlas", 0);
         setUniform("position", position);

@@ -1,8 +1,6 @@
 package assets;
 
-import assets.identifiers.GuiElementIdentifier;
-import assets.identifiers.ShaderIdentifier;
-import assets.identifiers.TextureIdentifier;
+import assets.identifiers.*;
 import rendering_api.ObjectLoader;
 import rendering_api.shaders.Shader;
 import rendering_api.ShaderLoader;
@@ -34,6 +32,20 @@ public final class AssetManager {
         Shader shader = ShaderLoader.loadShader(identifier);
         assets.put(identifier.getIdentifier(), shader);
         return shader;
+    }
+
+    public static Buffer getBuffer(BufferIdentifier identifier) {
+        if (assets.containsKey(identifier.getIdentifier())) return (Buffer) assets.get(identifier.getIdentifier());
+        Buffer buffer = new Buffer(identifier.getGenerator());
+        assets.put(identifier.getIdentifier(), buffer);
+        return buffer;
+    }
+
+    public static VertexArray getVertexArray(VertexArrayIdentifier identifier) {
+        if (assets.containsKey(identifier.getIdentifier())) return (VertexArray) assets.get(identifier.getIdentifier());
+        VertexArray vertexArray = new VertexArray(identifier.getGenerator());
+        assets.put(identifier.getIdentifier(), vertexArray);
+        return vertexArray;
     }
 
 

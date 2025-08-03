@@ -4,6 +4,7 @@ import assets.identifiers.ShaderIdentifier;
 import rendering_api.shaders.GuiBackgroundShader;
 import rendering_api.shaders.GuiShader;
 import rendering_api.shaders.Shader;
+import rendering_api.shaders.TextShader;
 
 public final class ShaderLoader {
 
@@ -15,6 +16,7 @@ public final class ShaderLoader {
         return switch (identifier) {
             case GUI -> getGuiShader();
             case GUI_BACKGROUND -> getGuiBackgroundShader();
+            case TEXT -> getTextShader();
         };
     }
 
@@ -25,5 +27,9 @@ public final class ShaderLoader {
 
     private static Shader getGuiBackgroundShader() {
         return new GuiBackgroundShader("assets/shaders/Gui.vert", "assets/shaders/GuiBackground.frag");
+    }
+
+    private static Shader getTextShader() {
+        return new TextShader("assets/shaders/Text.vert", "assets/shaders/Text.frag");
     }
 }

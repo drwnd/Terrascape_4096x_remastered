@@ -89,7 +89,7 @@ public final class Window {
         if (vidMode == null) throw new RuntimeException("Could not get video mode");
 
         if (maximized) GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), GLFW.GLFW_DONT_CARE);
-        else GLFW.glfwSetWindowMonitor(window, MemoryUtil.NULL, 0, 0, width, height, GLFW.GLFW_DONT_CARE);
+        else GLFW.glfwSetWindowMonitor(window, MemoryUtil.NULL, width / 4, height / 4, width / 2, height / 2, GLFW.GLFW_DONT_CARE);
     }
 
     public static void cleanUp() {

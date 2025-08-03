@@ -6,16 +6,15 @@ out vec2 textureCoordinates;
 
 uniform ivec2 screenSize;
 uniform ivec2 charSize;
-uniform int string[128];
-uniform int yOffset;
-uniform int xOffset;
+uniform int[128] string;
+uniform vec2 position;
 
 void main() {
     int deltaX = index >> 7 & 1;
     int deltaY = index >> 8 & 1;
 
-    float x = -1.0 + float(((index & 127) + deltaX) * charSize.x + xOffset) / screenSize.x;
-    float y = 1.0 - float(deltaY * charSize.y + yOffset) / screenSize.y;
+    float x = -1.0 + position.x + 2 * float(((index & 127) + deltaX) * charSize.x) / screenSize.x;
+    float y = +1.0 - position.y - 2 * float(deltaY * charSize.y) / screenSize.y;
     gl_Position = vec4(x, y, 0.5, 1);
 
     int character = string[index & 127];

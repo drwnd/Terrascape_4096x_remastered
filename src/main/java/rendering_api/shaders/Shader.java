@@ -3,6 +3,7 @@ package rendering_api.shaders;
 import assets.Asset;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryStack;
@@ -42,6 +43,10 @@ public class Shader extends Asset {
 
     public void setUniform(String uniformName, int x, int y) {
         GL46.glUniform2i(uniforms.get(uniformName), x, y);
+    }
+
+    public void setUniform(String uniformName, Vector2i value) {
+        GL46.glUniform2i(uniforms.get(uniformName), value.x, value.y);
     }
 
     public void setUniform(String uniformName, int x, int y, int z) {
@@ -95,6 +100,7 @@ public class Shader extends Asset {
             vertexShaderID = newVertexShaderID;
             fragmentShaderID = newFragmentShaderID;
 
+            System.out.println("Creating uniforms for Shader");
             createUniforms(vertexShaderCode);
             createUniforms(fragmentShaderCode);
         } catch (Exception e) {
@@ -121,6 +127,7 @@ public class Shader extends Asset {
         fragmentShaderID = createFragmentShader(fragmentShaderCode, programID);
         link(programID, vertexShaderID, fragmentShaderID);
 
+        System.out.println("Creating uniforms for Shader");
         createUniforms(vertexShaderCode);
         createUniforms(fragmentShaderCode);
     }
