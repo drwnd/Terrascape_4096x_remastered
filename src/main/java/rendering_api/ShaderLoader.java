@@ -1,24 +1,29 @@
 package rendering_api;
 
-import java.util.HashMap;
+import assets.identifiers.ShaderIdentifier;
+import rendering_api.shaders.GuiBackgroundShader;
+import rendering_api.shaders.GuiShader;
+import rendering_api.shaders.Shader;
 
 public final class ShaderLoader {
 
     private ShaderLoader() {
     }
 
-    public static GUIShader getGUIShader() {
-        if (shaders.containsKey(GUI_SHADER)) return (GUIShader) shaders.get(GUI_SHADER);
-        GUIShader shader = new GUIShader("assets/shaders/GUIVertex.glsl", "assets/shaders/GUIFragment.glsl");
-        shaders.put(GUI_SHADER, shader);
-        return shader;
+
+    public static Shader loadShader(ShaderIdentifier identifier) {
+        return switch (identifier) {
+            case GUI -> getGuiShader();
+            case GUI_BACKGROUND -> getGuiBackgroundShader();
+        };
     }
 
 
-    public static void reloadShaders() {
-        for (Shader shader : shaders.values()) shader.reload();
+    private static Shader getGuiShader() {
+        return new GuiShader("assets/shaders/Gui.vert", "assets/shaders/Gui.frag");
     }
 
-    private static final int GUI_SHADER = 1;
-    private static final HashMap<Integer, Shader> shaders = new HashMap<>();
+    private static Shader getGuiBackgroundShader() {
+        return new GuiBackgroundShader("assets/shaders/Gui.vert", "assets/shaders/GuiBackground.frag");
+    }
 }

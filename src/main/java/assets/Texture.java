@@ -15,6 +15,7 @@ public final class Texture extends Asset {
 
     @Override
     public void reload(String identifier) {
+        System.out.printf("Reloading Texture %s%n", identifier);
         GL46.glDeleteTextures(textureID);
         textureID = ObjectLoader.loadTexture(identifier).textureID;
     }

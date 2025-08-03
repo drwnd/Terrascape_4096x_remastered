@@ -1,14 +1,14 @@
-package rendering_api;
+package rendering_api.shaders;
 
 import assets.AssetManager;
 import assets.GuiElement;
-import assets.GuiElementIdentifier;
+import assets.identifiers.GuiElementIdentifier;
 import assets.Texture;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL46;
 
-public class GUIShader extends Shader {
-    public GUIShader(String vertexShaderFilePath, String fragmentShaderFilePath) {
+public class GuiShader extends Shader {
+    public GuiShader(String vertexShaderFilePath, String fragmentShaderFilePath) {
         super(vertexShaderFilePath, fragmentShaderFilePath);
     }
 

@@ -1,5 +1,6 @@
 package assets;
 
+import assets.identifiers.GuiElementIdentifier;
 import org.lwjgl.opengl.GL46;
 import rendering_api.ObjectLoader;
 
@@ -22,6 +23,7 @@ public class GuiElement extends Asset {
 
     @Override
     public void reload(String identifier) {
+        System.out.printf("Reloading GuiElement %s%n", identifier);
         GL46.glDeleteVertexArrays(vao);
         GL46.glDeleteBuffers(vbo1);
         GL46.glDeleteBuffers(vbo2);

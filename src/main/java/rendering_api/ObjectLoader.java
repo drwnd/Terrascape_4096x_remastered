@@ -1,7 +1,7 @@
 package rendering_api;
 
 import assets.GuiElement;
-import assets.GuiElementIdentifier;
+import assets.identifiers.GuiElementIdentifier;
 import assets.Texture;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.stb.STBImage;

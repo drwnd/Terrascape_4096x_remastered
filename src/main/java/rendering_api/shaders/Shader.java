@@ -1,5 +1,6 @@
-package rendering_api;
+package rendering_api.shaders;
 
+import assets.Asset;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -14,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Shader {
+public class Shader extends Asset {
 
     public Shader(String vertexShaderFilePath, String fragmentShaderFilePath) {
         uniforms = new HashMap<>();
@@ -75,8 +76,9 @@ public class Shader {
         GL46.glUniform3f(uniforms.get(uniformName), color.getRed() * 0.003921569f, color.getGreen() * 0.003921569f, color.getBlue() * 0.003921569f);
     }
 
-
-    public void reload() {
+    @Override
+    public void reload(String identifier) {
+        System.out.printf("Reloading Shader %s%n", identifier);
         try {
             String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
             String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
@@ -192,7 +194,7 @@ public class Shader {
         int uniformLocation = GL46.glGetUniformLocation(programID, uniformName);
         if (uniformLocation == -1) System.err.println("Could not find uniform " + uniformName);
         uniforms.put(uniformName, uniformLocation);
-        System.out.printf("Created uniform %s with binding %s%n", uniformName, uniformLocation);
+        System.out.printf("-Created uniform %s with binding %s%n", uniformName, uniformLocation);
     }
 
     private static String strip(String line) {

@@ -1,12 +1,12 @@
 package main_menu;
 
-import assets.TextureIdentifier;
+import assets.identifiers.ShaderIdentifier;
+import assets.identifiers.TextureIdentifier;
 import assets.AssetManager;
 import assets.Texture;
 import org.joml.Vector2f;
-import rendering_api.GUIShader;
+import rendering_api.shaders.GuiShader;
 import rendering_api.ScreenElement;
-import rendering_api.ShaderLoader;
 
 public final class MainMenu extends ScreenElement {
 
@@ -16,8 +16,8 @@ public final class MainMenu extends ScreenElement {
 
     @Override
     protected void renderSelf(Vector2f offset) {
-        GUIShader shader = ShaderLoader.getGUIShader();
-        Texture background = AssetManager.getTexture(TextureIdentifier.ATLAS);
+        GuiShader shader = (GuiShader) AssetManager.getShader(ShaderIdentifier.GUI_BACKGROUND);
+        Texture background = AssetManager.getTexture(TextureIdentifier.GUI_ELEMENT_BACKGROUND);
         shader.bind();
         shader.drawQuad(new Vector2f(-0.5f, -0.5f), new Vector2f(1.0f, 1.0f), background);
     }
