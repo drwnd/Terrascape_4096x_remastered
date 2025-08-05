@@ -4,12 +4,13 @@ import assets.AssetManager;
 import assets.GuiElement;
 import assets.identifiers.GuiElementIdentifier;
 import assets.Texture;
+import assets.identifiers.ShaderIdentifier;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL46;
 
 public class GuiShader extends Shader {
-    public GuiShader(String vertexShaderFilePath, String fragmentShaderFilePath) {
-        super(vertexShaderFilePath, fragmentShaderFilePath);
+    public GuiShader(String vertexShaderFilePath, String fragmentShaderFilePath, ShaderIdentifier identifier) {
+        super(vertexShaderFilePath, fragmentShaderFilePath, identifier);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package rendering_api.shaders;
 
 import assets.Asset;
+import assets.identifiers.ShaderIdentifier;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -18,13 +19,13 @@ import java.util.Scanner;
 
 public class Shader extends Asset {
 
-    public Shader(String vertexShaderFilePath, String fragmentShaderFilePath) {
+    public Shader(String vertexShaderFilePath, String fragmentShaderFilePath, ShaderIdentifier identifier) {
         uniforms = new HashMap<>();
         this.vertexShaderFilePath = vertexShaderFilePath;
         this.fragmentShaderFilePath = fragmentShaderFilePath;
 
         try {
-            load();
+            load(identifier.getIdentifier());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -104,7 +105,7 @@ public class Shader extends Asset {
             vertexShaderID = newVertexShaderID;
             fragmentShaderID = newFragmentShaderID;
 
-            System.out.println("Creating uniforms for Shader");
+            System.out.printf("Creating uniforms for Shader %s%n", identifier);
             createUniforms(vertexShaderCode);
             createUniforms(fragmentShaderCode);
         } catch (Exception e) {
@@ -122,7 +123,7 @@ public class Shader extends Asset {
     }
 
 
-    private void load() throws Exception {
+    private void load(String identifier) throws Exception {
         String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
         String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
 
@@ -131,7 +132,7 @@ public class Shader extends Asset {
         fragmentShaderID = createFragmentShader(fragmentShaderCode, programID);
         link(programID, vertexShaderID, fragmentShaderID);
 
-        System.out.println("Creating uniforms for Shader");
+        System.out.printf("Creating uniforms for Shader %s%n", identifier);
         createUniforms(vertexShaderCode);
         createUniforms(fragmentShaderCode);
     }

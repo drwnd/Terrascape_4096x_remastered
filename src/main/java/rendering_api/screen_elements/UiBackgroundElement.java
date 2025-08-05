@@ -1,0 +1,32 @@
+package rendering_api.screen_elements;
+
+import assets.AssetManager;
+import assets.Texture;
+import assets.identifiers.ShaderIdentifier;
+import assets.identifiers.TextureIdentifier;
+import org.joml.Vector2f;
+import rendering_api.Window;
+import rendering_api.shaders.GuiShader;
+
+public class UiBackgroundElement extends ScreenElement {
+    public UiBackgroundElement(Vector2f sizeToParent, Vector2f offsetToParent) {
+        super(sizeToParent, offsetToParent);
+    }
+
+    @Override
+    protected void renderSelf(Vector2f position, Vector2f size) {
+        GuiShader shader = (GuiShader) AssetManager.getShader(ShaderIdentifier.GUI_BACKGROUND);
+        Texture background = AssetManager.getTexture(TextureIdentifier.GUI_ELEMENT_BACKGROUND);
+        shader.bind();
+        shader.setUniform("rimWidth", RIM_WIDTH);
+        shader.setUniform("screenSize", Window.getWidth(), Window.getHeight());
+        shader.drawQuad(position, size, background);
+    }
+
+    @Override
+    protected void resizeSelfTo(int width, int height) {
+
+    }
+
+    private static final int RIM_WIDTH = 30;
+}

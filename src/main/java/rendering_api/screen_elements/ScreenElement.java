@@ -1,0 +1,88 @@
+package rendering_api.screen_elements;
+
+import org.joml.Vector2f;
+import org.joml.Vector2i;
+import rendering_api.Window;
+
+import java.util.ArrayList;
+
+public abstract class ScreenElement {
+
+    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent) {
+        this.sizeToParent = sizeToParent;
+        this.offsetToParent = offsetToParent;
+    }
+
+
+    protected abstract void renderSelf(Vector2f position, Vector2f size);
+
+    protected abstract void resizeSelfTo(int width, int height);
+
+
+    public final void render(Vector2f parentPosition, Vector2f parentSize) {
+        if (!isVisible) return;
+        Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
+        Vector2f thisPosition = new Vector2f(parentPosition).add(new Vector2f(parentSize).mul(offsetToParent));
+
+        if (isFocused) {
+            final float scalingFactor = 1.05f;
+            float dx = (thisSize.x - thisSize.x * scalingFactor) * 0.5f;
+            float dy = (thisSize.y - thisSize.y * scalingFactor) * 0.5f;
+
+            thisSize.mul(scalingFactor);
+            thisPosition.add(dx, dy);
+        }
+
+        renderSelf(thisPosition, thisSize);
+        for (ScreenElement child : children) child.render(thisPosition, thisSize);
+    }
+
+    public final void resize(Vector2i size, Vector2f parentSize) {
+        Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
+        resizeSelfTo((int) (size.x * thisSize.x), (int) (size.y * thisSize.y));
+        for (ScreenElement child : children) child.resize(size, thisSize);
+    }
+
+    public void addRenderable(ScreenElement screenElement) {
+        children.add(screenElement);
+        screenElement.parent = this;
+    }
+
+    public void move(Vector2f offset) {
+        offsetToParent.add(offset);
+    }
+
+    public boolean containsPixelCoordinate(Vector2i pixelCoordinate) {
+        Vector2f position = getPosition().mul(Window.getWidth(), Window.getHeight());
+        Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight());
+
+        return position.x <= pixelCoordinate.x && position.x + size.x >= pixelCoordinate.x
+                && position.y <= pixelCoordinate.y && position.y + size.y >= pixelCoordinate.y;
+    }
+
+    public void setVisible(boolean visible) {
+        this.isVisible = visible;
+    }
+
+    public void setFocused(boolean focused) {
+        isFocused = focused;
+    }
+
+    public Vector2f getPosition() {
+        return parent.getPosition().add(parent.getSize().mul(offsetToParent));
+    }
+
+    public Vector2f getSize() {
+        return parent.getSize().mul(sizeToParent);
+    }
+
+    public ArrayList<ScreenElement> getChildren() {
+        return children;
+    }
+
+    private final ArrayList<ScreenElement> children = new ArrayList<>();
+    private boolean isVisible = true, isFocused = false;
+    private final Vector2f sizeToParent;
+    private final Vector2f offsetToParent;
+    private ScreenElement parent = DummyScreenElement.dummy;
+}

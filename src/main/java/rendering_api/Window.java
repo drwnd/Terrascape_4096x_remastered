@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
+import rendering_api.screen_elements.ScreenElement;
 
 
 public final class Window {

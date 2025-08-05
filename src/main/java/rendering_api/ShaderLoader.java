@@ -22,14 +22,14 @@ public final class ShaderLoader {
 
 
     private static Shader getGuiShader() {
-        return new GuiShader("assets/shaders/Gui.vert", "assets/shaders/Gui.frag");
+        return new GuiShader("assets/shaders/Gui.vert", "assets/shaders/Gui.frag", ShaderIdentifier.GUI);
     }
 
     private static Shader getGuiBackgroundShader() {
-        return new GuiBackgroundShader("assets/shaders/Gui.vert", "assets/shaders/GuiBackground.frag");
+        return new GuiBackgroundShader("assets/shaders/Gui.vert", "assets/shaders/GuiBackground.frag", ShaderIdentifier.GUI_BACKGROUND);
     }
 
     private static Shader getTextShader() {
-        return new TextShader("assets/shaders/Text.vert", "assets/shaders/Text.frag");
+        return new TextShader("assets/shaders/Text.vert", "assets/shaders/Text.frag", ShaderIdentifier.TEXT);
     }
 }

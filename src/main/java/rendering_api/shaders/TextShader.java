@@ -2,6 +2,7 @@ package rendering_api.shaders;
 
 import assets.AssetManager;
 import assets.identifiers.BufferIdentifier;
+import assets.identifiers.ShaderIdentifier;
 import assets.identifiers.TextureIdentifier;
 import assets.identifiers.VertexArrayIdentifier;
 import org.joml.Vector2f;
@@ -13,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 public class TextShader extends Shader {
     public static final int MAX_TEXT_LENGTH = 128;
 
-    public TextShader(String vertexShaderFilePath, String fragmentShaderFilePath) {
-        super(vertexShaderFilePath, fragmentShaderFilePath);
+    public TextShader(String vertexShaderFilePath, String fragmentShaderFilePath, ShaderIdentifier identifier) {
+        super(vertexShaderFilePath, fragmentShaderFilePath, identifier);
     }
 
     @Override
