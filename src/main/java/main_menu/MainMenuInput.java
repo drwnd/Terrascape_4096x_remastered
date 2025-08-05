@@ -6,8 +6,9 @@ import rendering_api.Input;
 import rendering_api.Window;
 
 public final class MainMenuInput extends Input {
-    public MainMenuInput() {
+    public MainMenuInput(MainMenu menu) {
         super();
+        this.menu = menu;
     }
 
     @Override
@@ -36,4 +37,11 @@ public final class MainMenuInput extends Input {
         if (key == GLFW.GLFW_KEY_F11 && action == GLFW.GLFW_PRESS) Window.toggleFullScreen();
         if (key == GLFW.GLFW_KEY_I && action == GLFW.GLFW_PRESS) AssetManager.reload();
     }
+
+    @Override
+    public void charCallback(long window, int codePoint) {
+
+    }
+
+    private final MainMenu menu;
 }

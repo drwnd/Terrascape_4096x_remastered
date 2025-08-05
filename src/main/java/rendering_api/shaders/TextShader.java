@@ -28,7 +28,7 @@ public class TextShader extends Shader {
 
     public void drawText(Vector2f position, String text, Color color, boolean addTransparentBackground) {
         setUniform("string", toIntFormat(text));
-        setUniform("position", position);
+        setUniform("position", position.x - 0.5f, position.y - 0.5f);
         setUniform("color", color);
         setUniform("textAtlas", 0);
         setUniform("addTransparentBackground", addTransparentBackground ? 1 : 0);

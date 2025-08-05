@@ -7,24 +7,23 @@ import java.util.ArrayList;
 
 public abstract class ScreenElement {
 
-    public final Input input;
-
-    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent, Input input) {
+    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent) {
         this.sizeToParent = sizeToParent;
         this.offsetToParent = offsetToParent;
-        this.input = input;
     }
 
 
-    protected abstract void renderSelf(Vector2f offset);
+    protected abstract void renderSelf(Vector2f position, Vector2f size);
 
     protected abstract void resizeSelfTo(int width, int height);
 
 
-    public final void render(Vector2f parentOffset) {
-        Vector2f thisOffset = new Vector2f(parentOffset).mul(offsetToParent);
-        renderSelf(parentOffset);
-        for (ScreenElement child : children) child.render(thisOffset);
+    public final void render(Vector2f parentPosition, Vector2f parentSize) {
+        Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
+        Vector2f thisPosition = new Vector2f(parentPosition).add(new Vector2f(parentSize).mul(offsetToParent));
+
+        renderSelf(thisPosition, thisSize);
+        for (ScreenElement child : children) child.render(thisPosition, thisSize);
     }
 
     public final void resize(Vector2i size, Vector2f parentSize) {
@@ -42,7 +41,7 @@ public abstract class ScreenElement {
     }
 
 
-    private final ArrayList<ScreenElement> children = new ArrayList<>();
+    protected final ArrayList<ScreenElement> children = new ArrayList<>();
     protected final Vector2f sizeToParent;
     protected final Vector2f offsetToParent;
 }

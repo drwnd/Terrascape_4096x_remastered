@@ -1,23 +1,30 @@
 #version 400 core
 
-uniform sampler2D textureAtlas;
+uniform sampler2D image;
+uniform int rimWidth;
+uniform ivec2 screenSize;
+uniform vec2 size;
 
 in vec2 fragTextureCoordinate;
 
 out vec4 fragColor;
 
-const float RIM_THICKNESS = 0.03;
+float getTextureCoord(float fragTextureCoord, float size, int sceenSize) {
+    fragTextureCoord = min(fragTextureCoord, 1.0 - fragTextureCoord) * size;
 
-float getTextureCoord(float fragTextureCoord) {
-    fragTextureCoord = min(fragTextureCoord, 1.0 - fragTextureCoord);
-    if (fragTextureCoord >= RIM_THICKNESS) return 0.5;
-    return fragTextureCoord * (0.5 / RIM_THICKNESS);
+    float thickness = float(rimWidth) / sceenSize;
+
+    if (fragTextureCoord >= thickness) return 0.5;
+    return fragTextureCoord * (0.5 / thickness);
 }
 
 void main() {
-    vec2 textureCoord = vec2(getTextureCoord(fragTextureCoordinate.x), getTextureCoord(fragTextureCoordinate.y));
+    vec2 textureCoord = vec2(
+    getTextureCoord(fragTextureCoordinate.x, size.x, screenSize.x),
+    getTextureCoord(fragTextureCoordinate.y, size.y, screenSize.y)
+    );
 
-    vec4 color = texture(textureAtlas, textureCoord);
+    vec4 color = texture(image, textureCoord);
     if (color.a == 0.0) discard;
     fragColor = color;
 }

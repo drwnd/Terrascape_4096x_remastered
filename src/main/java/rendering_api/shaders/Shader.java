@@ -69,6 +69,10 @@ public class Shader extends Asset {
         GL46.glUniform2f(uniforms.get(uniformName), value.x, value.y);
     }
 
+    public void setUniform(String uniformName, float x, float y) {
+        GL46.glUniform2f(uniforms.get(uniformName), x, y);
+    }
+
     public void setUniform(String uniformName, Vector3f value) {
         GL46.glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
     }

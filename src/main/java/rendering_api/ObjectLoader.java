@@ -75,12 +75,15 @@ public final class ObjectLoader {
     public static int generateTextRowVertexArray() {
         int vao = createVAO();
 
+        final int offsetX = 128;
+        final int offsetY = 256;
+
         int[] textData = new int[TextShader.MAX_TEXT_LENGTH * 4];
         for (int i = 0; i < textData.length; i += 4) {
             textData[i] = i >> 2;
-            textData[i + 1] = i >> 2 | 128;
-            textData[i + 2] = i >> 2 | 256;
-            textData[i + 3] = i >> 2 | 384;
+            textData[i + 1] = i >> 2 | offsetX;
+            textData[i + 2] = i >> 2 | offsetY;
+            textData[i + 3] = i >> 2 | offsetX | offsetY;
         }
         int vbo = storeDateInAttributeList(textData);
 

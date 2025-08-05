@@ -72,15 +72,10 @@ public final class Window {
     public static void renderLoop() {
         while (!GLFW.glfwWindowShouldClose(window)) {
             GL46.glViewport(0, 0, width, height);
-            screenElement.render(new Vector2f(0.0f, 0.0f));
+            screenElement.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
             GLFW.glfwSwapBuffers(window);
             GLFW.glfwPollEvents();
         }
-    }
-
-    public static void setScreenElement(ScreenElement element) {
-        screenElement = element;
-        setInput(element.input);
     }
 
     public static void toggleFullScreen() {
@@ -96,6 +91,14 @@ public final class Window {
         GLFW.glfwDestroyWindow(window);
     }
 
+    public static float toRelativeX(int pixels) {
+        return (float) pixels / width;
+    }
+
+    public static float toRelativeY(int pixels) {
+        return (float) pixels / height;
+    }
+
     public static int getWidth() {
         return width;
     }
@@ -108,12 +111,17 @@ public final class Window {
         return window;
     }
 
-    private static void setInput(Input input) {
+    public static void setScreenElement(ScreenElement element) {
+        screenElement = element;
+    }
+
+    public static void setInput(Input input) {
         input.setInputMode();
         GLFW.glfwSetCursorPosCallback(window, input::cursorPosCallback);
         GLFW.glfwSetMouseButtonCallback(window, input::mouseButtonCallback);
         GLFW.glfwSetScrollCallback(window, input::scrollCallback);
         GLFW.glfwSetKeyCallback(window, input::keyCallback);
+        GLFW.glfwSetCharCallback(window, input::charCallback);
     }
 
     private static int width, height;

@@ -30,8 +30,8 @@ public class GuiShader extends Shader {
         GL46.glActiveTexture(GL46.GL_TEXTURE0);
         GL46.glBindTexture(GL46.GL_TEXTURE_2D, texture.getID());
 
-        setUniform("textureAtlas", 0);
-        setUniform("position", position);
+        setUniform("image", 0);
+        setUniform("position", position.x - 0.5f, position.y - 0.5f);
         setUniform("size", size);
 
         GL46.glDrawArrays(GL46.GL_TRIANGLES, 0, quad.getVertexCount());

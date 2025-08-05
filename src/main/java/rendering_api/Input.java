@@ -26,4 +26,6 @@ public abstract class Input {
     public abstract void scrollCallback(long window, double xScroll, double yScroll);
 
     public abstract void keyCallback(long window, int key, int scancode, int action, int mods);
+
+    public abstract void charCallback(long window, int codePoint);
 }
