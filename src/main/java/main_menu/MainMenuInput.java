@@ -19,7 +19,7 @@ public final class MainMenuInput extends Input {
 
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
-        cursorPos.set(Window.getWidth() - (int) xPos, Window.getHeight() - (int) yPos);
+        cursorPos.set((int) xPos, Window.getHeight() - (int) yPos);
 
         menu.hoverOver(cursorPos);
     }
@@ -40,7 +40,6 @@ public final class MainMenuInput extends Input {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
-        if (key == GLFW.GLFW_KEY_ESCAPE) GLFW.glfwSetWindowShouldClose(window, true);
         if (key == GLFW.GLFW_KEY_F11 && action == GLFW.GLFW_PRESS) Window.toggleFullScreen();
         if (key == GLFW.GLFW_KEY_I && action == GLFW.GLFW_PRESS) AssetManager.reload();
     }

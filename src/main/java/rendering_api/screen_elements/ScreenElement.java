@@ -48,6 +48,18 @@ public abstract class ScreenElement {
         screenElement.parent = this;
     }
 
+    public void clickOn(Vector2i pixelCoordinate) {
+        for (ScreenElement button : children)
+            if (button.isVisible && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate))
+                ((UiButton) button).run();
+    }
+
+    public void hoverOver(Vector2i pixelCoordinate) {
+        for (ScreenElement element : children)
+            if (element.isVisible)
+                element.setFocused(element.containsPixelCoordinate(pixelCoordinate));
+    }
+
     public void move(Vector2f offset) {
         offsetToParent.add(offset);
     }
@@ -78,6 +90,10 @@ public abstract class ScreenElement {
 
     public ArrayList<ScreenElement> getChildren() {
         return children;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
     }
 
     private final ArrayList<ScreenElement> children = new ArrayList<>();

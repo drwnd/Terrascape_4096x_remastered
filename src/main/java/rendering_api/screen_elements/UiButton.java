@@ -8,10 +8,14 @@ public class UiButton extends UiBackgroundElement implements Runnable {
         this.action = action;
     }
 
+    public void setAction(Runnable action) {
+        this.action = action;
+    }
+
     @Override
     public void run() {
         action.run();
     }
 
-    private final Runnable action;
+    private Runnable action;
 }

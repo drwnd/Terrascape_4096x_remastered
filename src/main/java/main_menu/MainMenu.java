@@ -2,7 +2,9 @@ package main_menu;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 import rendering_api.Window;
+import rendering_api.screen_elements.TextElement;
 import rendering_api.screen_elements.UiBackgroundElement;
 import rendering_api.screen_elements.ScreenElement;
 import rendering_api.screen_elements.UiButton;
@@ -17,12 +19,49 @@ public final class MainMenu extends UiBackgroundElement {
         Window.setInput(new MainMenuInput(this));
 
         File[] savedWorlds = getSavedWorlds();
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
         for (int index = 0; index < savedWorlds.length; index++) {
             File saveFile = savedWorlds[index];
-            WorldPlayButton button = new WorldPlayButton(new Vector2f(0.6f, 0.1f), new Vector2f(0.2f, 1.0f - 0.15f * (index + 1)), saveFile);
+
+            Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * (index + 1));
+            WorldPlayButton button = new WorldPlayButton(sizeToParent, offsetToParent, saveFile, this);
+
             addRenderable(button);
             worldButtons.add(button);
         }
+
+        sizeToParent = new Vector2f(0.25f, 0.1f);
+
+        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getSettingsRunnable());
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        text.setText("Settings");
+        settingsButton.addRenderable(text);
+
+        UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateWorldRunnable());
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        text.setText("New World");
+        createNewWorldButton.addRenderable(text);
+
+        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getCloseApplicationRunnable());
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        text.setText("Quit Game");
+        closeApplicationButton.addRenderable(text);
+
+        playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f), null);
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        playWorldButton.addRenderable(text);
+        playWorldButton.setVisible(false);
+
+        deleteWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.05f), null);
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        deleteWorldButton.addRenderable(text);
+        deleteWorldButton.setVisible(false);
+
+        addRenderable(settingsButton);
+        addRenderable(createNewWorldButton);
+        addRenderable(closeApplicationButton);
+        addRenderable(playWorldButton);
+        addRenderable(deleteWorldButton);
     }
 
     public void moveWorldButtons(float movement) {
@@ -30,14 +69,30 @@ public final class MainMenu extends UiBackgroundElement {
         for (ScreenElement element : worldButtons) element.move(offset);
     }
 
-    public void clickOn(Vector2i pixelCoordinate) {
-        for (ScreenElement button : getChildren())
-            if (button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate))
-                ((UiButton) button).run();
+    public void setSelectedWorld(File saveFile) {
+        playWorldButton.setAction(getPlayWorldRunnable(saveFile));
+        deleteWorldButton.setAction(getDeleteWorldRunnable(saveFile));
+
+        ((TextElement) playWorldButton.getChildren().getFirst()).setText("Play %s".formatted(saveFile.getName()));
+        ((TextElement) deleteWorldButton.getChildren().getFirst()).setText("Delete %s".formatted(saveFile.getName()));
+
+        playWorldButton.setVisible(true);
+        deleteWorldButton.setVisible(true);
     }
 
-    public void hoverOver(Vector2i pixelCoordinate) {
-        for (ScreenElement button : getChildren()) button.setFocused(button.containsPixelCoordinate(pixelCoordinate));
+    @Override
+    public void clickOn(Vector2i pixelCoordinate) {
+        boolean buttonFound = false;
+        for (ScreenElement button : getChildren())
+            if (button.isVisible() && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate)) {
+                ((UiButton) button).run();
+                buttonFound = true;
+            }
+
+        if (!buttonFound) {
+            playWorldButton.setVisible(false);
+            deleteWorldButton.setVisible(false);
+        }
     }
 
     private static File[] getSavedWorlds() {
@@ -46,5 +101,28 @@ public final class MainMenu extends UiBackgroundElement {
         return savesFile.listFiles();
     }
 
+    private static Runnable getSettingsRunnable() {
+        return () -> System.out.println("Settings is not implemented jet. :(");
+    }
+
+    private static Runnable getCreateWorldRunnable() {
+        return () -> System.out.println("Creating worlds is not implemented jet. :(");
+    }
+
+    private static Runnable getPlayWorldRunnable(File saveFile) {
+        return () -> System.out.printf("Playing %s is not implemented jet. :(%n", saveFile.getName());
+    }
+
+    private static Runnable getDeleteWorldRunnable(File saveFile) {
+        return () -> System.out.printf("Deleting %s is not implemented jet. :(%n", saveFile.getName());
+    }
+
+    private static Runnable getCloseApplicationRunnable() {
+        return () -> GLFW.glfwSetWindowShouldClose(Window.getWindow(), true);
+    }
+
     private final ArrayList<WorldPlayButton> worldButtons = new ArrayList<>();
+    private final UiButton playWorldButton, deleteWorldButton;
+
+    private static final Vector2i TEXT_SIZE = new Vector2i(16, 24);
 }
