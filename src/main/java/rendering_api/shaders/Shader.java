@@ -210,7 +210,10 @@ public class Shader extends Asset {
     }
 
     private static String strip(String line) {
-        return line.strip().replaceAll(" +", " ").replaceAll(";", "");
+        return line.strip()                                  // Remove accidental white space
+                .replaceAll(";", "")        // Remove trailing semicolon
+                .replaceAll("\\[.*]", "")   // Remove Array declarations (C-Style ones would cause problems)
+                .replaceAll(" +", " ");     // Remove unnecessary white space
     }
 
     private final String vertexShaderFilePath, fragmentShaderFilePath;
