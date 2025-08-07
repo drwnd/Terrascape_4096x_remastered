@@ -2,7 +2,6 @@ package main_menu;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.glfw.GLFW;
 import rendering_api.Window;
 import rendering_api.renderables.TextElement;
 import rendering_api.renderables.UiBackgroundElement;
@@ -16,7 +15,6 @@ public final class MainMenu extends UiBackgroundElement {
 
     public MainMenu() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        Window.setInput(new MainMenuInput(this));
 
         File[] savedWorlds = getSavedWorlds();
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
@@ -81,6 +79,11 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     @Override
+    public void setOnTop() {
+        Window.setInput(new MainMenuInput(this));
+    }
+
+    @Override
     public void clickOn(Vector2i pixelCoordinate) {
         boolean buttonFound = false;
         for (Renderable button : getChildren())
@@ -118,7 +121,7 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     private static Runnable getCloseApplicationRunnable() {
-        return () -> GLFW.glfwSetWindowShouldClose(Window.getWindow(), true);
+        return Window::removeTopRenderable;
     }
 
     private final ArrayList<WorldPlayButton> worldButtons = new ArrayList<>();

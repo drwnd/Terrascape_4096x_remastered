@@ -19,6 +19,10 @@ public abstract class Renderable {
     protected abstract void resizeSelfTo(int width, int height);
 
 
+    public void setOnTop() {
+
+    }
+
     public final void render(Vector2f parentPosition, Vector2f parentSize) {
         if (!isVisible) return;
         Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);

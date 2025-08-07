@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 import rendering_api.renderables.Renderable;
 
+import java.util.ArrayList;
+
 
 public final class Window {
 
@@ -61,8 +63,10 @@ public final class Window {
         GLFW.glfwSetFramebufferSizeCallback(window, (long window, int width, int height) -> {
             Window.width = width;
             Window.height = height;
-            if (renderable != null)
+            if (!renderablesStack.isEmpty()) {
+                Renderable renderable = renderablesStack.getLast();
                 renderable.resize(new Vector2i(width, height), new Vector2f(1.0f, 1.0f));
+            }
         });
 
         GLFW.glfwMakeContextCurrent(window);
@@ -71,6 +75,7 @@ public final class Window {
     }
 
     public static void renderLoop() {
+        Renderable renderable = renderablesStack.getLast();
         while (!GLFW.glfwWindowShouldClose(window)) {
             GL46.glViewport(0, 0, width, height);
             renderable.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
@@ -112,8 +117,15 @@ public final class Window {
         return window;
     }
 
-    public static void setRenderable(Renderable element) {
-        renderable = element;
+    public static void setTopRenderable(Renderable element) {
+        renderablesStack.add(element);
+        element.setOnTop();
+    }
+
+    public static void removeTopRenderable() {
+        renderablesStack.removeLast();
+        if (renderablesStack.isEmpty()) GLFW.glfwSetWindowShouldClose(window, true);
+        else renderablesStack.getLast().setOnTop();
     }
 
     public static void setInput(Input input) {
@@ -129,5 +141,5 @@ public final class Window {
     private static long window;
     private static boolean maximized;
 
-    private static Renderable renderable;
+    private static final ArrayList<Renderable> renderablesStack = new ArrayList<>();
 }
