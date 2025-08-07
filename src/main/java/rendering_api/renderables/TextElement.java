@@ -1,4 +1,4 @@
-package rendering_api.screen_elements;
+package rendering_api.renderables;
 
 import assets.AssetManager;
 import assets.identifiers.ShaderIdentifier;
@@ -9,7 +9,7 @@ import rendering_api.shaders.TextShader;
 
 import java.awt.*;
 
-public class TextElement extends ScreenElement {
+public class TextElement extends Renderable {
     public TextElement(Vector2f sizeToParent, Vector2f offsetToParent, Vector2i charSize) {
         super(sizeToParent, offsetToParent);
         this.charSize = charSize;

@@ -4,10 +4,10 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Window;
-import rendering_api.screen_elements.TextElement;
-import rendering_api.screen_elements.UiBackgroundElement;
-import rendering_api.screen_elements.ScreenElement;
-import rendering_api.screen_elements.UiButton;
+import rendering_api.renderables.TextElement;
+import rendering_api.renderables.UiBackgroundElement;
+import rendering_api.renderables.Renderable;
+import rendering_api.renderables.UiButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public final class MainMenu extends UiBackgroundElement {
 
     public void moveWorldButtons(float movement) {
         Vector2f offset = new Vector2f(0, movement);
-        for (ScreenElement element : worldButtons) element.move(offset);
+        for (Renderable element : worldButtons) element.move(offset);
     }
 
     public void setSelectedWorld(File saveFile) {
@@ -83,7 +83,7 @@ public final class MainMenu extends UiBackgroundElement {
     @Override
     public void clickOn(Vector2i pixelCoordinate) {
         boolean buttonFound = false;
-        for (ScreenElement button : getChildren())
+        for (Renderable button : getChildren())
             if (button.isVisible() && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate)) {
                 ((UiButton) button).run();
                 buttonFound = true;

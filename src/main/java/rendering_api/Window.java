@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
-import rendering_api.screen_elements.ScreenElement;
+import rendering_api.renderables.Renderable;
 
 
 public final class Window {
@@ -61,8 +61,8 @@ public final class Window {
         GLFW.glfwSetFramebufferSizeCallback(window, (long window, int width, int height) -> {
             Window.width = width;
             Window.height = height;
-            if (screenElement != null)
-                screenElement.resize(new Vector2i(width, height), new Vector2f(1.0f, 1.0f));
+            if (renderable != null)
+                renderable.resize(new Vector2i(width, height), new Vector2f(1.0f, 1.0f));
         });
 
         GLFW.glfwMakeContextCurrent(window);
@@ -73,7 +73,7 @@ public final class Window {
     public static void renderLoop() {
         while (!GLFW.glfwWindowShouldClose(window)) {
             GL46.glViewport(0, 0, width, height);
-            screenElement.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
+            renderable.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
             GLFW.glfwSwapBuffers(window);
             GLFW.glfwPollEvents();
         }
@@ -112,8 +112,8 @@ public final class Window {
         return window;
     }
 
-    public static void setScreenElement(ScreenElement element) {
-        screenElement = element;
+    public static void setRenderable(Renderable element) {
+        renderable = element;
     }
 
     public static void setInput(Input input) {
@@ -129,5 +129,5 @@ public final class Window {
     private static long window;
     private static boolean maximized;
 
-    private static ScreenElement screenElement;
+    private static Renderable renderable;
 }

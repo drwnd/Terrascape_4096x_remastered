@@ -2,10 +2,9 @@ package main_menu;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import rendering_api.screen_elements.TextElement;
-import rendering_api.screen_elements.UiButton;
+import rendering_api.renderables.TextElement;
+import rendering_api.renderables.UiButton;
 
-import java.awt.*;
 import java.io.File;
 
 public final class WorldPlayButton extends UiButton {

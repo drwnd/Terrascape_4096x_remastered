@@ -1,4 +1,4 @@
-package rendering_api.screen_elements;
+package rendering_api.renderables;
 
 import org.joml.Vector2f;
 

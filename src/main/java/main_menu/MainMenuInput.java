@@ -36,6 +36,8 @@ public final class MainMenuInput extends Input {
         float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0f);
         menu.moveWorldButtons(newScroll - scroll);
         scroll = newScroll;
+
+        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
     }
 
     @Override

@@ -1,4 +1,4 @@
-package rendering_api.screen_elements;
+package rendering_api.renderables;
 
 import assets.AssetManager;
 import assets.Texture;
@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 import rendering_api.Window;
 import rendering_api.shaders.GuiShader;
 
-public class UiBackgroundElement extends ScreenElement {
+public class UiBackgroundElement extends Renderable {
     public UiBackgroundElement(Vector2f sizeToParent, Vector2f offsetToParent) {
         super(sizeToParent, offsetToParent);
     }

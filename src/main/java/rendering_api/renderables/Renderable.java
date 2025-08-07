@@ -1,4 +1,4 @@
-package rendering_api.screen_elements;
+package rendering_api.renderables;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -6,9 +6,9 @@ import rendering_api.Window;
 
 import java.util.ArrayList;
 
-public abstract class ScreenElement {
+public abstract class Renderable {
 
-    public ScreenElement(Vector2f sizeToParent, Vector2f offsetToParent) {
+    public Renderable(Vector2f sizeToParent, Vector2f offsetToParent) {
         this.sizeToParent = sizeToParent;
         this.offsetToParent = offsetToParent;
     }
@@ -34,30 +34,30 @@ public abstract class ScreenElement {
         }
 
         renderSelf(thisPosition, thisSize);
-        for (ScreenElement child : children) child.render(thisPosition, thisSize);
+        for (Renderable child : children) child.render(thisPosition, thisSize);
     }
 
     public final void resize(Vector2i size, Vector2f parentSize) {
         Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
         resizeSelfTo((int) (size.x * thisSize.x), (int) (size.y * thisSize.y));
-        for (ScreenElement child : children) child.resize(size, thisSize);
+        for (Renderable child : children) child.resize(size, thisSize);
     }
 
-    public void addRenderable(ScreenElement screenElement) {
-        children.add(screenElement);
-        screenElement.parent = this;
+    public void addRenderable(Renderable renderable) {
+        children.add(renderable);
+        renderable.parent = this;
     }
 
     public void clickOn(Vector2i pixelCoordinate) {
-        for (ScreenElement button : children)
+        for (Renderable button : children)
             if (button.isVisible && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate))
                 ((UiButton) button).run();
     }
 
     public void hoverOver(Vector2i pixelCoordinate) {
-        for (ScreenElement element : children)
-            if (element.isVisible)
-                element.setFocused(element.containsPixelCoordinate(pixelCoordinate));
+        for (Renderable renderable : children)
+            if (renderable.isVisible)
+                renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
     }
 
     public void move(Vector2f offset) {
@@ -88,7 +88,7 @@ public abstract class ScreenElement {
         return parent.getSize().mul(sizeToParent);
     }
 
-    public ArrayList<ScreenElement> getChildren() {
+    public ArrayList<Renderable> getChildren() {
         return children;
     }
 
@@ -96,9 +96,9 @@ public abstract class ScreenElement {
         return isVisible;
     }
 
-    private final ArrayList<ScreenElement> children = new ArrayList<>();
+    private final ArrayList<Renderable> children = new ArrayList<>();
     private boolean isVisible = true, isFocused = false;
     private final Vector2f sizeToParent;
     private final Vector2f offsetToParent;
-    private ScreenElement parent = DummyScreenElement.dummy;
+    private Renderable parent = DummyRenderable.dummy;
 }

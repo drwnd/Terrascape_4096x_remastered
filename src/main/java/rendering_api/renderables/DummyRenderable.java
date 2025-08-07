@@ -1,12 +1,12 @@
-package rendering_api.screen_elements;
+package rendering_api.renderables;
 
 import org.joml.Vector2f;
 
-public final class DummyScreenElement extends ScreenElement {
+public final class DummyRenderable extends Renderable {
 
-    static final DummyScreenElement dummy = new DummyScreenElement();
+    static final DummyRenderable dummy = new DummyRenderable();
 
-    public DummyScreenElement() {
+    public DummyRenderable() {
         super(new Vector2f(), new Vector2f());
     }
 
