@@ -1,4 +1,4 @@
-import main_menu.MainMenu;
+import menus.MainMenu;
 import rendering_api.Window;
 
 public final class Launcher {

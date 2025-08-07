@@ -75,9 +75,9 @@ public final class Window {
     }
 
     public static void renderLoop() {
-        Renderable renderable = renderablesStack.getLast();
         while (!GLFW.glfwWindowShouldClose(window)) {
             GL46.glViewport(0, 0, width, height);
+            Renderable renderable = renderablesStack.getLast();
             renderable.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
             GLFW.glfwSwapBuffers(window);
             GLFW.glfwPollEvents();

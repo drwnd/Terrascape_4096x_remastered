@@ -1,4 +1,4 @@
-package main_menu;
+package menus;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -109,7 +109,7 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     private static Runnable getCreateWorldRunnable() {
-        return () -> System.out.println("Creating worlds is not implemented jet. :(");
+        return () -> Window.setTopRenderable(new WorldCreationMenu());
     }
 
     private static Runnable getPlayWorldRunnable(File saveFile) {

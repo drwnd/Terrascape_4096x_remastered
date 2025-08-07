@@ -1,4 +1,4 @@
-package main_menu;
+package menus;
 
 import assets.AssetManager;
 import org.joml.Vector2i;
