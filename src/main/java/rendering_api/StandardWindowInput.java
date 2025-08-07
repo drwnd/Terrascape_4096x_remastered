@@ -1,15 +1,9 @@
-package menus;
+package rendering_api;
 
-import org.joml.Vector2i;
+import assets.AssetManager;
 import org.lwjgl.glfw.GLFW;
-import rendering_api.Input;
-import rendering_api.Window;
 
-public final class WorldCreationMenuInput extends Input {
-
-    public WorldCreationMenuInput(WorldCreationMenu menu) {
-        this.menu = menu;
-    }
+public final class StandardWindowInput extends Input {
 
     @Override
     public void setInputMode() {
@@ -18,16 +12,12 @@ public final class WorldCreationMenuInput extends Input {
 
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
-        cursorPos.set((int) xPos, Window.getHeight() - (int) yPos);
 
-        menu.hoverOver(cursorPos);
     }
 
     @Override
     public void mouseButtonCallback(long window, int button, int action, int mods) {
-        if (action != GLFW.GLFW_PRESS) return;
 
-        menu.clickOn(cursorPos);
     }
 
     @Override
@@ -37,14 +27,12 @@ public final class WorldCreationMenuInput extends Input {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
-
+        if (key == GLFW.GLFW_KEY_F11 && action == GLFW.GLFW_PRESS) Window.toggleFullScreen();
+        if (key == GLFW.GLFW_KEY_I && action == GLFW.GLFW_PRESS) AssetManager.reload();
     }
 
     @Override
     public void charCallback(long window, int codePoint) {
 
     }
-
-    private final WorldCreationMenu menu;
-    private final Vector2i cursorPos = new Vector2i();
 }

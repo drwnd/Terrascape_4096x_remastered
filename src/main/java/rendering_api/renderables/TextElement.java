@@ -3,25 +3,24 @@ package rendering_api.renderables;
 import assets.AssetManager;
 import assets.identifiers.ShaderIdentifier;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import rendering_api.Window;
 import rendering_api.shaders.TextShader;
 
 import java.awt.*;
 
 public class TextElement extends Renderable {
-    public TextElement(Vector2f sizeToParent, Vector2f offsetToParent, Vector2i charSize) {
+    public TextElement(Vector2f sizeToParent, Vector2f offsetToParent, Vector2f charSize) {
         super(sizeToParent, offsetToParent);
         this.charSize = charSize;
     }
 
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
-        position = new Vector2f(position.x, position.y - Window.toRelativeY(charSize.y / 2));
+        position = new Vector2f(position.x, position.y - charSize.y * 0.5f);
         TextShader textShader = (TextShader) AssetManager.getShader(ShaderIdentifier.TEXT);
         textShader.bind();
         textShader.setUniform("screenSize", Window.getWidth(), Window.getHeight());
-        textShader.setUniform("charSize", charSize);
+        textShader.setUniform("charSize", (int) (Window.getWidth() * charSize.x), (int) (Window.getHeight() * charSize.y));
         textShader.drawText(position, text, Color.WHITE, hasTransparentBackground);
     }
 
@@ -34,7 +33,7 @@ public class TextElement extends Renderable {
         this.text = text;
     }
 
-    public void setCharSize(Vector2i charSize) {
+    public void setCharSize(Vector2f charSize) {
         this.charSize = charSize;
     }
 
@@ -43,6 +42,6 @@ public class TextElement extends Renderable {
     }
 
     private String text = "";
-    private Vector2i charSize;
+    private Vector2f charSize;
     private boolean hasTransparentBackground = false;
 }

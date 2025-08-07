@@ -127,5 +127,5 @@ public final class MainMenu extends UiBackgroundElement {
     private final ArrayList<WorldPlayButton> worldButtons = new ArrayList<>();
     private final UiButton playWorldButton, deleteWorldButton;
 
-    private static final Vector2i TEXT_SIZE = new Vector2i(16, 24);
+    private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }

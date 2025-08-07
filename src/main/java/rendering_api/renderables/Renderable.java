@@ -96,6 +96,10 @@ public abstract class Renderable {
         return children;
     }
 
+    public Renderable getParent() {
+        return parent;
+    }
+
     public boolean isVisible() {
         return isVisible;
     }

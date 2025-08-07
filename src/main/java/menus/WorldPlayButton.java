@@ -1,7 +1,6 @@
 package menus;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import rendering_api.renderables.TextElement;
 import rendering_api.renderables.UiButton;
 
@@ -21,5 +20,5 @@ public final class WorldPlayButton extends UiButton {
         return () -> menu.setSelectedWorld(saveFile);
     }
 
-    private static final Vector2i TEXT_SIZE = new Vector2i(16, 24);
+    private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }
