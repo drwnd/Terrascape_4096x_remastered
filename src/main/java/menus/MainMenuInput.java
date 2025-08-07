@@ -11,6 +11,10 @@ public final class MainMenuInput extends Input {
         this.menu = menu;
     }
 
+    public float getScroll() {
+        return scroll;
+    }
+
     @Override
     public void setInputMode() {
 

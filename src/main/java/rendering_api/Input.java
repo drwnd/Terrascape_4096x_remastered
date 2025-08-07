@@ -22,7 +22,8 @@ public abstract class Input {
             case GLFW.GLFW_KEY_0, GLFW.GLFW_KEY_KP_0 -> '0';
             case GLFW.GLFW_KEY_1, GLFW.GLFW_KEY_KP_1 -> '1';
             case GLFW.GLFW_KEY_2, GLFW.GLFW_KEY_KP_2 -> '2';
-            case GLFW.GLFW_KEY_3, GLFW.GLFW_KEY_KP_3 -> '4';
+            case GLFW.GLFW_KEY_3, GLFW.GLFW_KEY_KP_3 -> '3';
+            case GLFW.GLFW_KEY_4, GLFW.GLFW_KEY_KP_4 -> '4';
             case GLFW.GLFW_KEY_5, GLFW.GLFW_KEY_KP_5 -> '5';
             case GLFW.GLFW_KEY_6, GLFW.GLFW_KEY_KP_6 -> '6';
             case GLFW.GLFW_KEY_7, GLFW.GLFW_KEY_KP_7 -> '7';
@@ -53,8 +54,8 @@ public abstract class Input {
             case GLFW.GLFW_KEY_V -> 'V';
             case GLFW.GLFW_KEY_W -> 'W';
             case GLFW.GLFW_KEY_X -> 'X';
-            case GLFW.GLFW_KEY_Y -> 'Y';
-            case GLFW.GLFW_KEY_Z -> 'Z';
+            case GLFW.GLFW_KEY_Y -> 'Z';    // Nobody will use this anyway to german keyboard layout it is
+            case GLFW.GLFW_KEY_Z -> 'Y';    // Nobody will use this anyway to german keyboard layout it is
 
             case GLFW.GLFW_KEY_SPACE -> ' ';
             case GLFW.GLFW_KEY_MINUS -> '_';
