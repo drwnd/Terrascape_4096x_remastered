@@ -43,23 +43,14 @@ public final class TextFieldInput extends Input {
         if (key == GLFW.GLFW_KEY_ESCAPE) {
             field.getParent().setOnTop();
             field.getParent().hoverOver(cursorPos);
-            return;
         }
-
-        char keyChar = Input.getChar(key);
-        if (Character.isAlphabetic(keyChar)) {
-            if (Input.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT) || Input.isKeyPressed(GLFW.GLFW_KEY_RIGHT_SHIFT))
-                keyChar = Character.toUpperCase(keyChar);
-            else keyChar = Character.toLowerCase(keyChar);
-        }
-
-        if (keyChar != 0) field.setText(field.getText() + keyChar);
         if (key == GLFW.GLFW_KEY_BACKSPACE) handleBackspace();
     }
 
     @Override
     public void charCallback(long window, int codePoint) {
-
+        char[] chars = Character.toChars(codePoint);
+        field.setText(field.getText() + toString(chars));
     }
 
     private void handleBackspace() {
@@ -71,6 +62,12 @@ public final class TextFieldInput extends Input {
             if (spaceIndex == -1) field.setText("");
             else field.setText(currentText.substring(0, spaceIndex));
         } else field.setText(currentText.substring(0, currentText.length() - 1));
+    }
+
+    private String toString(char[] chars) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : chars) stringBuilder.append(c);
+        return stringBuilder.toString();
     }
 
     private final TextField field;
