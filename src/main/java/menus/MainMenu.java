@@ -17,20 +17,20 @@ public final class MainMenu extends UiBackgroundElement {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
 
-        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getSettingsRunnable());
+        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
         TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Settings");
-        settingsButton.addRenderable(text);
+        text.setText("Quit Game");
+        closeApplicationButton.addRenderable(text);
 
         UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateWorldRunnable());
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
         text.setText("New World");
         createNewWorldButton.addRenderable(text);
 
-        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getCloseApplicationRunnable());
+        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getSettingsRunnable());
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Quit Game");
-        closeApplicationButton.addRenderable(text);
+        text.setText("Settings");
+        settingsButton.addRenderable(text);
 
         playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f), null);
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
@@ -51,7 +51,7 @@ public final class MainMenu extends UiBackgroundElement {
 
     public void moveWorldButtons(float movement) {
         Vector2f offset = new Vector2f(0, movement);
-        for (Renderable element : worldButtons) element.move(offset);
+        for (Renderable renderable : worldButtons) renderable.move(offset);
     }
 
     public void setSelectedWorld(File saveFile) {
@@ -67,7 +67,8 @@ public final class MainMenu extends UiBackgroundElement {
 
     @Override
     public void setOnTop() {
-        input = new MainMenuInput(this);
+        // IDK why but sometimes it doesn't fine MainMenuInput without the package declaration
+        input = new menus.MainMenuInput(this);
         Window.setInput(input);
         createWorldButtons();
     }
@@ -98,20 +99,31 @@ public final class MainMenu extends UiBackgroundElement {
         getChildren().removeAll(worldButtons);
 
         File[] savedWorlds = getSavedWorlds();
-        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
         for (int index = 0; index < savedWorlds.length; index++) {
             File saveFile = savedWorlds[index];
 
-            Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * (index + 1) + input.getScroll());
-            WorldPlayButton button = new WorldPlayButton(sizeToParent, offsetToParent, saveFile, this);
+            UiButton button = getPlayWorldButton(index, saveFile);
 
             addRenderable(button);
             worldButtons.add(button);
         }
     }
 
+    private UiButton getPlayWorldButton(int index, File saveFile) {
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * (index + 1) + input.getScroll());
+
+        UiButton button = new UiButton(sizeToParent, offsetToParent, () -> setSelectedWorld(saveFile));
+
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        text.setText(saveFile.getName());
+        button.addRenderable(text);
+
+        return button;
+    }
+
     private static Runnable getSettingsRunnable() {
-        return () -> System.out.println("Settings is not implemented jet. :(");
+        return () -> Window.setTopRenderable(new SettingsMenu());
     }
 
     private static Runnable getCreateWorldRunnable() {
@@ -131,13 +143,10 @@ public final class MainMenu extends UiBackgroundElement {
         };
     }
 
-    private static Runnable getCloseApplicationRunnable() {
-        return Window::removeTopRenderable;
-    }
 
-    private final ArrayList<WorldPlayButton> worldButtons = new ArrayList<>();
+    private final ArrayList<UiButton> worldButtons = new ArrayList<>();
     private final UiButton playWorldButton, deleteWorldButton;
-    private MainMenuInput input;
+    private menus.MainMenuInput input;  // IDK why but sometimes it doesn't fine MainMenuInput without the package declaration
 
     private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }

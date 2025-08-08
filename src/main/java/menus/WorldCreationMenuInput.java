@@ -1,6 +1,5 @@
 package menus;
 
-import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
@@ -8,12 +7,13 @@ import rendering_api.Window;
 public final class WorldCreationMenuInput extends Input {
 
     public WorldCreationMenuInput(WorldCreationMenu menu) {
+        super(menu);
         this.menu = menu;
     }
 
     @Override
     public void setInputMode() {
-
+        GLFW.glfwSetInputMode(Window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     }
 
     @Override
@@ -46,5 +46,4 @@ public final class WorldCreationMenuInput extends Input {
     }
 
     private final WorldCreationMenu menu;
-    private final Vector2i cursorPos = new Vector2i();
 }

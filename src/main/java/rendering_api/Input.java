@@ -1,11 +1,27 @@
 package rendering_api;
 
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import rendering_api.renderables.Renderable;
 
 public abstract class Input {
 
     public static final int IS_MOUSE_BUTTON = 0x80000000;
     public static final int BUTTON_MASK = 0x7FFFFFFF;
+
+    protected final Vector2i cursorPos = new Vector2i();
+
+    public Input() {
+
+    }
+
+    public Input(Renderable menu) {
+        double[] cursorX = new double[1];
+        double[] cursorY = new double[1];
+        GLFW.glfwGetCursorPos(Window.getWindow(), cursorX, cursorY);
+        cursorPos.set((int) cursorX[0], (int) (Window.getHeight() - cursorY[0]));
+        menu.hoverOver(cursorPos);
+    }
 
     public static boolean isKeyPressed(int keycode) {
         if ((keycode & Input.IS_MOUSE_BUTTON) == 0)

@@ -1,10 +1,9 @@
-package menus;
+package rendering_api.renderables;
 
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
-import rendering_api.renderables.TextField;
 
 public final class TextFieldInput extends Input {
 

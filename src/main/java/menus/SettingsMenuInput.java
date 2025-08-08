@@ -4,14 +4,11 @@ import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
 
-public final class MainMenuInput extends Input {
-    public MainMenuInput(MainMenu menu) {
+public class SettingsMenuInput extends Input {
+
+    public SettingsMenuInput(SettingsMenu menu) {
         super(menu);
         this.menu = menu;
-    }
-
-    public float getScroll() {
-        return scroll;
     }
 
     @Override
@@ -35,11 +32,7 @@ public final class MainMenuInput extends Input {
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
-        float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0f);
-        menu.moveWorldButtons(newScroll - scroll);
-        scroll = newScroll;
 
-        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
     }
 
     @Override
@@ -52,6 +45,5 @@ public final class MainMenuInput extends Input {
 
     }
 
-    private final MainMenu menu;
-    private float scroll = 0;
+    private final SettingsMenu menu;
 }

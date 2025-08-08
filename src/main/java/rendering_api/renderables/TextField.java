@@ -1,7 +1,6 @@
 package rendering_api.renderables;
 
 import assets.identifiers.TextureIdentifier;
-import menus.TextFieldInput;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import rendering_api.Window;

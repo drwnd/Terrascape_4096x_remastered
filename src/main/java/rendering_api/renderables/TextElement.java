@@ -16,12 +16,16 @@ public class TextElement extends Renderable {
 
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
+        float distanceToParentBorder = getParent().getPosition().x + getParent().getSize().x - position.x;
+        int maxLengthInsideParent = (int) (distanceToParentBorder / charSize.x);
+        maxLengthInsideParent = Math.min(text.length(), maxLengthInsideParent);
+
         position = new Vector2f(position.x, position.y - charSize.y * 0.5f);
         TextShader textShader = (TextShader) AssetManager.getShader(ShaderIdentifier.TEXT);
         textShader.bind();
         textShader.setUniform("screenSize", Window.getWidth(), Window.getHeight());
         textShader.setUniform("charSize", (int) (Window.getWidth() * charSize.x), (int) (Window.getHeight() * charSize.y));
-        textShader.drawText(position, text, Color.WHITE, hasTransparentBackground);
+        textShader.drawText(position, text.substring(0, maxLengthInsideParent), Color.WHITE, hasTransparentBackground);
     }
 
     @Override
@@ -33,15 +37,11 @@ public class TextElement extends Renderable {
         this.text = text;
     }
 
-    public void setCharSize(Vector2f charSize) {
-        this.charSize = charSize;
-    }
-
     public void setHasTransparentBackground(boolean hasTransparentBackground) {
         this.hasTransparentBackground = hasTransparentBackground;
     }
 
     private String text = "";
-    private Vector2f charSize;
     private boolean hasTransparentBackground = false;
+    private final Vector2f charSize;
 }

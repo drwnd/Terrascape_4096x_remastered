@@ -28,7 +28,6 @@ Open inventory:E
 Open debug menu:F3
 Toggle X-Ray:X
 Toggle no-clip:G
-Reload settings:O
 Scroll hot bar:FALSE
 Zoom:V
 Master audio:0.5
@@ -37,8 +36,6 @@ Place audio:4.0
 Dig audio:1.0
 Miscellaneous audio:1.0
 Inventory audio:0.25
-Reload Shaders:P
-Seed:64891648131816132
 Increase Break/Place Size:UP
 Decrease Break/Place Size:DOWN
 Drop Button:1
