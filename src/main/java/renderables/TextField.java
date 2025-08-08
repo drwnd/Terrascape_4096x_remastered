@@ -1,4 +1,4 @@
-package rendering_api.renderables;
+package renderables;
 
 import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;

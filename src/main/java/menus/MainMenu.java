@@ -3,10 +3,10 @@ package menus;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import rendering_api.Window;
-import rendering_api.renderables.Renderable;
-import rendering_api.renderables.TextElement;
-import rendering_api.renderables.UiBackgroundElement;
-import rendering_api.renderables.UiButton;
+import renderables.Renderable;
+import renderables.TextElement;
+import renderables.UiBackgroundElement;
+import renderables.UiButton;
 
 import java.io.File;
 import java.util.ArrayList;

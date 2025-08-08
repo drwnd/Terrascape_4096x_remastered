@@ -1,4 +1,4 @@
-package rendering_api.renderables;
+package renderables;
 
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;

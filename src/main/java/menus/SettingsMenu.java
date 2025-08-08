@@ -2,11 +2,12 @@ package menus;
 
 import org.joml.Vector2f;
 import rendering_api.Window;
-import rendering_api.renderables.TextElement;
-import rendering_api.renderables.UiBackgroundElement;
-import rendering_api.renderables.UiButton;
+import renderables.TextElement;
+import renderables.UiBackgroundElement;
+import renderables.UiButton;
 
 public class SettingsMenu extends UiBackgroundElement {
+
     public SettingsMenu() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
@@ -21,8 +22,14 @@ public class SettingsMenu extends UiBackgroundElement {
         text.setText("Apply");
         applyChangesButton.addRenderable(text);
 
+        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonRunnable());
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
+        text.setText("Reset");
+        resetButton.addRenderable(text);
+
         addRenderable(closeApplicationButton);
         addRenderable(applyChangesButton);
+        addRenderable(resetButton);
     }
 
     @Override
@@ -31,6 +38,10 @@ public class SettingsMenu extends UiBackgroundElement {
     }
 
     private static Runnable getApplyChangesButtonRunnable() {
+        return () -> System.out.println("This isn't implemented jet. :(");
+    }
+
+    private static Runnable getResetSettingsButtonRunnable() {
         return () -> System.out.println("This isn't implemented jet. :(");
     }
 

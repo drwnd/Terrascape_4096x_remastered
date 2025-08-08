@@ -1,4 +1,4 @@
-package rendering_api.renderables;
+package renderables;
 
 import assets.AssetManager;
 import assets.identifiers.ShaderIdentifier;

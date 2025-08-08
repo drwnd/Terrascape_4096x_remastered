@@ -2,10 +2,10 @@ package menus;
 
 import org.joml.Vector2f;
 import rendering_api.Window;
-import rendering_api.renderables.TextElement;
-import rendering_api.renderables.TextField;
-import rendering_api.renderables.UiBackgroundElement;
-import rendering_api.renderables.UiButton;
+import renderables.TextElement;
+import renderables.TextField;
+import renderables.UiBackgroundElement;
+import renderables.UiButton;
 
 import java.io.File;
 

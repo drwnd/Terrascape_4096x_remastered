@@ -2,7 +2,7 @@ package rendering_api;
 
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-import rendering_api.renderables.Renderable;
+import renderables.Renderable;
 
 public abstract class Input {
 
