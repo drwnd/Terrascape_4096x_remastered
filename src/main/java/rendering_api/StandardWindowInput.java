@@ -1,7 +1,8 @@
 package rendering_api;
 
 import assets.AssetManager;
-import org.lwjgl.glfw.GLFW;
+import settings.KeySetting;
+import settings.Settings;
 
 public final class StandardWindowInput extends Input {
 
@@ -27,8 +28,9 @@ public final class StandardWindowInput extends Input {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
-        if (key == GLFW.GLFW_KEY_F11 && action == GLFW.GLFW_PRESS) Window.toggleFullScreen();
-        if (key == GLFW.GLFW_KEY_I && action == GLFW.GLFW_PRESS) AssetManager.reload();
+        if (Input.isKeyPressed(KeySetting.RESIZE_WINDOW.value())) Window.toggleFullScreen();
+        if (Input.isKeyPressed(KeySetting.RELOAD_ASSETS.value())) AssetManager.reload();
+        if (Input.isKeyPressed(KeySetting.RELOAD_SETTINGS.value())) Settings.loadFromFile();
     }
 
     @Override

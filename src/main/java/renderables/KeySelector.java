@@ -7,7 +7,7 @@ import rendering_api.Input;
 import rendering_api.Window;
 import settings.KeySetting;
 
-public class KeySelector extends UiButton {
+public final class KeySelector extends UiButton {
 
     public KeySelector(Vector2f sizeToParent, Vector2f offsetToParent, KeySetting setting) {
         super(sizeToParent, offsetToParent, null);

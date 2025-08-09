@@ -6,6 +6,14 @@ public enum ToggleSetting {
     DO_SHADOW_MAPPING(false),
     X_RAY(false);
 
+    public static void setIfPresent(String name, String value) {
+        try {
+            valueOf(name).setValue(Boolean.parseBoolean(value));
+        } catch (IllegalArgumentException ignore) {
+
+        }
+    }
+
     ToggleSetting(boolean defaultValue) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;

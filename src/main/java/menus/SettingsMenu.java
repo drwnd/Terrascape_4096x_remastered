@@ -107,6 +107,7 @@ public class SettingsMenu extends UiBackgroundElement {
             for (Slider slider : sliders) Settings.update(slider.getSetting(), slider.getValue());
             for (KeySelector keySelector : keySelectors) Settings.update(keySelector.getSetting(), keySelector.getValue());
             for (Toggle toggle : toggles) Settings.update(toggle.getSetting(), toggle.getValue());
+            Settings.writeToFile();
             Window.removeTopRenderable();
         };
     }

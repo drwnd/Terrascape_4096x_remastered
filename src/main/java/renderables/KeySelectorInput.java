@@ -3,7 +3,7 @@ package renderables;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 
-public class KeySelectorInput extends Input {
+public final class KeySelectorInput extends Input {
 
     public KeySelectorInput(KeySelector selector) {
         super(selector);

@@ -30,6 +30,7 @@ public final class Window {
         createWindow(title, vSync);
         GL.createCapabilities();
 
+        GL46.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         GL46.glClearColor(0, 0, 0, 1);
         GL46.glEnable(GL46.GL_DEPTH_TEST);
         GL46.glDepthFunc(GL46.GL_LESS);
@@ -77,6 +78,7 @@ public final class Window {
     public static void renderLoop() {
         while (!GLFW.glfwWindowShouldClose(window)) {
             GL46.glViewport(0, 0, width, height);
+            GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT | GL46.GL_STENCIL_BUFFER_BIT);
             Renderable renderable = renderablesStack.getLast();
             renderable.render(new Vector2f(0.0f, 0.0f), new Vector2f(1.0f, 1.0f));
             GLFW.glfwSwapBuffers(window);

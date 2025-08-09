@@ -7,6 +7,7 @@ import assets.identifiers.TextureIdentifier;
 import assets.identifiers.VertexArrayIdentifier;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL46;
+import settings.FloatSetting;
 
 import java.awt.*;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +29,10 @@ public class TextShader extends Shader {
     }
 
     public void drawText(Vector2f position, String text, Color color, boolean addTransparentBackground) {
+        float guiSize = FloatSetting.GUI_SIZE.value();
+
         setUniform("string", toIntFormat(text));
-        setUniform("position", position.x - 0.5f, position.y - 0.5f);
+        setUniform("position", (position.x - 0.5f) * guiSize, (position.y - 0.5f) * guiSize);
         setUniform("color", color);
         setUniform("textAtlas", 0);
         setUniform("addTransparentBackground", addTransparentBackground ? 1 : 0);

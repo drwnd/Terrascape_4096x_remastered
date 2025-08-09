@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 import rendering_api.shaders.GuiShader;
 import settings.ToggleSetting;
 
-public class Toggle extends UiButton {
+public final class Toggle extends UiButton {
 
     public Toggle(Vector2f sizeToParent, Vector2f offsetToParent, ToggleSetting setting) {
         super(sizeToParent, offsetToParent, null);

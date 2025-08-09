@@ -3,6 +3,7 @@ package renderables;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import rendering_api.Window;
+import settings.FloatSetting;
 
 import java.util.ArrayList;
 
@@ -74,8 +75,9 @@ public abstract class Renderable {
     }
 
     public boolean containsPixelCoordinate(Vector2i pixelCoordinate) {
-        Vector2f position = getPosition().mul(Window.getWidth(), Window.getHeight());
-        Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight());
+        float guiSize = FloatSetting.GUI_SIZE.value();
+        Vector2f position = getPosition().mul(guiSize).add((1 - guiSize) * 0.5f, (1 - guiSize) * 0.5f).mul(Window.getWidth(), Window.getHeight());
+        Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight()).mul(guiSize);
 
         return position.x <= pixelCoordinate.x && position.x + size.x >= pixelCoordinate.x
                 && position.y <= pixelCoordinate.y && position.y + size.y >= pixelCoordinate.y;

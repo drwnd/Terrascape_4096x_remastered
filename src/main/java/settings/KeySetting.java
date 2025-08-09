@@ -32,7 +32,18 @@ public enum KeySetting {
     ZOOM(GLFW.GLFW_KEY_V),
     INCREASE_BREAK_PLACE_SIZE(GLFW.GLFW_KEY_UP),
     DECREASE_BREAK_PLACE_SIZE(GLFW.GLFW_KEY_DOWN),
-    DROP(GLFW.GLFW_KEY_Q);
+    DROP(GLFW.GLFW_KEY_Q),
+    RESIZE_WINDOW(GLFW.GLFW_KEY_F11),
+    RELOAD_ASSETS(GLFW.GLFW_KEY_I),
+    RELOAD_SETTINGS(GLFW.GLFW_KEY_O);
+
+    public static void setIfPresent(String name, String value) {
+        try {
+            valueOf(name).setValue(Integer.parseInt(value));
+        } catch (IllegalArgumentException ignore) {
+
+        }
+    }
 
     KeySetting(int defaultValue) {
         this.defaultValue = defaultValue;

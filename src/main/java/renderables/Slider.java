@@ -6,7 +6,7 @@ import rendering_api.Input;
 import rendering_api.Window;
 import settings.FloatSetting;
 
-public class Slider extends UiButton {
+public final class Slider extends UiButton {
 
     public Slider(Vector2f sizeToParent, Vector2f offsetToParent, FloatSetting setting) {
         super(sizeToParent, offsetToParent, null);
@@ -47,9 +47,10 @@ public class Slider extends UiButton {
 
     private Runnable getAction() {
         return () -> {
+            float guiSize = FloatSetting.GUI_SIZE.value();
             Vector2i cursorPos = Input.getCursorPos();
-            Vector2f position = getPosition().mul(Window.getWidth(), Window.getHeight());
-            Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight());
+            Vector2f position = getPosition().mul(guiSize).add((1 - guiSize) * 0.5f, (1 - guiSize) * 0.5f).mul(Window.getWidth(), Window.getHeight());
+            Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight()).mul(guiSize);
 
             float fraction = (cursorPos.x - position.x) / size.x;
             fraction = Math.clamp(fraction, 0.0f, 1.0f);
