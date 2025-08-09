@@ -16,10 +16,7 @@ public abstract class Input {
     }
 
     public Input(Renderable menu) {
-        double[] cursorX = new double[1];
-        double[] cursorY = new double[1];
-        GLFW.glfwGetCursorPos(Window.getWindow(), cursorX, cursorY);
-        cursorPos.set((int) cursorX[0], (int) (Window.getHeight() - cursorY[0]));
+        cursorPos.set(getCursorPos());
         menu.hoverOver(cursorPos);
     }
 
@@ -28,6 +25,21 @@ public abstract class Input {
             return GLFW.glfwGetKey(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
         else
             return GLFW.glfwGetMouseButton(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
+    }
+
+    public static Vector2i getCursorPos() {
+        double[] cursorX = new double[1];
+        double[] cursorY = new double[1];
+        GLFW.glfwGetCursorPos(Window.getWindow(), cursorX, cursorY);
+        return new Vector2i((int) cursorX[0], Window.getHeight() - (int) cursorY[0]);
+    }
+
+    public static void setStandardInputMode() {
+        GLFW.glfwSetInputMode(Window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    }
+
+    public void standardCursorPosCallBack(double xPos, double yPos) {
+        cursorPos.set((int) xPos, Window.getHeight() - (int) yPos);
     }
 
     public abstract void setInputMode();

@@ -1,49 +1,127 @@
 package menus;
 
 import org.joml.Vector2f;
+import renderables.*;
 import rendering_api.Window;
-import renderables.TextElement;
-import renderables.UiBackgroundElement;
-import renderables.UiButton;
+import settings.FloatSetting;
+import settings.KeySetting;
+import settings.Settings;
+import settings.ToggleSetting;
+
+import java.util.ArrayList;
 
 public class SettingsMenu extends UiBackgroundElement {
 
     public SettingsMenu() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
+        input = new SettingsMenuInput(this);
+        Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
 
         UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Cancel");
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Cancel");
         closeApplicationButton.addRenderable(text);
 
         UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getApplyChangesButtonRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Apply");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Apply");
         applyChangesButton.addRenderable(text);
 
         UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Reset");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE,"Reset All");
         resetButton.addRenderable(text);
 
         addRenderable(closeApplicationButton);
         addRenderable(applyChangesButton);
         addRenderable(resetButton);
+
+        int counter = 0;
+        for (FloatSetting setting : FloatSetting.values()) addSlider(setting, ++counter);
+        for (ToggleSetting setting : ToggleSetting.values()) addToggle(setting, ++counter);
+        for (KeySetting setting : KeySetting.values()) addKeySelector(setting, ++counter);
+    }
+
+    public void scrollSettingButtons(float scroll) {
+        Vector2f offset = new Vector2f(0, scroll);
+
+        for (Slider slider : sliders) slider.move(offset);
+        for (KeySelector keySelector : keySelectors) keySelector.move(offset);
+        for (Toggle toggle : toggles) toggle.move(offset);
+        for (UiButton resetButton : resetButtons) resetButton.move(offset);
+    }
+
+    private void addSlider(FloatSetting setting, int counter) {
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+
+        Slider slider = new Slider(sizeToParent, offsetToParent, setting);
+        addRenderable(slider);
+        sliders.add(slider);
+
+        createResetButton(counter).setAction(slider::setToDefault);
+    }
+
+    private void addKeySelector(KeySetting setting, int counter) {
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+
+        KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting);
+        addRenderable(keySelector);
+        keySelectors.add(keySelector);
+
+        createResetButton(counter).setAction(keySelector::setToDefault);
+    }
+
+    private void addToggle(ToggleSetting setting, int counter) {
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+
+        Toggle toggle = new Toggle(sizeToParent, offsetToParent, setting);
+        addRenderable(toggle);
+        toggles.add(toggle);
+
+        createResetButton(counter).setAction(toggle::setToDefault);
+    }
+
+    private UiButton createResetButton(int counter) {
+        Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
+        UiButton resetButton = new UiButton(sizeToParent, offsetToParent, null);
+
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Reset");
+        resetButton.addRenderable(text);
+
+        addRenderable(resetButton);
+        resetButtons.add(resetButton);
+        return resetButton;
     }
 
     @Override
     public void setOnTop() {
-        Window.setInput(new SettingsMenuInput(this));
+        float scroll = input == null ? 0.0f : input.getScroll();
+        input = new SettingsMenuInput(this);
+        input.setScroll(scroll);
+        Window.setInput(input);
     }
 
-    private static Runnable getApplyChangesButtonRunnable() {
-        return () -> System.out.println("This isn't implemented jet. :(");
+    private Runnable getApplyChangesButtonRunnable() {
+        return () -> {
+            for (Slider slider : sliders) Settings.update(slider.getSetting(), slider.getValue());
+            for (KeySelector keySelector : keySelectors) Settings.update(keySelector.getSetting(), keySelector.getValue());
+            for (Toggle toggle : toggles) Settings.update(toggle.getSetting(), toggle.getValue());
+            Window.removeTopRenderable();
+        };
     }
 
-    private static Runnable getResetSettingsButtonRunnable() {
-        return () -> System.out.println("This isn't implemented jet. :(");
+    private Runnable getResetSettingsButtonRunnable() {
+        return () -> {
+            for (UiButton resetButton : resetButtons) resetButton.run();
+        };
     }
+
+    private SettingsMenuInput input;
+    private final ArrayList<Slider> sliders = new ArrayList<>();
+    private final ArrayList<KeySelector> keySelectors = new ArrayList<>();
+    private final ArrayList<Toggle> toggles = new ArrayList<>();
+    private final ArrayList<UiButton> resetButtons = new ArrayList<>();
 
     private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }

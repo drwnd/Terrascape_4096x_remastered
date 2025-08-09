@@ -2,7 +2,6 @@ package menus;
 
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
-import rendering_api.Window;
 
 public final class WorldCreationMenuInput extends Input {
 
@@ -13,13 +12,12 @@ public final class WorldCreationMenuInput extends Input {
 
     @Override
     public void setInputMode() {
-        GLFW.glfwSetInputMode(Window.getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        setStandardInputMode();
     }
 
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
-        cursorPos.set((int) xPos, Window.getHeight() - (int) yPos);
-
+        standardCursorPosCallBack(xPos, yPos);
         menu.hoverOver(cursorPos);
     }
 

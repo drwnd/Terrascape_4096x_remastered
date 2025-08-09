@@ -13,11 +13,24 @@ public abstract class Renderable {
         this.offsetToParent = offsetToParent;
     }
 
+    public static void scaleForFocused(Vector2f position, Vector2f size) {
+        final float scalingFactor = 1.05f;
+        float dx = (size.x - size.x * scalingFactor) * 0.5f;
+        float dy = (size.y - size.y * scalingFactor) * 0.5f;
+
+        size.mul(scalingFactor);
+        position.add(dx, dy);
+    }
+
 
     protected abstract void renderSelf(Vector2f position, Vector2f size);
 
     protected abstract void resizeSelfTo(int width, int height);
 
+
+    public void allowScaling(boolean allowScaling) {
+        this.allowScaling = allowScaling;
+    }
 
     public void setOnTop() {
 
@@ -27,15 +40,7 @@ public abstract class Renderable {
         if (!isVisible) return;
         Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
         Vector2f thisPosition = new Vector2f(parentPosition).add(new Vector2f(parentSize).mul(offsetToParent));
-
-        if (isFocused) {
-            final float scalingFactor = 1.05f;
-            float dx = (thisSize.x - thisSize.x * scalingFactor) * 0.5f;
-            float dy = (thisSize.y - thisSize.y * scalingFactor) * 0.5f;
-
-            thisSize.mul(scalingFactor);
-            thisPosition.add(dx, dy);
-        }
+        if (isFocused && allowScaling) scaleForFocused(thisPosition, thisSize);
 
         renderSelf(thisPosition, thisSize);
         for (Renderable child : children) child.render(thisPosition, thisSize);
@@ -92,6 +97,14 @@ public abstract class Renderable {
         return parent.getSize().mul(sizeToParent);
     }
 
+    public Vector2f getOffsetToParent() {
+        return offsetToParent;
+    }
+
+    public Vector2f getSizeToParent() {
+        return sizeToParent;
+    }
+
     public ArrayList<Renderable> getChildren() {
         return children;
     }
@@ -100,12 +113,16 @@ public abstract class Renderable {
         return parent;
     }
 
+    public void setOffsetToParent(Vector2f offsetToParent) {
+        this.offsetToParent.set(offsetToParent);
+    }
+
     public boolean isVisible() {
         return isVisible;
     }
 
     private final ArrayList<Renderable> children = new ArrayList<>();
-    private boolean isVisible = true, isFocused = false;
+    private boolean isVisible = true, isFocused = false, allowScaling = true;
     private final Vector2f sizeToParent;
     private final Vector2f offsetToParent;
     private Renderable parent = DummyRenderable.dummy;

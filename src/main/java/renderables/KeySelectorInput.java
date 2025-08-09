@@ -1,21 +1,13 @@
-package menus;
+package renderables;
 
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 
-public class SettingsMenuInput extends Input {
+public class KeySelectorInput extends Input {
 
-    public SettingsMenuInput(SettingsMenu menu) {
-        super(menu);
-        this.menu = menu;
-    }
-
-    public float getScroll() {
-        return scroll;
-    }
-
-    public void setScroll(float scroll) {
-        this.scroll = scroll;
+    public KeySelectorInput(KeySelector selector) {
+        super(selector);
+        this.selector = selector;
     }
 
     @Override
@@ -26,28 +18,28 @@ public class SettingsMenuInput extends Input {
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
         standardCursorPosCallBack(xPos, yPos);
-        menu.hoverOver(cursorPos);
     }
 
     @Override
     public void mouseButtonCallback(long window, int button, int action, int mods) {
         if (action != GLFW.GLFW_PRESS) return;
-
-        menu.clickOn(cursorPos);
+        selector.setValue(button | Input.IS_MOUSE_BUTTON);
+        selector.getParent().setOnTop();
+        selector.getParent().hoverOver(cursorPos);
     }
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
-        float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0f);
-        menu.scrollSettingButtons(newScroll - scroll);
-        scroll = newScroll;
 
-        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
     }
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
-
+        if (action != GLFW.GLFW_PRESS) return;
+        if (key == GLFW.GLFW_KEY_ESCAPE) selector.setValue(GLFW.GLFW_KEY_UNKNOWN);
+        else selector.setValue(key);
+        selector.getParent().setOnTop();
+        selector.getParent().hoverOver(cursorPos);
     }
 
     @Override
@@ -55,6 +47,5 @@ public class SettingsMenuInput extends Input {
 
     }
 
-    private final SettingsMenu menu;
-    private float scroll = 0;
+    private final KeySelector selector;
 }

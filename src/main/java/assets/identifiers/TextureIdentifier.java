@@ -11,7 +11,9 @@ public enum TextureIdentifier {
     INVENTORY_OVERLAY("assets/textures/InventoryOverlay.png"),
     PROPERTIES_ATLAS("assets/textures/properties256.png"),
     TEXT_ATLAS("assets/textures/textAtlas.png"),
-    GUI_ELEMENT_BACKGROUND("assets/textures/GuiElementBackground.png");
+    GUI_ELEMENT_BACKGROUND("assets/textures/GuiElementBackground.png"),
+    TOGGLE_ACTIVATED("assets/textures/ToggleActivated.png"),
+    TOGGLE_DEACTIVATED("assets/textures/ToggleDeactivated.png");
 
     TextureIdentifier(String identifier) {
         this.identifier = identifier;

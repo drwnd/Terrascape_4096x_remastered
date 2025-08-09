@@ -20,13 +20,11 @@ public final class WorldCreationMenu extends UiBackgroundElement {
 
         sizeToParent = new Vector2f(0.25f, 0.1f);
         UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getBackButtonRunnable());
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Back");
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Back");
         backButton.addRenderable(text);
 
         UiButton createButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateButtonRunnable(nameField, seedField));
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Create");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Create");
         createButton.addRenderable(text);
 
         addRenderable(backButton);

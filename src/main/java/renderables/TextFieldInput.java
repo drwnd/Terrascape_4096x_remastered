@@ -3,22 +3,22 @@ package renderables;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
-import rendering_api.Window;
 
 public final class TextFieldInput extends Input {
 
     public TextFieldInput(TextField field) {
+        super(field);
         this.field = field;
     }
 
     @Override
     public void setInputMode() {
-
+        setStandardInputMode();
     }
 
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
-        cursorPos.set((int) xPos, Window.getHeight() - (int) yPos);
+        standardCursorPosCallBack(xPos, yPos);
     }
 
     @Override

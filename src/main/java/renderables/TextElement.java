@@ -14,6 +14,12 @@ public class TextElement extends Renderable {
         this.charSize = charSize;
     }
 
+    public TextElement(Vector2f sizeToParent, Vector2f offsetToParent, Vector2f charSize, String text) {
+        super(sizeToParent, offsetToParent);
+        this.charSize = charSize;
+        this.text = text;
+    }
+
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
         float distanceToParentBorder = getParent().getPosition().x + getParent().getSize().x - position.x;

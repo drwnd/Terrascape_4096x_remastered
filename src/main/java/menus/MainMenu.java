@@ -18,18 +18,15 @@ public final class MainMenu extends UiBackgroundElement {
         Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
 
         UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Quit Game");
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Quit Game");
         closeApplicationButton.addRenderable(text);
 
         UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateWorldRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("New World");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "New World");
         createNewWorldButton.addRenderable(text);
 
         UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getSettingsRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
-        text.setText("Settings");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Settings");
         settingsButton.addRenderable(text);
 
         playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f), null);
