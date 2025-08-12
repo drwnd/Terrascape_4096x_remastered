@@ -1,5 +1,6 @@
 package renderables;
 
+import menus.SettingsMenu;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -57,6 +58,9 @@ public final class Slider extends UiButton {
         float fraction = (cursorPos.x - position.x) / size.x;
         fraction = Math.clamp(fraction, 0.0f, 1.0f);
         setValue(setting.valueFronFraction(fraction));
+
+        if (getParent() instanceof SettingsMenu)
+            ((SettingsMenu) getParent()).setSelectedSlider(this);
     }
 
     private final FloatSetting setting;

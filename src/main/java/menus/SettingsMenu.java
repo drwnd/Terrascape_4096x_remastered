@@ -2,6 +2,7 @@ package menus;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 import renderables.*;
 import rendering_api.Window;
 import settings.FloatSetting;
@@ -18,16 +19,16 @@ public class SettingsMenu extends UiBackgroundElement {
         input = new SettingsMenuInput(this);
         Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
 
-        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
+        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getCancelButtonAction());
         TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Cancel");
         closeApplicationButton.addRenderable(text);
 
-        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getApplyChangesButtonRunnable());
+        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getApplyChangesButtonAction());
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Apply");
         applyChangesButton.addRenderable(text);
 
-        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE,"Reset All");
+        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonAction());
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Reset All");
         resetButton.addRenderable(text);
 
         addRenderable(closeApplicationButton);
@@ -47,6 +48,10 @@ public class SettingsMenu extends UiBackgroundElement {
         for (KeySelector keySelector : keySelectors) keySelector.move(offset);
         for (Toggle toggle : toggles) toggle.move(offset);
         for (UiButton resetButton : resetButtons) resetButton.move(offset);
+    }
+
+    public void setSelectedSlider(Slider slider) {
+        this.selectedSlider = slider;
     }
 
     private void addSlider(FloatSetting setting, int counter) {
@@ -101,17 +106,32 @@ public class SettingsMenu extends UiBackgroundElement {
         input = new SettingsMenuInput(this);
         input.setScroll(scroll);
         Window.setInput(input);
+        selectedSlider = null;
     }
 
     @Override
     public void dragOver(Vector2i pixelCoordinate) {
-        for (Renderable renderable : getChildren())
-            if (renderable.isVisible() && renderable.containsPixelCoordinate(pixelCoordinate))
-                renderable.dragOver(pixelCoordinate);
+        if (selectedSlider != null)
+            selectedSlider.dragOver(pixelCoordinate);
+        else super.dragOver(pixelCoordinate);
     }
 
-    private Runnable getApplyChangesButtonRunnable() {
-        return () -> {
+    @Override
+    public void clickOn(Vector2i pixelCoordinate, int mouseButton, int action) {
+        boolean buttonFound = false;
+        for (Renderable renderable : getChildren())
+            if (renderable.isVisible() && renderable.containsPixelCoordinate(pixelCoordinate)) {
+                renderable.clickOn(pixelCoordinate, mouseButton, action);
+                buttonFound = true;
+                break;
+            }
+
+        if (!buttonFound) selectedSlider = null;
+    }
+
+    private Clickable getApplyChangesButtonAction() {
+        return (Vector2i pixelCoordinate, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
             for (Slider slider : sliders) Settings.update(slider.getSetting(), slider.getValue());
             for (KeySelector keySelector : keySelectors) Settings.update(keySelector.getSetting(), keySelector.getValue());
             for (Toggle toggle : toggles) Settings.update(toggle.getSetting(), toggle.getValue());
@@ -120,12 +140,21 @@ public class SettingsMenu extends UiBackgroundElement {
         };
     }
 
-    private Runnable getResetSettingsButtonRunnable() {
-        return () -> {
-            for (UiButton resetButton : resetButtons) resetButton.run();
+    private Clickable getResetSettingsButtonAction() {
+        return (Vector2i pixelCoordinate, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
+            for (UiButton resetButton : resetButtons) resetButton.clickOn(pixelCoordinate, button, action);
         };
     }
 
+    private Clickable getCancelButtonAction() {
+        return (Vector2i pixelCoordinate, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
+            Window.removeTopRenderable();
+        };
+    }
+
+    private Slider selectedSlider;
     private SettingsMenuInput input;
     private final ArrayList<Slider> sliders = new ArrayList<>();
     private final ArrayList<KeySelector> keySelectors = new ArrayList<>();

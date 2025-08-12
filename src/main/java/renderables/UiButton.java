@@ -10,6 +10,11 @@ public class UiButton extends UiBackgroundElement implements Clickable {
         this.action = (cursorPos, button, buttonAction) -> action.run();
     }
 
+    public UiButton(Vector2f sizeToParent, Vector2f offsetToParent, Clickable action) {
+        super(sizeToParent, offsetToParent);
+        this.action = (cursorPos, button, buttonAction) -> action.run();
+    }
+
     public UiButton(Vector2f sizeToParent, Vector2f offsetToParent) {
         super(sizeToParent, offsetToParent);
         this.action = (cursorPos, button, action) -> System.err.printf("No action set for this button %s%n", this);
