@@ -12,7 +12,7 @@ public class UiButton extends UiBackgroundElement implements Clickable {
 
     public UiButton(Vector2f sizeToParent, Vector2f offsetToParent, Clickable action) {
         super(sizeToParent, offsetToParent);
-        this.action = (cursorPos, button, buttonAction) -> action.run();
+        this.action = action;
     }
 
     public UiButton(Vector2f sizeToParent, Vector2f offsetToParent) {
