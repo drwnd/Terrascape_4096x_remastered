@@ -2,15 +2,15 @@ package renderables;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import rendering_api.Input;
+import org.lwjgl.glfw.GLFW;
 import rendering_api.Window;
 import settings.FloatSetting;
 
 public final class Slider extends UiButton {
 
     public Slider(Vector2f sizeToParent, Vector2f offsetToParent, FloatSetting setting) {
-        super(sizeToParent, offsetToParent, null);
-        setAction(getAction());
+        super(sizeToParent, offsetToParent);
+        setAction(this::action);
         allowScaling(false);
         this.setting = setting;
 
@@ -41,21 +41,22 @@ public final class Slider extends UiButton {
         slider.setOffsetToParent(new Vector2f(setting.fractionFromValue(value) - slider.getSizeToParent().x * 0.5f, 0.0f));
     }
 
+    @Override
+    public void dragOver(Vector2i pixelCoordinate) {
+        action(pixelCoordinate, GLFW.GLFW_MOUSE_BUTTON_LEFT, GLFW.GLFW_PRESS);
+    }
+
     private void matchSetting() {
         setValue(setting.value());
     }
 
-    private Runnable getAction() {
-        return () -> {
-            float guiSize = FloatSetting.GUI_SIZE.value();
-            Vector2i cursorPos = Input.getCursorPos();
-            Vector2f position = getPosition().mul(guiSize).add((1 - guiSize) * 0.5f, (1 - guiSize) * 0.5f).mul(Window.getWidth(), Window.getHeight());
-            Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight()).mul(guiSize);
+    private void action(Vector2i cursorPos, int button, int action) {
+        Vector2f position = Window.toPixelCoordinate(getPosition());
+        Vector2f size = Window.toPixelSize(getSize());
 
-            float fraction = (cursorPos.x - position.x) / size.x;
-            fraction = Math.clamp(fraction, 0.0f, 1.0f);
-            setValue(setting.valueFronFraction(fraction));
-        };
+        float fraction = (cursorPos.x - position.x) / size.x;
+        fraction = Math.clamp(fraction, 0.0f, 1.0f);
+        setValue(setting.valueFronFraction(fraction));
     }
 
     private final FloatSetting setting;

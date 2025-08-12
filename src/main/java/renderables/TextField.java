@@ -2,13 +2,12 @@ package renderables;
 
 import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import rendering_api.Window;
 
 public class TextField extends UiButton {
 
     public TextField(Vector2f sizeToParent, Vector2f offsetToParent, String name) {
-        super(sizeToParent, offsetToParent, null);
+        super(sizeToParent, offsetToParent);
         setAction(this::setOnTop);
 
         UiElement blackBox = new UiElement(new Vector2f(0.8f, 0.8f), new Vector2f(0.175f, 0.1f), TextureIdentifier.INVENTORY_OVERLAY);
@@ -40,11 +39,6 @@ public class TextField extends UiButton {
     @Override
     public void setOnTop() {
         Window.setInput(new TextFieldInput(this));
-    }
-
-    @Override
-    public void clickOn(Vector2i pixelCoordinate) {
-
     }
 
     private String text = "";

@@ -3,7 +3,6 @@ package renderables;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import rendering_api.Window;
-import settings.FloatSetting;
 
 import java.util.ArrayList;
 
@@ -58,10 +57,10 @@ public abstract class Renderable {
         renderable.parent = this;
     }
 
-    public void clickOn(Vector2i pixelCoordinate) {
-        for (Renderable button : children)
-            if (button.isVisible && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate))
-                ((UiButton) button).run();
+    public void clickOn(Vector2i pixelCoordinate, int mouseButton, int action) {
+        for (Renderable renderable : children)
+            if (renderable.isVisible && renderable.containsPixelCoordinate(pixelCoordinate))
+                renderable.clickOn(pixelCoordinate, mouseButton, action);
     }
 
     public void hoverOver(Vector2i pixelCoordinate) {
@@ -70,14 +69,17 @@ public abstract class Renderable {
                 renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
     }
 
+    public void dragOver(Vector2i pixelCoordinate) {
+        hoverOver(pixelCoordinate);
+    }
+
     public void move(Vector2f offset) {
         offsetToParent.add(offset);
     }
 
     public boolean containsPixelCoordinate(Vector2i pixelCoordinate) {
-        float guiSize = FloatSetting.GUI_SIZE.value();
-        Vector2f position = getPosition().mul(guiSize).add((1 - guiSize) * 0.5f, (1 - guiSize) * 0.5f).mul(Window.getWidth(), Window.getHeight());
-        Vector2f size = getSize().mul(Window.getWidth(), Window.getHeight()).mul(guiSize);
+        Vector2f position = Window.toPixelCoordinate(getPosition());
+        Vector2f size = Window.toPixelSize(getSize());
 
         return position.x <= pixelCoordinate.x && position.x + size.x >= pixelCoordinate.x
                 && position.y <= pixelCoordinate.y && position.y + size.y >= pixelCoordinate.y;

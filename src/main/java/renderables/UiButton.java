@@ -1,21 +1,34 @@
 package renderables;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 
-public class UiButton extends UiBackgroundElement implements Runnable {
+public class UiButton extends UiBackgroundElement implements Clickable {
+
     public UiButton(Vector2f sizeToParent, Vector2f offsetToParent, Runnable action) {
         super(sizeToParent, offsetToParent);
+        this.action = (cursorPos, button, buttonAction) -> action.run();
+    }
+
+    public UiButton(Vector2f sizeToParent, Vector2f offsetToParent) {
+        super(sizeToParent, offsetToParent);
+        this.action = (cursorPos, button, action) -> System.err.printf("No action set for this button %s%n", this);
+    }
+
+    public void setAction(Clickable action) {
+        if (action == null) return;
         this.action = action;
     }
 
     public void setAction(Runnable action) {
-        this.action = action;
+        if (action == null) return;
+        this.action = (cursorPos, button, buttonAction) -> action.run();
     }
 
     @Override
-    public void run() {
-        action.run();
+    public void clickOn(Vector2i cursorPos, int button, int action) {
+        this.action.clickOn(cursorPos, button, action);
     }
 
-    private Runnable action;
+    private Clickable action;
 }

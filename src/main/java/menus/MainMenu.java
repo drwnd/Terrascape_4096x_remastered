@@ -29,12 +29,12 @@ public final class MainMenu extends UiBackgroundElement {
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Settings");
         settingsButton.addRenderable(text);
 
-        playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f), null);
+        playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f));
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
         playWorldButton.addRenderable(text);
         playWorldButton.setVisible(false);
 
-        deleteWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.05f), null);
+        deleteWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.05f));
         text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE);
         deleteWorldButton.addRenderable(text);
         deleteWorldButton.setVisible(false);
@@ -71,11 +71,11 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     @Override
-    public void clickOn(Vector2i pixelCoordinate) {
+    public void clickOn(Vector2i pixelCoordinate, int mouseButton, int action) {
         boolean buttonFound = false;
         for (Renderable button : getChildren())
-            if (button.isVisible() && button instanceof UiButton && button.containsPixelCoordinate(pixelCoordinate)) {
-                ((UiButton) button).run();
+            if (button.isVisible() && button.containsPixelCoordinate(pixelCoordinate)) {
+                button.clickOn(pixelCoordinate, mouseButton, action);
                 buttonFound = true;
                 break;
             }

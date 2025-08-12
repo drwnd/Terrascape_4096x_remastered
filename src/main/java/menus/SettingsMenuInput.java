@@ -26,14 +26,14 @@ public class SettingsMenuInput extends Input {
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
         standardCursorPosCallBack(xPos, yPos);
-        menu.hoverOver(cursorPos);
+        if (Input.isKeyPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT | IS_MOUSE_BUTTON))
+            menu.dragOver(cursorPos);
+        else menu.hoverOver(cursorPos);
     }
 
     @Override
     public void mouseButtonCallback(long window, int button, int action, int mods) {
-        if (action != GLFW.GLFW_PRESS) return;
-
-        menu.clickOn(cursorPos);
+        menu.clickOn(cursorPos, button, action);
     }
 
     @Override

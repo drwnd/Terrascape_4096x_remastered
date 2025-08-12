@@ -1,6 +1,7 @@
 package menus;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import renderables.*;
 import rendering_api.Window;
 import settings.FloatSetting;
@@ -84,7 +85,7 @@ public class SettingsMenu extends UiBackgroundElement {
     private UiButton createResetButton(int counter) {
         Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
         Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
-        UiButton resetButton = new UiButton(sizeToParent, offsetToParent, null);
+        UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
 
         TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), TEXT_SIZE, "Reset");
         resetButton.addRenderable(text);
@@ -100,6 +101,13 @@ public class SettingsMenu extends UiBackgroundElement {
         input = new SettingsMenuInput(this);
         input.setScroll(scroll);
         Window.setInput(input);
+    }
+
+    @Override
+    public void dragOver(Vector2i pixelCoordinate) {
+        for (Renderable renderable : getChildren())
+            if (renderable.isVisible() && renderable.containsPixelCoordinate(pixelCoordinate))
+                renderable.dragOver(pixelCoordinate);
     }
 
     private Runnable getApplyChangesButtonRunnable() {

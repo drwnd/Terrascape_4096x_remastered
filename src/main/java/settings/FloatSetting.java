@@ -1,11 +1,11 @@
 package settings;
 
 public enum FloatSetting {
-    FOV(10.0f, 175.0f, 90.0f),
-    GUI_SIZE(0.1f, 1.0f, 1.0f),
+    FOV(10.0f, 175.0f, 90.0f, 1.0f),
+    GUI_SIZE(0.1f, 1.0f, 1.0f, 0.05f),
     SENSITIVITY(0.0f, 1.0f, 0.14612676056338028f),
-    REACH(0.0f, 500.0f, 5.0f),
-    TEXT_SIZE(0.0f, 3.0f, 1.0f),
+    REACH(0.0f, 500.0f, 5.0f, 1.0f),
+    TEXT_SIZE(0.0f, 3.0f, 1.0f, 0.05f),
     MASTER_AUDIO(0.0f, 10.0f, 0.5f),
     FOOTSTEPS_AUDIO(0.0f, 5.0f, 1.0f),
     PLACE_AUDIO(0.0f, 5.0f, 1.0f),
@@ -21,11 +21,20 @@ public enum FloatSetting {
         }
     }
 
+    FloatSetting(float min, float max, float defaultValue, float accuracy) {
+        this.min = min;
+        this.max = max;
+        this.defaultValue = defaultValue;
+        this.value = defaultValue;
+        this.accuracy = accuracy;
+    }
+
     FloatSetting(float min, float max, float defaultValue) {
         this.min = min;
         this.max = max;
         this.defaultValue = defaultValue;
         this.value = defaultValue;
+        this.accuracy = 0.00001f;
     }
 
     void setValue(float value) {
@@ -37,7 +46,9 @@ public enum FloatSetting {
     }
 
     public float valueFronFraction(float fraction) {
-        return min + fraction * (max - min);
+        float unroundedValue = min + fraction * (max - min);
+        float roundingOffset = absMin(-(unroundedValue % accuracy), accuracy - unroundedValue % accuracy);
+        return unroundedValue + roundingOffset;
     }
 
     public float fractionFromValue(float value) {
@@ -48,6 +59,10 @@ public enum FloatSetting {
         return defaultValue;
     }
 
-    private final float min, max, defaultValue;
+    private static float absMin(float a, float b) {
+        return Math.abs(a) < Math.abs(b) ? a : b;
+    }
+
+    private final float min, max, defaultValue, accuracy;
     private float value;
 }

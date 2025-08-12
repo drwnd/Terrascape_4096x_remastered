@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 import renderables.Renderable;
+import settings.FloatSetting;
 
 import java.util.ArrayList;
 
@@ -99,12 +100,14 @@ public final class Window {
         GLFW.glfwDestroyWindow(window);
     }
 
-    public static float toRelativeX(int pixels) {
-        return (float) pixels / width;
+    public static Vector2f toPixelCoordinate(Vector2f position) {
+        float guiSize = FloatSetting.GUI_SIZE.value();
+        return position.mul(guiSize).add((1 - guiSize) * 0.5f, (1 - guiSize) * 0.5f).mul(Window.getWidth(), Window.getHeight());
     }
 
-    public static float toRelativeY(int pixels) {
-        return (float) pixels / height;
+    public static Vector2f toPixelSize(Vector2f size) {
+        float guiSize = FloatSetting.GUI_SIZE.value();
+        return size.mul(Window.getWidth(), Window.getHeight()).mul(guiSize);
     }
 
     public static int getWidth() {

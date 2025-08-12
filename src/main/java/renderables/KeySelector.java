@@ -10,7 +10,7 @@ import settings.KeySetting;
 public final class KeySelector extends UiButton {
 
     public KeySelector(Vector2f sizeToParent, Vector2f offsetToParent, KeySetting setting) {
-        super(sizeToParent, offsetToParent, null);
+        super(sizeToParent, offsetToParent);
         setAction(() -> Window.setInput(new KeySelectorInput(this)));
         this.setting = setting;
 

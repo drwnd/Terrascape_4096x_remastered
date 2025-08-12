@@ -28,7 +28,7 @@ public final class MainMenuInput extends Input {
     public void mouseButtonCallback(long window, int button, int action, int mods) {
         if (action != GLFW.GLFW_PRESS) return;
 
-        menu.clickOn(cursorPos);
+        menu.clickOn(cursorPos, button, action);
     }
 
     @Override
