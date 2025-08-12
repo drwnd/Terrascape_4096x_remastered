@@ -3,7 +3,7 @@ package menus;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 
-public class SettingsMenuInput extends Input {
+public final class SettingsMenuInput extends Input {
 
     public SettingsMenuInput(SettingsMenu menu) {
         super(menu);

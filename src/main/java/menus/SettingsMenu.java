@@ -12,7 +12,7 @@ import settings.ToggleSetting;
 
 import java.util.ArrayList;
 
-public class SettingsMenu extends UiBackgroundElement {
+public final class SettingsMenu extends UiBackgroundElement {
 
     public SettingsMenu() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
