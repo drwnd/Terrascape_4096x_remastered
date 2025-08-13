@@ -7,6 +7,8 @@ import assets.identifiers.TextureIdentifier;
 import assets.identifiers.VertexArrayIdentifier;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL46;
+import renderables.TextElement;
+import rendering_api.Window;
 import settings.FloatSetting;
 
 import java.awt.*;
@@ -32,6 +34,7 @@ public class TextShader extends Shader {
         float guiSize = FloatSetting.GUI_SIZE.value();
 
         setUniform("string", toIntFormat(text));
+        setUniform("offsets", getOffsets(text));
         setUniform("position", (position.x - 0.5f) * guiSize, (position.y - 0.5f) * guiSize);
         setUniform("color", color);
         setUniform("textAtlas", 0);
@@ -43,7 +46,19 @@ public class TextShader extends Shader {
         GL46.glEnableVertexAttribArray(0);
         GL46.glBindBuffer(GL46.GL_ELEMENT_ARRAY_BUFFER, AssetManager.getBuffer(BufferIdentifier.MODEL_INDEX_BUFFER).getID());
 
-        GL46.glDrawElements(GL46.GL_TRIANGLES, 384, GL46.GL_UNSIGNED_INT, 0);
+        GL46.glDrawElements(GL46.GL_TRIANGLES, 384 * 2, GL46.GL_UNSIGNED_INT, 0);
+    }
+
+    public static int getMaxLength(String text, float maxAllowedLength, float charWidth) {
+        int[] offsets = getOffsets(text);
+
+        float textSize = FloatSetting.TEXT_SIZE.value();
+        float guiSize = FloatSetting.GUI_SIZE.value();
+        float factor = TextElement.DEFAULT_TEXT_SCALAR * textSize * charWidth / (Window.getWidth() * guiSize);
+
+        for (int index = 0, max = Math.min(text.length(), MAX_TEXT_LENGTH); index < max; index++)
+            if (offsets[index + 1] * factor > maxAllowedLength) return index;
+        return text.length();
     }
 
     private static int[] toIntFormat(String text) {
@@ -55,4 +70,28 @@ public class TextShader extends Shader {
 
         return array;
     }
+
+    private static int[] getOffsets(String text) {
+        int[] array = new int[MAX_TEXT_LENGTH + 1];
+        char[] chars = text.toCharArray();
+        array[0] = 0;
+
+        for (int index = 0, max = Math.min(text.length(), MAX_TEXT_LENGTH); index < max; index++)
+            array[index + 1] = array[index] + getCharWidth(chars[index]) + CHAR_PADDING;
+
+        return array;
+    }
+
+    private static int getCharWidth(char character) {
+        return switch (character) {
+            case '!', '\'', ',', '.', ':', ';', 'i', '|' -> 1;
+            case '[', ']', '`', '´', 'j', 'l' -> 2;
+            case '"', '(', ')', '*', '+', '-', 'I', '/', '1', '<', '=', '>', '\\', 'r', 't', '{', '}' -> 3;
+            case '2', '4', '7', '?', 'C', 'E', 'F', 'J', 'K', 'L', '_', 'f', 'k' -> 4;
+            case '@', 'Q' -> 6;
+            default -> 5;
+        };
+    }
+
+    private static final int CHAR_PADDING = 1;
 }

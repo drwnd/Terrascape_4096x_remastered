@@ -15,10 +15,10 @@ public final class KeySelector extends UiButton {
         this.setting = setting;
 
         UiElement blackBox = new UiElement(new Vector2f(0.5f, 0.6f), new Vector2f(0.45f, 0.2f), TextureIdentifier.INVENTORY_OVERLAY);
-        display = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, getDisplayString(value));
+        display = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), getDisplayString(value));
         blackBox.addRenderable(display);
 
-        addRenderable(new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, setting.name()));
+        addRenderable(new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), setting.name()));
         addRenderable(blackBox);
 
         matchSetting();
@@ -94,6 +94,4 @@ public final class KeySelector extends UiButton {
     private final KeySetting setting;
     private final TextElement display;
     private int value;
-
-    private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }

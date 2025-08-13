@@ -5,6 +5,8 @@ import assets.Texture;
 import assets.identifiers.ShaderIdentifier;
 import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 import rendering_api.shaders.GuiShader;
 import settings.ToggleSetting;
 
@@ -12,11 +14,11 @@ public final class Toggle extends UiButton {
 
     public Toggle(Vector2f sizeToParent, Vector2f offsetToParent, ToggleSetting setting) {
         super(sizeToParent, offsetToParent);
-        setAction(() -> value = !value);
+        setAction(getAction());
         this.setting = setting;
         matchSetting();
 
-        addRenderable(new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, setting.name()));
+        addRenderable(new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), setting.name()));
     }
 
     public void setToDefault() {
@@ -48,8 +50,12 @@ public final class Toggle extends UiButton {
         value = setting.value();
     }
 
+    private Clickable getAction() {
+        return (Vector2i cursorPos, int button, int action) -> {
+            if (action == GLFW.GLFW_PRESS) value = !value;
+        };
+    }
+
     private boolean value;
     private final ToggleSetting setting;
-
-    private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }

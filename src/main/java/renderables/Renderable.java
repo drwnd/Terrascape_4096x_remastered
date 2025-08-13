@@ -64,6 +64,7 @@ public abstract class Renderable {
     }
 
     public void hoverOver(Vector2i pixelCoordinate) {
+        if (isFocused) return;
         for (Renderable renderable : children)
             if (renderable.isVisible)
                 renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
@@ -91,6 +92,9 @@ public abstract class Renderable {
 
     public void setFocused(boolean focused) {
         isFocused = focused;
+
+        if (isFocused) return;
+        for (Renderable renderable : children) renderable.setFocused(false);
     }
 
     public Vector2f getPosition() {

@@ -2,10 +2,10 @@ package settings;
 
 public enum FloatSetting {
     FOV(10.0f, 175.0f, 90.0f, 1.0f),
-    GUI_SIZE(0.1f, 1.0f, 1.0f, 0.01f),
+    GUI_SIZE(0.25f, 1.0f, 1.0f, 0.01f),
     SENSITIVITY(0.0f, 1.0f, 0.14612676056338028f),
     REACH(0.0f, 500.0f, 5.0f, 1.0f),
-    TEXT_SIZE(0.0f, 3.0f, 1.0f, 0.01f),
+    TEXT_SIZE(0.5f, 3.0f, 1.0f, 0.01f),
     MASTER_AUDIO(0.0f, 10.0f, 0.5f, 0.01f),
     FOOTSTEPS_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),
     PLACE_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),

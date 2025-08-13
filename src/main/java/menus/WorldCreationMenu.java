@@ -1,11 +1,11 @@
 package menus;
 
 import org.joml.Vector2f;
-import rendering_api.Window;
 import renderables.TextElement;
 import renderables.TextField;
 import renderables.UiBackgroundElement;
 import renderables.UiButton;
+import rendering_api.Window;
 
 import java.io.File;
 
@@ -20,11 +20,11 @@ public final class WorldCreationMenu extends UiBackgroundElement {
 
         sizeToParent = new Vector2f(0.25f, 0.1f);
         UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getBackButtonRunnable());
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Back");
+        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Back");
         backButton.addRenderable(text);
 
         UiButton createButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateButtonRunnable(nameField, seedField));
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), TEXT_SIZE, "Create");
+        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Create");
         createButton.addRenderable(text);
 
         addRenderable(backButton);
@@ -93,6 +93,4 @@ public final class WorldCreationMenu extends UiBackgroundElement {
         }
         return longs;
     }
-
-    private static final Vector2f TEXT_SIZE = new Vector2f(0.008333334f, 0.022222223f);
 }
