@@ -82,6 +82,10 @@ public class Shader extends Asset {
         GL46.glUniform1i(uniforms.get(uniformName), value);
     }
 
+    public void setUniform(String uniformName, boolean value) {
+        GL46.glUniform1i(uniforms.get(uniformName), value ? 1 : 0);
+    }
+
     public void setUniform(String uniformName, Color color) {
         GL46.glUniform3f(uniforms.get(uniformName), color.getRed() * 0.003921569f, color.getGreen() * 0.003921569f, color.getBlue() * 0.003921569f);
     }

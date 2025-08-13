@@ -11,10 +11,10 @@ public class TextField extends UiButton {
         setAction(this::setOnTop);
 
         UiElement blackBox = new UiElement(new Vector2f(0.8f, 0.8f), new Vector2f(0.175f, 0.1f), TextureIdentifier.INVENTORY_OVERLAY);
-        textElement = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f));
+        textElement = new TextElement(new Vector2f(0.05f, 0.5f));
         blackBox.addRenderable(textElement);
 
-        TextElement nameElement = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.025f, 0.5f));
+        TextElement nameElement = new TextElement(new Vector2f(0.025f, 0.5f));
         nameElement.setText(name);
 
         addRenderable(blackBox);

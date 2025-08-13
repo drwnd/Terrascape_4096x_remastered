@@ -1,0 +1,93 @@
+package utils;
+
+public final class Utils {
+
+    public static int mackEven(int value) {
+        return value - (value & 1);
+    }
+
+    public static int makeOdd(int value) {
+        return value + 1 - (value & 1);
+    }
+
+    public static int floor(float value) {
+        int addend = value < 0 ? -1 : 0;
+        return (int) value + addend;
+    }
+
+    public static int floor(double value) {
+        int addend = value < 0 ? -1 : 0;
+        return (int) value + addend;
+    }
+
+    public static float fraction(float number) {
+        int addend = number < 0 ? 1 : 0;
+        return (number - (int) number) + addend;
+    }
+
+    public static double smoothInOutQuad(double x, double lowBound, double highBound) {
+        // Maps centerX ∈ [lowBound, highBound] to [0, 1]
+        x -= lowBound;
+        x /= highBound - lowBound;
+
+        if (x < 0.5) return 2 * x * x;
+        double oneMinusX = 1 - x;
+        return 1 - 2 * oneMinusX * oneMinusX;
+    }
+
+    public static int hash(int x, int z, int seed) {
+        final int mask = 0x5bd1e995;
+        int hash = seed;
+        // process first vector element
+        int k = x;
+        k *= mask;
+        k ^= k >> 24;
+        k *= mask;
+        hash *= mask;
+        hash ^= k;
+        // process second vector element
+        k = z;
+        k *= mask;
+        k ^= k >> 24;
+        k *= mask;
+        hash *= mask;
+        hash ^= k;
+        // some final mixing
+        hash ^= hash >> 13;
+        hash *= mask;
+        hash ^= hash >> 15;
+        return hash;
+    }
+
+    public static byte[] toByteArray(int i) {
+        return new byte[]{(byte) (i >> 24 & 0xFF), (byte) (i >> 16 & 0xFF), (byte) (i >> 8 & 0xFF), (byte) (i & 0xFF)};
+    }
+
+    public static byte[] toByteArray(long l) {
+        return new byte[]{(byte) (l >> 56 & 0xFF), (byte) (l >> 48 & 0xFF), (byte) (l >> 40 & 0xFF), (byte) (l >> 32 & 0xFF),
+                (byte) (l >> 24 & 0xFF), (byte) (l >> 16 & 0xFF), (byte) (l >> 8 & 0xFF), (byte) (l & 0xFF)};
+    }
+
+    public static int getInt(byte[] bytes, int startIndex) {
+        int result = 0;
+        for (int index = startIndex; index < startIndex + 4; index++) {
+            int currentByte = bytes[index] & 0xFF;
+            result <<= 8;
+            result |= currentByte;
+        }
+        return result;
+    }
+
+    public static long getLong(byte[] bytes, int startIndex) {
+        long result = 0;
+        for (int index = startIndex; index < startIndex + 8; index++) {
+            long currentByte = bytes[index] & 0xFF;
+            result <<= 8;
+            result |= currentByte;
+        }
+        return result;
+    }
+
+    private Utils() {
+    }
+}

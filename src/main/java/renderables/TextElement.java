@@ -13,13 +13,13 @@ public class TextElement extends Renderable {
 
     public static final float DEFAULT_TEXT_SCALAR = 2;
 
-    public TextElement(Vector2f sizeToParent, Vector2f offsetToParent) {
-        super(sizeToParent, offsetToParent);
+    public TextElement(Vector2f offsetToParent) {
+        super(new Vector2f(1.0f, 1.0f), offsetToParent);
         this.charSize = new Vector2f(1.0f, 1.0f);
     }
 
-    public TextElement(Vector2f sizeToParent, Vector2f offsetToParent, String text) {
-        super(sizeToParent, offsetToParent);
+    public TextElement(Vector2f offsetToParent, String text) {
+        super(new Vector2f(1.0f, 1.0f), offsetToParent);
         this.charSize = new Vector2f(1.0f, 1.0f);
         this.text = text;
     }

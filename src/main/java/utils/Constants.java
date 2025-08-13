@@ -2,6 +2,8 @@ package utils;
 
 public class Constants {
 
+    public static final int LOD_COUNT = 10;
+
     // Just pretend it doesn't exist
     public static final float[] SKY_BOX_VERTICES;
     public static final int[] SKY_BOX_INDICES;

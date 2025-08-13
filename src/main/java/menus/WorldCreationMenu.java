@@ -6,8 +6,9 @@ import renderables.TextField;
 import renderables.UiBackgroundElement;
 import renderables.UiButton;
 import rendering_api.Window;
+import utils.Utils;
 
-import java.io.File;
+import java.io.*;
 
 public final class WorldCreationMenu extends UiBackgroundElement {
 
@@ -20,11 +21,11 @@ public final class WorldCreationMenu extends UiBackgroundElement {
 
         sizeToParent = new Vector2f(0.25f, 0.1f);
         UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getBackButtonRunnable());
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Back");
+        TextElement text = new TextElement(new Vector2f(0.05f, 0.5f), "Back");
         backButton.addRenderable(text);
 
         UiButton createButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateButtonRunnable(nameField, seedField));
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Create");
+        text = new TextElement(new Vector2f(0.05f, 0.5f), "Create");
         createButton.addRenderable(text);
 
         addRenderable(backButton);
@@ -52,6 +53,19 @@ public final class WorldCreationMenu extends UiBackgroundElement {
 
             File newWorldFile = new File("saves/%s".formatted(nameField.getText()));
             newWorldFile.mkdir();
+
+            File worldSettingsFile = new File(newWorldFile.getPath() + "/settings");
+            try {
+                worldSettingsFile.createNewFile();
+
+                FileOutputStream writer = new FileOutputStream(worldSettingsFile.getPath());
+                writer.write(Utils.toByteArray(seed));
+                writer.close();
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             Window.removeTopRenderable();
         };
     }

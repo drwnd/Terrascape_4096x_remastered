@@ -38,7 +38,7 @@ public class TextShader extends Shader {
         setUniform("position", (position.x - 0.5f) * guiSize, (position.y - 0.5f) * guiSize);
         setUniform("color", color);
         setUniform("textAtlas", 0);
-        setUniform("addTransparentBackground", addTransparentBackground ? 1 : 0);
+        setUniform("addTransparentBackground", addTransparentBackground);
 
         GL46.glActiveTexture(0);
         GL46.glBindTexture(GL46.GL_TEXTURE_2D, AssetManager.getTexture(TextureIdentifier.TEXT_ATLAS).getID());

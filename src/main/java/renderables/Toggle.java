@@ -18,7 +18,7 @@ public final class Toggle extends UiButton {
         this.setting = setting;
         matchSetting();
 
-        addRenderable(new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), setting.name()));
+        addRenderable(new TextElement(new Vector2f(0.05f, 0.5f), setting.name()));
     }
 
     public void setToDefault() {

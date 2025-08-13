@@ -16,7 +16,7 @@ public final class Slider extends UiButton {
         this.setting = setting;
 
         slider = new UiBackgroundElement(new Vector2f(0.05f, 1.0f), new Vector2f(0.0f, 0.0f));
-        textElement = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), setting.name());
+        textElement = new TextElement(new Vector2f(0.05f, 0.5f), setting.name());
 
         addRenderable(slider);
         addRenderable(textElement);

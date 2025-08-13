@@ -7,6 +7,7 @@ import renderables.TextElement;
 import renderables.UiBackgroundElement;
 import renderables.UiButton;
 import rendering_api.Window;
+import server.WorldInitializer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,24 +19,24 @@ public final class MainMenu extends UiBackgroundElement {
         Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
 
         UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Quit Game");
+        TextElement text = new TextElement(new Vector2f(0.05f, 0.5f), "Quit Game");
         closeApplicationButton.addRenderable(text);
 
         UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getCreateWorldRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "New World");
+        text = new TextElement(new Vector2f(0.05f, 0.5f), "New World");
         createNewWorldButton.addRenderable(text);
 
         UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getSettingsRunnable());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f), "Settings");
+        text = new TextElement(new Vector2f(0.05f, 0.5f), "Settings");
         settingsButton.addRenderable(text);
 
         playWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.4f));
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f));
+        text = new TextElement(new Vector2f(0.05f, 0.5f));
         playWorldButton.addRenderable(text);
         playWorldButton.setVisible(false);
 
         deleteWorldButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.05f));
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f));
+        text = new TextElement(new Vector2f(0.05f, 0.5f));
         deleteWorldButton.addRenderable(text);
         deleteWorldButton.setVisible(false);
 
@@ -112,7 +113,7 @@ public final class MainMenu extends UiBackgroundElement {
 
         UiButton button = new UiButton(sizeToParent, offsetToParent, () -> setSelectedWorld(saveFile));
 
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.05f, 0.5f));
+        TextElement text = new TextElement(new Vector2f(0.05f, 0.5f));
         text.setText(saveFile.getName());
         button.addRenderable(text);
 
@@ -128,7 +129,7 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     private static Runnable getPlayWorldRunnable(File saveFile) {
-        return () -> System.out.printf("Playing %s is not implemented jet. :(%n", saveFile.getName());
+        return () -> WorldInitializer.play(saveFile);
     }
 
     private static Runnable getDeleteWorldRunnable(File saveFile, MainMenu menu) {

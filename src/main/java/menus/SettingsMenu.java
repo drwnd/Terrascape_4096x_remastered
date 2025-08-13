@@ -20,15 +20,15 @@ public final class SettingsMenu extends UiBackgroundElement {
         Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
 
         UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getCancelButtonAction());
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), "Cancel");
+        TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Cancel");
         closeApplicationButton.addRenderable(text);
 
         UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getApplyChangesButtonAction());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), "Apply");
+        text = new TextElement(new Vector2f(0.15f, 0.5f), "Apply");
         applyChangesButton.addRenderable(text);
 
         UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonAction());
-        text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), "Reset All");
+        text = new TextElement(new Vector2f(0.15f, 0.5f), "Reset All");
         resetButton.addRenderable(text);
 
         addRenderable(closeApplicationButton);
@@ -92,7 +92,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
         UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
 
-        TextElement text = new TextElement(new Vector2f(1.0f, 1.0f), new Vector2f(0.15f, 0.5f), "Reset");
+        TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Reset");
         resetButton.addRenderable(text);
 
         addRenderable(resetButton);
