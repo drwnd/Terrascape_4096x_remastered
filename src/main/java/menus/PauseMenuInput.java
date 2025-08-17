@@ -1,10 +1,9 @@
 package menus;
 
 import org.lwjgl.glfw.GLFW;
-import player.Player;
 import rendering_api.Input;
 import rendering_api.Window;
-import server.World;
+import server.GameHandler;
 
 public class PauseMenuInput extends Input {
 
@@ -42,8 +41,8 @@ public class PauseMenuInput extends Input {
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
             Window.removeTopRenderable();
-            World.startTicks();
-            Player.setInput();
+            GameHandler.getWorld().startTicks();
+            GameHandler.getPlayer().setInput();
         }
     }
 

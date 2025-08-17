@@ -17,6 +17,8 @@ public final class ShaderLoader {
             case GUI -> getGuiShader();
             case GUI_BACKGROUND -> getGuiBackgroundShader();
             case TEXT -> getTextShader();
+            case OPAQUE_GEOMETRY -> new Shader("assets/shaders/Material.vert", "assets/shaders/OpaqueMaterial.frag", ShaderIdentifier.OPAQUE_GEOMETRY);
+            case SKYBOX -> new Shader("assets/shaders/Skybox.vert", "assets/shaders/Skybox.frag", ShaderIdentifier.SKYBOX);
         };
     }
 

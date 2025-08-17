@@ -2,12 +2,11 @@ package menus;
 
 import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;
-import player.Player;
 import renderables.TextElement;
 import renderables.UiButton;
 import renderables.UiElement;
 import rendering_api.Window;
-import server.World;
+import server.GameHandler;
 
 public final class PauseMenu extends UiElement {
     public PauseMenu() {
@@ -18,7 +17,7 @@ public final class PauseMenu extends UiElement {
         UiButton quitButton = new UiButton(sizeToParent, new Vector2f(0.2f, 0.3f), getQuitButtonAction());
         quitButton.addRenderable(new TextElement(new Vector2f(0.05f, 0.5f), "Quit"));
 
-        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.2f, 0.45f),getSettingsButtonAction());
+        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.2f, 0.45f), getSettingsButtonAction());
         settingsButton.addRenderable(new TextElement(new Vector2f(0.05f, 0.5f), "Settings"));
 
         UiButton playButton = new UiButton(sizeToParent, new Vector2f(0.2f, 0.6f), getPlayButtonAction());
@@ -32,15 +31,11 @@ public final class PauseMenu extends UiElement {
     @Override
     public void setOnTop() {
         Window.setInput(new PauseMenuInput(this));
-        World.pauseTicks();
+        GameHandler.getWorld().pauseTicks();
     }
 
     private static Runnable getQuitButtonAction() {
-        return () -> {
-            Window.removeTopRenderable();
-            World.cleanUp();
-            Window.removeTopRenderable();
-        };
+        return GameHandler::quit;
     }
 
     private static Runnable getSettingsButtonAction() {
@@ -50,8 +45,8 @@ public final class PauseMenu extends UiElement {
     private static Runnable getPlayButtonAction() {
         return () -> {
             Window.removeTopRenderable();
-            World.startTicks();
-            Player.setInput();
+            GameHandler.getWorld().startTicks();
+            GameHandler.getPlayer().setInput();
         };
     }
 }

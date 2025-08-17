@@ -41,12 +41,12 @@ public class TextShader extends Shader {
         setUniform("addTransparentBackground", addTransparentBackground);
 
         GL46.glActiveTexture(0);
-        GL46.glBindTexture(GL46.GL_TEXTURE_2D, AssetManager.getTexture(TextureIdentifier.TEXT_ATLAS).getID());
-        GL46.glBindVertexArray(AssetManager.getVertexArray(VertexArrayIdentifier.TEXT_ROW_VERTEX_ARRAY).getID());
+        GL46.glBindTexture(GL46.GL_TEXTURE_2D, AssetManager.getTexture(TextureIdentifier.TEXT).getID());
+        GL46.glBindVertexArray(AssetManager.getVertexArray(VertexArrayIdentifier.TEXT_ROW).getID());
         GL46.glEnableVertexAttribArray(0);
-        GL46.glBindBuffer(GL46.GL_ELEMENT_ARRAY_BUFFER, AssetManager.getBuffer(BufferIdentifier.MODEL_INDEX_BUFFER).getID());
+        GL46.glBindBuffer(GL46.GL_ELEMENT_ARRAY_BUFFER, AssetManager.getBuffer(BufferIdentifier.MODEL_INDEX).getID());
 
-        GL46.glDrawElements(GL46.GL_TRIANGLES, 384 * 2, GL46.GL_UNSIGNED_INT, 0);
+        GL46.glDrawElements(GL46.GL_TRIANGLES, 768, GL46.GL_UNSIGNED_INT, 0);
     }
 
     public static int getMaxLength(String text, float maxAllowedLength, float charWidth) {

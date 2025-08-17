@@ -1,6 +1,25 @@
 package utils;
 
+import static utils.Constants.*;
+
 public final class Utils {
+
+    public static long getChunkId(int chunkX, int chunkY, int chunkZ) {
+        return (long) (chunkX & MAX_CHUNKS_XZ) << 40 | (long) (chunkY & MAX_CHUNKS_Y) << 24 | chunkZ & MAX_CHUNKS_XZ;
+    }
+
+    public static int getChunkIndex(int chunkX, int chunkY, int chunkZ) {
+        chunkX %= RENDERED_WORLD_WIDTH;
+        if (chunkX < 0) chunkX += RENDERED_WORLD_WIDTH;
+
+        chunkY %= RENDERED_WORLD_HEIGHT;
+        if (chunkY < 0) chunkY += RENDERED_WORLD_HEIGHT;
+
+        chunkZ %= RENDERED_WORLD_WIDTH;
+        if (chunkZ < 0) chunkZ += RENDERED_WORLD_WIDTH;
+
+        return (chunkX * RENDERED_WORLD_WIDTH + chunkZ) * RENDERED_WORLD_HEIGHT + chunkY;
+    }
 
     public static int mackEven(int value) {
         return value - (value & 1);

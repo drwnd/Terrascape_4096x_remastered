@@ -7,7 +7,7 @@ import renderables.TextElement;
 import renderables.UiBackgroundElement;
 import renderables.UiButton;
 import rendering_api.Window;
-import server.WorldInitializer;
+import server.GameHandler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -129,7 +129,7 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     private static Runnable getPlayWorldRunnable(File saveFile) {
-        return () -> WorldInitializer.play(saveFile);
+        return () -> GameHandler.play(saveFile);
     }
 
     private static Runnable getDeleteWorldRunnable(File saveFile, MainMenu menu) {

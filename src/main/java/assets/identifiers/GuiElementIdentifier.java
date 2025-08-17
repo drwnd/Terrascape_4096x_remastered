@@ -12,7 +12,7 @@ public enum GuiElementIdentifier {
     }
 
     public String getIdentifier() {
-        return name();
+        return name() + "_GUI_ELEMENT";
     }
 
     public final float[] vertices, textureCoordinates;

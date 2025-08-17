@@ -4,10 +4,12 @@ flat in int textureData;
 flat in vec3 normal;
 in vec3 totalPosition;
 
-layout(location = 0) out vec3 fragNormal;
-layout(location = 1) out vec3 fragPosition;
-layout(location = 2) out vec4 fragColor;
-layout(location = 3) out float fragProperties;
+out vec4 fragColor;
+
+//layout(location = 0) out vec3 fragNormal;
+//layout(location = 1) out vec3 fragPosition;
+//layout(location = 2) out vec4 fragColor;
+//layout(location = 3) out float fragProperties;
 
 uniform sampler2D textureAtlas;
 uniform sampler2D propertiesTexture;
@@ -29,11 +31,13 @@ void main() {
     float u = (textureData & 15) * 0.0625;
     float v = (textureData >> 4 & 15) * 0.0625;
     vec2 uvCoord = vec2(u, v) + getUVOffset(textureData >> 8 & 7);
-    fragColor = texture(textureAtlas, uvCoord);
-    fragProperties = texture(propertiesTexture, uvCoord).r;
+    vec4 color = texture(textureAtlas, uvCoord);
+    float fragProperties = texture(propertiesTexture, uvCoord).r;
 
-    if (fragColor.a == 0) discard;
+    if (color.a == 0) discard;
 
-    fragPosition = totalPosition;
-    fragNormal = normal;
+    vec3 fragPosition = totalPosition;
+    vec3 fragNormal = normal;
+
+    fragColor = vec4(color);
 }

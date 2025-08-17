@@ -1,17 +1,37 @@
 package rendering_api;
 
 import assets.GuiElement;
-import assets.identifiers.GuiElementIdentifier;
 import assets.Texture;
+import assets.identifiers.GuiElementIdentifier;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+import player.OpaqueModel;
+import player.TransparentModel;
 import rendering_api.shaders.TextShader;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static utils.Constants.*;
+
 public final class ObjectLoader {
+
+    public static OpaqueModel loadOpaqueModel(int[] vertices, Vector3i position, int[] vertexCounts, int lod) {
+        if (vertices.length == 0) return new OpaqueModel(position, null, 0, lod);
+        int vertexBuffer = GL46.glCreateBuffers();
+        GL46.glNamedBufferData(vertexBuffer, vertices, GL46.GL_STATIC_DRAW);
+        return new OpaqueModel(position, vertexCounts, vertexBuffer, lod);
+    }
+
+    public static TransparentModel loadTransparentModel(int[] vertices, int waterVertexCount, int glassVertexCount, Vector3i position, int lod) {
+        if (waterVertexCount + glassVertexCount == 0) return new TransparentModel(position, 0, 0, 0, lod);
+        int vertexBuffer = GL46.glCreateBuffers();
+        GL46.glNamedBufferData(vertexBuffer, vertices, GL46.GL_STATIC_DRAW);
+        return new TransparentModel(position, waterVertexCount, glassVertexCount, vertexBuffer, lod);
+    }
 
     public static Texture loadTexture(String filepath) {
         int width, height;
@@ -94,6 +114,14 @@ public final class ObjectLoader {
         return vao;
     }
 
+    public static int generateSkyboxVertexArray() {
+        int vao = createVAO();
+        storeIndicesInBuffer(SKY_BOX_INDICES);
+        storeDateInAttributeList(0, 3, SKY_BOX_VERTICES);
+        storeDateInAttributeList(1, 2, SKY_BOX_TEXTURE_COORDINATES);
+        return vao;
+    }
+
 
     private static int createVAO() {
         int vao = GL46.glGenVertexArrays();
@@ -117,5 +145,18 @@ public final class ObjectLoader {
         GL46.glVertexAttribIPointer(0, 1, GL46.GL_INT, 0, 0);
         GL46.glBindBuffer(GL46.GL_ARRAY_BUFFER, 0);
         return vbo;
+    }
+
+    private static void storeIndicesInBuffer(int[] indices) {
+        int vbo = GL46.glGenBuffers();
+        GL46.glBindBuffer(GL46.GL_ELEMENT_ARRAY_BUFFER, vbo);
+        IntBuffer buffer = storeDateInIntBuffer(indices);
+        GL46.glBufferData(GL46.GL_ELEMENT_ARRAY_BUFFER, buffer, GL46.GL_STATIC_DRAW);
+    }
+
+    public static IntBuffer storeDateInIntBuffer(int[] data) {
+        IntBuffer buffer = MemoryUtil.memAllocInt(data.length);
+        buffer.put(data).flip();
+        return buffer;
     }
 }

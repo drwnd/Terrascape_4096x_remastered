@@ -12,6 +12,7 @@ import java.awt.*;
 public class TextElement extends Renderable {
 
     public static final float DEFAULT_TEXT_SCALAR = 2;
+    public static final Vector2f DEFAULT_TEXT_SIZE = new Vector2f(7f / 1920f, 13f / 1080f).mul(DEFAULT_TEXT_SCALAR);
 
     public TextElement(Vector2f offsetToParent) {
         super(new Vector2f(1.0f, 1.0f), offsetToParent);
@@ -26,8 +27,8 @@ public class TextElement extends Renderable {
 
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
-        float charSizeX = charSize.x * TEXT_SIZE.x;
-        float charSizeY = charSize.y * TEXT_SIZE.y;
+        float charSizeX = charSize.x * DEFAULT_TEXT_SIZE.x;
+        float charSizeY = charSize.y * DEFAULT_TEXT_SIZE.y;
 
         float textSize = FloatSetting.TEXT_SIZE.value();
         float guiSize = FloatSetting.GUI_SIZE.value();
@@ -61,6 +62,4 @@ public class TextElement extends Renderable {
     private String text = "";
     private boolean hasTransparentBackground = false;
     private final Vector2f charSize;
-
-    private static final Vector2f TEXT_SIZE = new Vector2f(7f / 1920f, 13f / 1080f).mul(DEFAULT_TEXT_SCALAR);
 }

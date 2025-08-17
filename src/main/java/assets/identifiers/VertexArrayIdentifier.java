@@ -5,14 +5,15 @@ import rendering_api.ObjectLoader;
 
 public enum VertexArrayIdentifier {
 
-    TEXT_ROW_VERTEX_ARRAY(ObjectLoader::generateTextRowVertexArray);
+    TEXT_ROW(ObjectLoader::generateTextRowVertexArray),
+    SKYBOX(ObjectLoader::generateSkyboxVertexArray);
 
     VertexArrayIdentifier(ObjectGenerator generator) {
         this.generator = generator;
     }
 
     public String getIdentifier() {
-        return name();
+        return name() + "_VERTEX_ARRAY";
     }
 
     public ObjectGenerator getGenerator() {
