@@ -5,6 +5,8 @@ import player.Position;
 
 public abstract class MovementState {
 
+    MovementState next = this;
+
     /**
      * Computes the velocity the player should have in the next Gametick.
      *
@@ -12,8 +14,8 @@ public abstract class MovementState {
      * @param lastPositon The position of the player in the last Gametick
      * @param inOutVelocity The velocity of the player in the last Gametick.
      *                      WHATEVER VALUE THIS HAS AFTER THE METHOD RETURNS IS THE VELOCITY OF THE PLAYER IN THE NEXT GAME TICK!
-     * @return The MovementState the player will be in in the next Gametick.
      */
-    protected abstract MovementState computeNextGameTickVelocity(Vector3f playerDirection, Position lastPositon, Vector3f inOutVelocity);
+    abstract void computeNextGameTickVelocity(Vector3f playerDirection, Position lastPositon, Vector3f inOutVelocity);
 
+    abstract void registerKeyInput(int key, int action);
 }

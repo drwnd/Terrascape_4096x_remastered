@@ -19,9 +19,10 @@ public final class Player {
     }
 
     public void updateFrame() {
-        meshCollector.loadAllMeshes();
+        meshCollector.uploadAllMeshes();
 
         float fraction = GameHandler.getWorld().getServer().getCurrentGameTickFraction();
+        fraction = Math.clamp(fraction, 0.0f, 1.0f);
 
         synchronized (this) {
             camera.rotate(input.getCursorMovement());
@@ -52,6 +53,10 @@ public final class Player {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public void registerKey(int key, int action) {
+        movement.registerKey(key, action);
     }
 
     private final MeshCollector meshCollector;

@@ -125,6 +125,7 @@ public final class Window {
     public static void setTopRenderable(Renderable element) {
         renderablesStack.add(element);
         element.setOnTop();
+        GL46.glPolygonMode(GL46.GL_FRONT_AND_BACK, GL46.GL_FILL);
     }
 
     public static void removeTopRenderable() {

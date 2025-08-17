@@ -14,6 +14,7 @@ public final class Camera {
     public Camera() {
         position = new Position(new Vector3i(), new Vector3f());
         rotation = new Vector2f(0.0f, 0.0f);
+        updateProjectionMatrix();
     }
 
     public void updateProjectionMatrix() {
@@ -23,8 +24,11 @@ public final class Camera {
 
     public Vector3f getDirection() {
 
-        float rotationXRadians = (float) Math.toRadians(rotation.y);
-        float rotationYRadians = (float) Math.toRadians(rotation.x);
+        float rotationXRadians, rotationYRadians;
+        synchronized (this) {
+            rotationXRadians = (float) Math.toRadians(rotation.y);
+            rotationYRadians = (float) Math.toRadians(rotation.x);
+        }
 
         float x = (float) Math.sin(rotationXRadians);
         float y = (float) -Math.sin(rotationYRadians);
@@ -39,11 +43,13 @@ public final class Camera {
     }
 
     private void moveRotation(float yaw, float pitch) {
-        rotation.x += pitch;
-        rotation.y += yaw;
+        synchronized (this) {
+            rotation.x += pitch;
+            rotation.y += yaw;
 
-        rotation.x = Math.max(-90, Math.min(rotation.x, 90));
-        rotation.y %= 360.0f;
+            rotation.x = Math.max(-90, Math.min(rotation.x, 90));
+            rotation.y %= 360.0f;
+        }
     }
 
     public void rotate(Vector2i cursorMovement) {
@@ -60,15 +66,21 @@ public final class Camera {
     }
 
     public Position getPosition() {
-        return position;
+        synchronized (this) {
+            return new Position(position);
+        }
     }
 
     public void setPlayerPositon(Position playerPositon) {
-        position = playerPositon;
+        synchronized (this) {
+            position = new Position(playerPositon);
+        }
     }
 
     public Vector2f getRotation() {
-        return rotation;
+        synchronized (this) {
+            return new Vector2f(rotation);
+        }
     }
 
     private Position position;

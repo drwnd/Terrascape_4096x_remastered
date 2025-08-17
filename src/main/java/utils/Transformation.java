@@ -7,30 +7,30 @@ import player.Camera;
 
 public final class Transformation {
 
-    public static final Vector3f X_AXIS = new Vector3f(1.0f, 0.0f, 0.0f);
-    public static final Vector3f Y_AXIS = new Vector3f(0.0f, 1.0f, 0.0f);
-
-    public static Matrix4f createSkyBoxTransformationMatrix(Camera camera) {
-        Vector2f rot = camera.getRotation();
+    public static Matrix4f createProjectionRotationMatrix(Camera camera) {
+        Vector2f rotation = camera.getRotation();
 
         Matrix4f matrix = new Matrix4f(camera.getProjectionMatrix());
-        matrix.rotate((float) Math.toRadians(rot.x), X_AXIS).rotate((float) Math.toRadians(rot.y), Y_AXIS);
+        matrix.rotate((float) Math.toRadians(rotation.x), X_AXIS).rotate((float) Math.toRadians(rotation.y), Y_AXIS);
 
         return matrix;
     }
 
     public static Matrix4f getProjectionViewMatrix(Camera camera) {
-        Vector3f pos = camera.getPosition().getInChunkPosition();
-        return getTransformationMatrix(camera, pos);
+        Vector3f position = camera.getPosition().getInChunkPosition();
+        return getProjectionViewMatrix(camera, position);
     }
 
-    private static Matrix4f getTransformationMatrix(Camera camera, Vector3f pos) {
-        Matrix4f matrix = createSkyBoxTransformationMatrix(camera);
-        matrix.translate(-pos.x, -pos.y, -pos.z);
+    private static Matrix4f getProjectionViewMatrix(Camera camera, Vector3f translation) {
+        Matrix4f matrix = createProjectionRotationMatrix(camera);
+        matrix.translate(-translation.x, -translation.y, -translation.z);
 
         return matrix;
     }
 
     private Transformation() {
     }
+
+    private static final Vector3f X_AXIS = new Vector3f(1.0f, 0.0f, 0.0f);
+    private static final Vector3f Y_AXIS = new Vector3f(0.0f, 1.0f, 0.0f);
 }

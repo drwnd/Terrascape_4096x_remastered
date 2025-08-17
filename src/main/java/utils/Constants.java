@@ -13,8 +13,8 @@ public final class Constants {
 
     public static final byte RENDER_DISTANCE_XZ = 2;
     public static final byte RENDER_DISTANCE_Y = 2;
-    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 3;
-    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 3;
+    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 1;
+    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 1;
 
     public static final int LOD_COUNT = 10;
 

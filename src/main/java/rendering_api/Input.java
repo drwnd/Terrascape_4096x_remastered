@@ -3,6 +3,7 @@ package rendering_api;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import renderables.Renderable;
+import settings.KeySetting;
 
 public abstract class Input {
 
@@ -25,6 +26,10 @@ public abstract class Input {
             return GLFW.glfwGetKey(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
         else
             return GLFW.glfwGetMouseButton(Window.getWindow(), keycode & Input.BUTTON_MASK) == GLFW.GLFW_PRESS;
+    }
+
+    public static boolean isKeyPressed(KeySetting setting) {
+        return isKeyPressed(setting.value());
     }
 
     public static Vector2i getCursorPos() {

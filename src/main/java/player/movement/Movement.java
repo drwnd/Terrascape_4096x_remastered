@@ -12,7 +12,8 @@ public final class Movement {
     public Position computeNextGameTickPosition(Position lastPosition, Vector3f direction) {
         Position position = new Position(lastPosition);
         position.add(velocity.x, velocity.y, velocity.z);
-        state = state.computeNextGameTickVelocity(direction, lastPosition, velocity);
+        state.computeNextGameTickVelocity(direction, lastPosition, velocity);
+        state = state.next;
         return position;
     }
 
@@ -20,6 +21,16 @@ public final class Movement {
         return new Vector3f(velocity);
     }
 
-    private MovementState state = new FollowDirectionState();
+    public static void normalizeToMaxComponent(Vector3f velocity) {
+        float max = Math.abs(velocity.get(velocity.maxComponent()));
+        if (max < 1E-4) return;
+        velocity.normalize(max);
+    }
+
+    public void registerKey(int key, int action) {
+        state.registerKeyInput(key, action);
+    }
+
+    private MovementState state = new FlyingState();
     private final Vector3f velocity;
 }

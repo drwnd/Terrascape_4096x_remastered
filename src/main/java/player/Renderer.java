@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL46;
 import renderables.Renderable;
 import rendering_api.shaders.Shader;
 import server.GameHandler;
+import settings.ToggleSetting;
 import utils.Transformation;
 import utils.Utils;
 
@@ -27,13 +28,17 @@ public final class Renderer extends Renderable {
         Camera camera = player.getCamera();
         player.updateFrame();
 
-        camera.updateProjectionMatrix();
         Matrix4f projectionViewMatrix = Transformation.getProjectionViewMatrix(camera);
         Position cameraPosition = player.getCamera().getPosition();
 
+        setupRenderState();
         renderSkybox(camera);
         renderOpaqueGeometry(cameraPosition, projectionViewMatrix, player);
         renderDebugInfo();
+    }
+
+    private static void setupRenderState() {
+        GL46.glPolygonMode(GL46.GL_FRONT_AND_BACK, ToggleSetting.X_RAY.value() ? GL46.GL_LINE : GL46.GL_FILL);
     }
 
     private static void renderSkybox(Camera camera) {
@@ -44,7 +49,7 @@ public final class Renderer extends Renderable {
         shader.setUniform("textureAtlas1", 0);
         shader.setUniform("textureAtlas2", 1);
         shader.setUniform("time", 1.0f);
-        shader.setUniform("projectionViewMatrix", Transformation.createSkyBoxTransformationMatrix(camera));
+        shader.setUniform("projectionViewMatrix", Transformation.createProjectionRotationMatrix(camera));
 
         GL46.glBindVertexArray(AssetManager.getVertexArray(VertexArrayIdentifier.SKYBOX).getID());
         GL46.glEnableVertexAttribArray(0);
@@ -104,6 +109,6 @@ public final class Renderer extends Renderable {
 
     @Override
     protected void resizeSelfTo(int width, int height) {
-
+        GameHandler.getPlayer().getCamera().updateProjectionMatrix();
     }
 }

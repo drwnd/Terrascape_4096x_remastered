@@ -5,6 +5,7 @@ import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
+import server.GameHandler;
 import settings.ToggleSetting;
 
 public final class PlayerInput extends Input {
@@ -37,6 +38,7 @@ public final class PlayerInput extends Input {
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) Window.setTopRenderable(new PauseMenu());
+        GameHandler.getPlayer().registerKey(key, action);
     }
 
     @Override

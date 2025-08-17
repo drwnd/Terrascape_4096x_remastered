@@ -35,7 +35,8 @@ public enum KeySetting {
     DROP(GLFW.GLFW_KEY_Q),
     RESIZE_WINDOW(GLFW.GLFW_KEY_F11),
     RELOAD_ASSETS(GLFW.GLFW_KEY_I),
-    RELOAD_SETTINGS(GLFW.GLFW_KEY_O);
+    RELOAD_SETTINGS(GLFW.GLFW_KEY_O),
+    TOGGLE_FLYING_FOLLOWING_MOVEMENT_STATE(GLFW.GLFW_KEY_K);
 
     public static void setIfPresent(String name, String value) {
         try {
