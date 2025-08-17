@@ -5,8 +5,6 @@ import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
-import server.GameHandler;
-import settings.FloatSetting;
 import settings.ToggleSetting;
 
 public final class PlayerInput extends Input {
@@ -46,17 +44,10 @@ public final class PlayerInput extends Input {
 
     }
 
-    public void rotateCamera() {
-        float deltaX = cursorPos.x - lastCursorPos.x;
-        float deltaY = cursorPos.y - lastCursorPos.y;
-
-        float sensitivityFactor = FloatSetting.SENSITIVITY.value() * 0.6f + 0.2f;
-        sensitivityFactor = 1.2f * sensitivityFactor * sensitivityFactor * sensitivityFactor;
-        float rotationX = deltaX * sensitivityFactor;
-        float rotationY = deltaY * sensitivityFactor;
-
-        GameHandler.getPlayer().getCamera().moveRotation(rotationX, -rotationY);
+    public Vector2i getCursorMovement() {
+        Vector2i movement = new Vector2i(cursorPos).sub(lastCursorPos);
         lastCursorPos.set(cursorPos);
+        return movement;
     }
 
     private final Vector2i lastCursorPos = new Vector2i();

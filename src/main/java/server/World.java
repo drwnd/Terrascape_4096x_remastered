@@ -9,6 +9,7 @@ public final class World {
 
     public World() {
         chunks = new Chunk[RENDERED_WORLD_WIDTH * RENDERED_WORLD_HEIGHT * RENDERED_WORLD_WIDTH];
+        server = new Server();
     }
 
     public void init() {
@@ -25,6 +26,7 @@ public final class World {
             generator.setChunk(chunk);
             generator.generateMesh();
         }
+        startTicks();
     }
 
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ, int lod) {
@@ -39,16 +41,21 @@ public final class World {
     }
 
     public void pauseTicks() {
-
+        server.pauseTicks();
     }
 
     public void startTicks() {
-
+        server.startTicks();
     }
 
     public void cleanUp() {
         pauseTicks();
     }
 
+    public Server getServer() {
+        return server;
+    }
+
     private final Chunk[] chunks;
+    private final Server server;
 }

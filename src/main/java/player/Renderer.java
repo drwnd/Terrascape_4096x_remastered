@@ -25,13 +25,14 @@ public final class Renderer extends Renderable {
     protected void renderSelf(Vector2f position, Vector2f size) {
         Player player = GameHandler.getPlayer();
         Camera camera = player.getCamera();
-        camera.updateProjectionMatrix();
-        Matrix4f projectionViewMatrix = Transformation.getProjectionViewMatrix(camera);
-        Position playerPosition = player.getToRenderPosition();
         player.updateFrame();
 
+        camera.updateProjectionMatrix();
+        Matrix4f projectionViewMatrix = Transformation.getProjectionViewMatrix(camera);
+        Position cameraPosition = player.getCamera().getPosition();
+
         renderSkybox(camera);
-        renderOpaqueGeometry(playerPosition, projectionViewMatrix, player);
+        renderOpaqueGeometry(cameraPosition, projectionViewMatrix, player);
         renderDebugInfo();
     }
 
