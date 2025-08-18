@@ -1,18 +1,14 @@
 package assets.identifiers;
 
 import assets.ObjectGenerator;
-import rendering_api.ObjectLoader;
+import player.rendering.ObjectLoader;
 
-public enum BufferIdentifier {
+public enum BufferIdentifier implements AssetIdentifier {
 
     MODEL_INDEX(ObjectLoader::generateModelIndexBuffer);
 
     BufferIdentifier(ObjectGenerator generator) {
         this.generator = generator;
-    }
-
-    public String getIdentifier() {
-        return name() + "_BUFFER";
     }
 
     public ObjectGenerator getGenerator() {

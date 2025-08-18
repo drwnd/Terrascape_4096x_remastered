@@ -1,4 +1,4 @@
-package player;
+package player.rendering;
 
 import org.joml.Vector3i;
 

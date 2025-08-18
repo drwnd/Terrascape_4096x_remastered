@@ -1,7 +1,7 @@
 package player.movement;
 
 import org.joml.Vector3f;
-import player.Position;
+import utils.Position;
 
 public abstract class MovementState {
 

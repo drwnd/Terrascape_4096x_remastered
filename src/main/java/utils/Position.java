@@ -1,8 +1,7 @@
-package player;
+package utils;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import utils.Utils;
 
 import static utils.Constants.*;
 
@@ -25,9 +24,5 @@ public record Position(Vector3i intPosition, Vector3f fractionPosition) {
 
     public Vector3f getInChunkPosition() {
         return new Vector3f(intPosition.x & CHUNK_SIZE_MASK, intPosition.y & CHUNK_SIZE_MASK, intPosition.z & CHUNK_SIZE_MASK).add(fractionPosition);
-    }
-
-    public Vector3f getAbsolutePosition() {
-        return new Vector3f(intPosition).add(fractionPosition);
     }
 }

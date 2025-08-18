@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 import renderables.Renderable;
 import settings.FloatSetting;
+import settings.ToggleSetting;
 
 import java.util.ArrayList;
 
@@ -19,16 +20,14 @@ public final class Window {
     private Window() {
     }
 
-    public static void init(String title, int width, int height, boolean vSync, boolean maximized) {
-        Window.width = width;
-        Window.height = height;
-        Window.maximized = maximized;
+    public static void init(String title) {
+        Window.maximized = true;
 
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!GLFW.glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
 
-        createWindow(title, vSync);
+        createWindow(title);
         GL.createCapabilities();
 
         GL46.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -39,7 +38,7 @@ public final class Window {
         GL46.glCullFace(GL46.GL_BACK);
     }
 
-    private static void createWindow(String title, boolean vSync) {
+    private static void createWindow(String title) {
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL46.GL_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL46.GL_TRUE);
@@ -56,6 +55,8 @@ public final class Window {
             width = vidMode.width();
             height = vidMode.height();
         } else {
+            width = vidMode.width() / 2;
+            height = vidMode.height() / 2;
             window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
             GLFW.glfwSetWindowPos(window, (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
         }
@@ -72,7 +73,7 @@ public final class Window {
         });
 
         GLFW.glfwMakeContextCurrent(window);
-        GLFW.glfwSwapInterval(vSync ? 1 : 0);
+        GLFW.glfwSwapInterval(ToggleSetting.V_SYNC.value() ? 1 : 0);
         GLFW.glfwShowWindow(window);
     }
 

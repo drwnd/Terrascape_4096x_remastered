@@ -1,19 +1,15 @@
 package assets.identifiers;
 
 import assets.ObjectGenerator;
-import rendering_api.ObjectLoader;
+import player.rendering.ObjectLoader;
 
-public enum VertexArrayIdentifier {
+public enum VertexArrayIdentifier implements AssetIdentifier {
 
     TEXT_ROW(ObjectLoader::generateTextRowVertexArray),
     SKYBOX(ObjectLoader::generateSkyboxVertexArray);
 
     VertexArrayIdentifier(ObjectGenerator generator) {
         this.generator = generator;
-    }
-
-    public String getIdentifier() {
-        return name() + "_VERTEX_ARRAY";
     }
 
     public ObjectGenerator getGenerator() {

@@ -2,11 +2,11 @@ package player.movement;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import player.Position;
+import utils.Position;
 import rendering_api.Input;
 import settings.KeySetting;
 
-public class FlyingState extends MovementState {
+public final class FlyingState extends MovementState {
     @Override
     protected void computeNextGameTickVelocity(Vector3f playerDirection, Position lastPositon, Vector3f inOutVelocity) {
 

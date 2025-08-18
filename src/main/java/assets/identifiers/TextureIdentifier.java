@@ -1,6 +1,6 @@
 package assets.identifiers;
 
-public enum TextureIdentifier {
+public enum TextureIdentifier implements AssetIdentifier {
 
     MATERIALS("assets/textures/atlas256.png"),
     DAY_SKY("assets/textures/82984-skybox-blue-atmosphere-sky-space-hd-image-free-png.png"),
@@ -15,13 +15,13 @@ public enum TextureIdentifier {
     TOGGLE_ACTIVATED("assets/textures/ToggleActivated.png"),
     TOGGLE_DEACTIVATED("assets/textures/ToggleDeactivated.png");
 
-    TextureIdentifier(String identifier) {
-        this.identifier = identifier;
+    TextureIdentifier(String filepath) {
+        this.filepath = filepath;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getFilepath() {
+        return filepath;
     }
 
-    private final String identifier;
+    private final String filepath;
 }

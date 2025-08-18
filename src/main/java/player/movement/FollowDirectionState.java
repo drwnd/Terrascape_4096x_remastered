@@ -2,7 +2,7 @@ package player.movement;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import player.Position;
+import utils.Position;
 import settings.KeySetting;
 
 public final class FollowDirectionState extends MovementState {

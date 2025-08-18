@@ -2,8 +2,12 @@ package player;
 
 import org.joml.Vector3f;
 import player.movement.Movement;
+import player.rendering.Camera;
+import player.rendering.MeshCollector;
+import player.rendering.Renderer;
 import rendering_api.Window;
 import server.GameHandler;
+import utils.Position;
 
 public final class Player {
 

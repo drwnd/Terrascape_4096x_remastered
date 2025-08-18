@@ -1,6 +1,5 @@
 package assets;
 
-import assets.identifiers.VertexArrayIdentifier;
 import org.lwjgl.opengl.GL46;
 
 public class VertexArray extends Asset {
@@ -10,16 +9,14 @@ public class VertexArray extends Asset {
     }
 
     @Override
-    public void reload(String identifier) {
-        System.out.printf("Reloading VertexArray %s%n", identifier);
+    public void delete() {
         GL46.glDeleteVertexArrays(id);
-        id = VertexArrayIdentifier.valueOf(identifier).getGenerator().generateObject();
     }
 
     public int getID() {
         return id;
     }
 
-    private int id;
+    private final int id;
 }
 

@@ -4,7 +4,8 @@ public enum ToggleSetting {
     SCROLL_HOT_BAR(true),
     RAW_MOUSE_INPUT(true),
     DO_SHADOW_MAPPING(false),
-    X_RAY(false);
+    X_RAY(false),
+    V_SYNC(true);
 
     public static void setIfPresent(String name, String value) {
         try {

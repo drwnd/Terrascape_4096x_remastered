@@ -45,3 +45,4 @@ SCROLL_HOT_BAR:false
 RAW_MOUSE_INPUT:true
 DO_SHADOW_MAPPING:false
 X_RAY:false
+V_SYNC:true

@@ -1,8 +1,9 @@
-package player;
+package player.rendering;
 
 import org.joml.*;
 import rendering_api.Window;
 import settings.FloatSetting;
+import utils.Position;
 
 import java.lang.Math;
 

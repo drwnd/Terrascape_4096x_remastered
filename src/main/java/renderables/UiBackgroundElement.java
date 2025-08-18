@@ -7,6 +7,7 @@ import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;
 import rendering_api.Window;
 import rendering_api.shaders.GuiShader;
+import settings.FloatSetting;
 
 public class UiBackgroundElement extends Renderable {
     public UiBackgroundElement(Vector2f sizeToParent, Vector2f offsetToParent) {
@@ -18,8 +19,8 @@ public class UiBackgroundElement extends Renderable {
         GuiShader shader = (GuiShader) AssetManager.getShader(ShaderIdentifier.GUI_BACKGROUND);
         Texture background = AssetManager.getTexture(TextureIdentifier.GUI_ELEMENT_BACKGROUND);
         shader.bind();
-        shader.setUniform("rimWidth", RIM_WIDTH);
-        shader.setUniform("screenSize", Window.getWidth(), Window.getHeight());
+        shader.setUniform("rimWidth", RIM_WIDTH * FloatSetting.GUI_SIZE.value());
+        shader.setUniform("aspectRatio", (float) Window.getWidth() / Window.getHeight());
         shader.drawQuad(position, size, background);
     }
 
@@ -28,5 +29,5 @@ public class UiBackgroundElement extends Renderable {
 
     }
 
-    private static final int RIM_WIDTH = 30;
+    private static final float RIM_WIDTH = 0.015625f;
 }

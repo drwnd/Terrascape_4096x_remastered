@@ -21,16 +21,28 @@ public class Shader extends Asset {
 
     public Shader(String vertexShaderFilePath, String fragmentShaderFilePath, ShaderIdentifier identifier) {
         uniforms = new HashMap<>();
-        this.vertexShaderFilePath = vertexShaderFilePath;
-        this.fragmentShaderFilePath = fragmentShaderFilePath;
 
         try {
-            load(identifier.getIdentifier());
+            String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
+            String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
+
+            programID = createProgram();
+            int vertexShaderID = createVertexShader(vertexShaderCode, programID);
+            int fragmentShaderID = createFragmentShader(fragmentShaderCode, programID);
+            link(programID, vertexShaderID, fragmentShaderID);
+
+            System.out.printf("Creating uniforms for Shader %s%n", identifier);
+            createUniforms(vertexShaderCode);
+            createUniforms(fragmentShaderCode);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+
+    public void bind() {
+        GL46.glUseProgram(programID);
+    }
 
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -91,55 +103,11 @@ public class Shader extends Asset {
     }
 
     @Override
-    public void reload(String identifier) {
-        System.out.printf("Reloading Shader %s%n", identifier);
-        try {
-            String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
-            String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
-
-            int newProgramID = createProgram();
-            int newVertexShaderID = createVertexShader(vertexShaderCode, newProgramID);
-            int newFragmentShaderID = createFragmentShader(fragmentShaderCode, newProgramID);
-
-            link(newProgramID, newVertexShaderID, newFragmentShaderID);
-
-            cleanUp();
-
-            programID = newProgramID;
-            vertexShaderID = newVertexShaderID;
-            fragmentShaderID = newFragmentShaderID;
-
-            System.out.printf("Creating uniforms for Shader %s%n", identifier);
-            createUniforms(vertexShaderCode);
-            createUniforms(fragmentShaderCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void cleanUp() {
+    public void delete() {
         uniforms.clear();
         if (programID != 0) GL46.glDeleteProgram(programID);
     }
 
-    public void bind() {
-        GL46.glUseProgram(programID);
-    }
-
-
-    private void load(String identifier) throws Exception {
-        String vertexShaderCode = loadShaderCode(vertexShaderFilePath);
-        String fragmentShaderCode = loadShaderCode(fragmentShaderFilePath);
-
-        programID = createProgram();
-        vertexShaderID = createVertexShader(vertexShaderCode, programID);
-        fragmentShaderID = createFragmentShader(fragmentShaderCode, programID);
-        link(programID, vertexShaderID, fragmentShaderID);
-
-        System.out.printf("Creating uniforms for Shader %s%n", identifier);
-        createUniforms(vertexShaderCode);
-        createUniforms(fragmentShaderCode);
-    }
 
     private static int createProgram() throws Exception {
         int programID = GL46.glCreateProgram();
@@ -220,9 +188,6 @@ public class Shader extends Asset {
                 .replaceAll(" +", " ");     // Remove unnecessary white space
     }
 
-    private final String vertexShaderFilePath, fragmentShaderFilePath;
-
-    protected int programID;
-    private int vertexShaderID, fragmentShaderID;
+    protected final int programID;
     private final HashMap<String, Integer> uniforms;
 }

@@ -1,4 +1,4 @@
-package player;
+package player.rendering;
 
 import assets.AssetManager;
 import assets.identifiers.ShaderIdentifier;
@@ -7,10 +7,12 @@ import assets.identifiers.VertexArrayIdentifier;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL46;
+import player.Player;
 import renderables.Renderable;
 import rendering_api.shaders.Shader;
 import server.GameHandler;
 import settings.ToggleSetting;
+import utils.Position;
 import utils.Transformation;
 import utils.Utils;
 
@@ -78,9 +80,9 @@ public final class Renderer extends Renderable {
         shader.bind();
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
         shader.setUniform("iCameraPosition",
-                Utils.floor(playerPosition.intPosition().x) & ~CHUNK_SIZE_MASK,
-                Utils.floor(playerPosition.intPosition().y) & ~CHUNK_SIZE_MASK,
-                Utils.floor(playerPosition.intPosition().z) & ~CHUNK_SIZE_MASK);
+                playerPosition.intPosition().x & ~CHUNK_SIZE_MASK,
+                playerPosition.intPosition().y & ~CHUNK_SIZE_MASK,
+                playerPosition.intPosition().z & ~CHUNK_SIZE_MASK);
         shader.setUniform("textureAtlas", 0);
         shader.setUniform("propertiesTexture", 1);
 

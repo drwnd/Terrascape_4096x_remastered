@@ -3,7 +3,7 @@ package server;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import player.Player;
-import player.Position;
+import utils.Position;
 import utils.Utils;
 
 import java.io.File;

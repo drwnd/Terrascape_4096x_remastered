@@ -1,7 +1,6 @@
-package player;
+package player.rendering;
 
 import org.lwjgl.opengl.GL46;
-import rendering_api.ObjectLoader;
 import utils.Utils;
 
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package utils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import player.Camera;
+import player.rendering.Camera;
 
 public final class Transformation {
 

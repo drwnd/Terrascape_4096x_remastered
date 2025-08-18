@@ -1,7 +1,6 @@
 package assets;
 
 import org.lwjgl.opengl.GL46;
-import rendering_api.ObjectLoader;
 
 public final class Texture extends Asset {
 
@@ -14,11 +13,9 @@ public final class Texture extends Asset {
     }
 
     @Override
-    public void reload(String identifier) {
-        System.out.printf("Reloading Texture %s%n", identifier);
+    public void delete() {
         GL46.glDeleteTextures(id);
-        id = ObjectLoader.loadTexture(identifier).id;
     }
 
-    private int id;
+    private final int id;
 }

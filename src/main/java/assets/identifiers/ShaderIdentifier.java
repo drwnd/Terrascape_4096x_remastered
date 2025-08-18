@@ -1,10 +1,7 @@
 package assets.identifiers;
 
-public enum ShaderIdentifier {
+public enum ShaderIdentifier implements AssetIdentifier {
 
-    GUI, GUI_BACKGROUND, TEXT, OPAQUE_GEOMETRY, SKYBOX;
+    GUI, GUI_BACKGROUND, TEXT, OPAQUE_GEOMETRY, SKYBOX
 
-    public String getIdentifier() {
-        return name() + "_SHADER";
-    }
 }

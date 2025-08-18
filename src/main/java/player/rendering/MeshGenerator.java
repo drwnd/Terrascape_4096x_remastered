@@ -1,4 +1,4 @@
-package player;
+package player.rendering;
 
 import server.Chunk;
 import server.GameHandler;

@@ -1,6 +1,6 @@
 package server;
 
-import player.MeshGenerator;
+import player.rendering.MeshGenerator;
 import utils.Utils;
 
 import static utils.Constants.*;

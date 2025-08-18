@@ -1,7 +1,7 @@
 package assets;
 
 import assets.identifiers.*;
-import rendering_api.ObjectLoader;
+import player.rendering.ObjectLoader;
 import rendering_api.shaders.Shader;
 import rendering_api.ShaderLoader;
 
@@ -14,46 +14,47 @@ public final class AssetManager {
 
 
     public static Texture getTexture(TextureIdentifier identifier) {
-        if (assets.containsKey(identifier.getIdentifier())) return (Texture) assets.get(identifier.getIdentifier());
-        Texture texture = ObjectLoader.loadTexture(identifier.getIdentifier());
-        assets.put(identifier.getIdentifier(), texture);
-        return texture;
+        return (Texture) loadAsset(identifier, () -> ObjectLoader.loadTexture(identifier));
     }
 
     public static GuiElement getGuiElement(GuiElementIdentifier identifier) {
-        if (assets.containsKey(identifier.getIdentifier())) return (GuiElement) assets.get(identifier.getIdentifier());
-        GuiElement guiElement = ObjectLoader.loadGuiElement(identifier);
-        assets.put(identifier.getIdentifier(), guiElement);
-        return guiElement;
+        return (GuiElement) loadAsset(identifier, () -> ObjectLoader.loadGuiElement(identifier));
     }
 
     public static Shader getShader(ShaderIdentifier identifier) {
-        if (assets.containsKey(identifier.getIdentifier())) return (Shader) assets.get(identifier.getIdentifier());
-        Shader shader = ShaderLoader.loadShader(identifier);
-        assets.put(identifier.getIdentifier(), shader);
-        return shader;
+        return (Shader) loadAsset(identifier, () -> ShaderLoader.loadShader(identifier));
     }
 
     public static Buffer getBuffer(BufferIdentifier identifier) {
-        if (assets.containsKey(identifier.getIdentifier())) return (Buffer) assets.get(identifier.getIdentifier());
-        Buffer buffer = new Buffer(identifier.getGenerator());
-        assets.put(identifier.getIdentifier(), buffer);
-        return buffer;
+        return (Buffer) loadAsset(identifier, () -> new Buffer(identifier.getGenerator()));
     }
 
     public static VertexArray getVertexArray(VertexArrayIdentifier identifier) {
-        if (assets.containsKey(identifier.getIdentifier())) return (VertexArray) assets.get(identifier.getIdentifier());
-        VertexArray vertexArray = new VertexArray(identifier.getGenerator());
-        assets.put(identifier.getIdentifier(), vertexArray);
-        return vertexArray;
+        return (VertexArray) loadAsset(identifier, () -> new VertexArray(identifier.getGenerator()));
     }
 
 
     public static void reload() {
-        System.out.println("---Reloading all Assets---");
-        for (String identifier : assets.keySet()) assets.get(identifier).reload(identifier);
-        System.out.println("---Reloaded all Assets ---");
+        System.out.println("---Deleting old Assets---");
+        synchronized (assets) {
+            for (Asset asset : assets.values()) asset.delete();
+            assets.clear();
+        }
     }
 
-    private static final HashMap<String, Asset> assets = new HashMap<>();
+
+    private static Asset loadAsset(AssetIdentifier identifier, AssetGenerator generator) {
+        synchronized (assets) {
+            if (assets.containsKey(identifier)) return assets.get(identifier);
+            Asset asset = generator.generate();
+            assets.put(identifier, asset);
+            return asset;
+        }
+    }
+
+    private static final HashMap<AssetIdentifier, Asset> assets = new HashMap<>();
+
+    private interface AssetGenerator {
+        Asset generate();
+    }
 }
