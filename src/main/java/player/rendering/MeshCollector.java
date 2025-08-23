@@ -44,8 +44,8 @@ public final class MeshCollector {
         }
     }
 
-    public boolean isMeshed(int chunkIndex) {
-        return (isMeshed[chunkIndex >> 6] & chunkIndex & 63) != 0;
+    public boolean isMeshed(int chunkIndex, int lod) {
+        return (isMeshed[chunkIndex >> 6] & 1L << chunkIndex) != 0;
     }
 
     public void setMeshed(boolean meshed, int chunkIndex, int lod) {
@@ -110,8 +110,6 @@ public final class MeshCollector {
     }
 
     private void upload(Mesh mesh) {
-
-
         int chunkIndex = Utils.getChunkIndex(mesh.chunkX(), mesh.chunkY(), mesh.chunkZ());
         deleteMesh(chunkIndex, mesh.lod());
 

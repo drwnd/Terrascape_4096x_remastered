@@ -30,8 +30,8 @@ public class TextShader extends Shader {
         GL46.glBlendFunc(GL46.GL_SRC_ALPHA, GL46.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    public void drawText(Vector2f position, String text, Color color, boolean addTransparentBackground) {
-        float guiSize = FloatSetting.GUI_SIZE.value();
+    public void drawText(Vector2f position, String text, Color color, boolean addTransparentBackground, boolean scaleWithUi) {
+        float guiSize = scaleWithUi ? FloatSetting.GUI_SIZE.value() : 1.0f;
 
         setUniform("string", toIntFormat(text));
         setUniform("offsets", getOffsets(text));
@@ -75,9 +75,11 @@ public class TextShader extends Shader {
         int[] array = new int[MAX_TEXT_LENGTH + 1];
         char[] chars = text.toCharArray();
         array[0] = 0;
+        int max = Math.min(text.length(), MAX_TEXT_LENGTH);
 
-        for (int index = 0, max = Math.min(text.length(), MAX_TEXT_LENGTH); index < max; index++)
+        for (int index = 0; index < max; index++)
             array[index + 1] = array[index] + getCharWidth(chars[index]) + CHAR_PADDING;
+        for (int index = max; index < MAX_TEXT_LENGTH; index++) array[index + 1] = array[index];
 
         return array;
     }

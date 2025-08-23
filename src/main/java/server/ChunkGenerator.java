@@ -123,7 +123,7 @@ public final class ChunkGenerator {
         for (int chunkY = playerChunkY - RENDER_DISTANCE_Y; chunkY < playerChunkY + RENDER_DISTANCE_Y + 1; chunkY++) {
             int chunkIndex = Utils.getChunkIndex(chunkX, chunkY, chunkZ);
             Chunk chunk = world.getChunk(chunkIndex, lod);
-            if (chunk == null || !player.getMeshCollector().isMeshed(chunkIndex)) return true;
+            if (chunk == null || !player.getMeshCollector().isMeshed(chunkIndex, lod)) return true;
         }
         return false;
     }
@@ -195,7 +195,7 @@ public final class ChunkGenerator {
                         System.err.println(chunkX + " " + chunkY + " " + chunkZ);
                         WorldGeneration.generate(chunk);
                     }
-                    if (meshCollector.isMeshed(chunkIndex)) continue;
+                    if (meshCollector.isMeshed(chunkIndex, lod)) continue;
                     meshChunk(meshGenerator, chunk);
 
                 } catch (Exception exception) {

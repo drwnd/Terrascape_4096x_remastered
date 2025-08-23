@@ -14,13 +14,13 @@ public final class Camera {
 
     public Camera() {
         position = new Position(new Vector3i(), new Vector3f());
-        rotation = new Vector2f(0.0f, 0.0f);
+        rotation = new Vector3f(0.0f, 0.0f, 0.0f);
         updateProjectionMatrix();
     }
 
     public void updateProjectionMatrix() {
         float aspectRatio = (float) Window.getWidth() / Window.getHeight();
-        projectionMatrix.setPerspective(FloatSetting.FOV.defaultValue(), aspectRatio, Z_NEAR, Z_FAR);
+        projectionMatrix.setPerspective((float) Math.toRadians(FloatSetting.FOV.value()), aspectRatio, Z_NEAR, Z_FAR);
     }
 
     public Vector3f getDirection() {
@@ -78,14 +78,14 @@ public final class Camera {
         }
     }
 
-    public Vector2f getRotation() {
+    public Vector3f getRotation() {
         synchronized (this) {
-            return new Vector2f(rotation);
+            return new Vector3f(rotation);
         }
     }
 
     private Position position;
-    private final Vector2f rotation;
+    private final Vector3f rotation;
 
     private final Matrix4f projectionMatrix = new Matrix4f();
 }

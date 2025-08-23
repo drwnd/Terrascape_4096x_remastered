@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
 import renderables.Renderable;
 import settings.FloatSetting;
-import settings.ToggleSetting;
 
 import java.util.ArrayList;
 
@@ -73,7 +72,6 @@ public final class Window {
         });
 
         GLFW.glfwMakeContextCurrent(window);
-        GLFW.glfwSwapInterval(ToggleSetting.V_SYNC.value() ? 1 : 0);
         GLFW.glfwShowWindow(window);
     }
 

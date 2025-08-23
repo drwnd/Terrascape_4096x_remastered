@@ -1,12 +1,14 @@
 package player;
 
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import player.movement.Movement;
 import player.rendering.Camera;
 import player.rendering.MeshCollector;
 import player.rendering.Renderer;
 import rendering_api.Window;
 import server.Game;
+import settings.KeySetting;
 import utils.Position;
 
 public final class Player {
@@ -17,8 +19,9 @@ public final class Player {
         input = new PlayerInput();
         this.position = position;
         movement = new Movement(new Vector3f());
+        renderer = new Renderer();
 
-        Window.setTopRenderable(new Renderer());
+        Window.setTopRenderable(renderer);
         setInput();
     }
 
@@ -62,6 +65,7 @@ public final class Player {
 
     public void registerKey(int key, int action) {
         movement.registerKey(key, action);
+        if (key == KeySetting.DEBUG_MENU.value() && action == GLFW.GLFW_PRESS) renderer.toggleDebugScreen();
     }
 
     public Position getPosition() {
@@ -74,6 +78,7 @@ public final class Player {
     private final Camera camera;
     private final PlayerInput input;
     private final Movement movement;
+    private final Renderer renderer;
 
     private Position position;
 }

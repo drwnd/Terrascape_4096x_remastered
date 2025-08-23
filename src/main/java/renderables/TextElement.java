@@ -43,7 +43,7 @@ public class TextElement extends Renderable {
         textShader.bind();
         textShader.setUniform("screenSize", Window.getWidth(), Window.getHeight());
         textShader.setUniform("charSize", charWidth, charHeight);
-        textShader.drawText(position, text.substring(0, maxLength), Color.WHITE, hasTransparentBackground);
+        textShader.drawText(position, text.substring(0, maxLength), Color.WHITE, hasTransparentBackground, true);
     }
 
     @Override

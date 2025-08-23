@@ -62,7 +62,9 @@ public final class SettingsMenu extends UiBackgroundElement {
         addRenderable(slider);
         sliders.add(slider);
 
-        createResetButton(counter).setAction(slider::setToDefault);
+        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
+            if (action == GLFW.GLFW_PRESS) slider.setToDefault();
+        });
     }
 
     private void addKeySelector(KeySetting setting, int counter) {
@@ -73,7 +75,9 @@ public final class SettingsMenu extends UiBackgroundElement {
         addRenderable(keySelector);
         keySelectors.add(keySelector);
 
-        createResetButton(counter).setAction(keySelector::setToDefault);
+        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
+            if (action == GLFW.GLFW_PRESS) keySelector.setToDefault();
+        });
     }
 
     private void addToggle(ToggleSetting setting, int counter) {
@@ -84,7 +88,9 @@ public final class SettingsMenu extends UiBackgroundElement {
         addRenderable(toggle);
         toggles.add(toggle);
 
-        createResetButton(counter).setAction(toggle::setToDefault);
+        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
+            if (action == GLFW.GLFW_PRESS) toggle.setToDefault();
+        });
     }
 
     private UiButton createResetButton(int counter) {
