@@ -1,9 +1,9 @@
 package server;
 
-import player.rendering.MeshGenerator;
 import utils.Utils;
 
-import static utils.Constants.*;
+import static utils.Constants.RENDERED_WORLD_HEIGHT;
+import static utils.Constants.RENDERED_WORLD_WIDTH;
 
 public final class World {
 
@@ -13,19 +13,6 @@ public final class World {
     }
 
     public void init() {
-        for (int chunkX = 0; chunkX < RENDERED_WORLD_WIDTH; chunkX++)
-            for (int chunkZ = 0; chunkZ < RENDERED_WORLD_WIDTH; chunkZ++)
-                for (int chunkY = 0; chunkY < RENDERED_WORLD_HEIGHT; chunkY++) {
-                    Chunk chunk = new Chunk(chunkX, chunkY, chunkZ);
-                    WorldGeneration.generate(chunk);
-                    chunks[chunk.getIndex()] = chunk;
-                }
-
-        MeshGenerator generator = new MeshGenerator();
-        for (Chunk chunk : chunks) {
-            generator.setChunk(chunk);
-            generator.generateMesh();
-        }
         startTicks();
     }
 
@@ -33,11 +20,26 @@ public final class World {
         return chunks[Utils.getChunkIndex(chunkX, chunkY, chunkZ)];
     }
 
+    public Chunk getChunk(int chunkIndex, int lod) {
+        return chunks[chunkIndex];
+    }
+
+    public Chunk[] getLod(int lod) {
+        return chunks;
+    }
+
     public void storeChunk(Chunk chunk) {
         Chunk previousChunk = chunks[chunk.getIndex()];
-        chunks[chunk.getIndex()] = chunk;
-
         if (previousChunk != null) previousChunk.cleanUp();
+
+        chunks[chunk.getIndex()] = chunk;
+    }
+
+    public void setNull(int chunkIndex, int lod) {
+        Chunk previousChunk = chunks[chunkIndex];
+        if (previousChunk != null) previousChunk.cleanUp();
+
+        chunks[chunkIndex] = null;
     }
 
     public void pauseTicks() {
@@ -50,6 +52,7 @@ public final class World {
 
     public void cleanUp() {
         pauseTicks();
+        server.cleanUp();
     }
 
     public Server getServer() {

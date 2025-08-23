@@ -18,18 +18,20 @@ import static utils.Constants.*;
 
 public final class ObjectLoader {
 
-    public static OpaqueModel loadOpaqueModel(int[] vertices, Vector3i position, int[] vertexCounts, int lod) {
-        if (vertices.length == 0) return new OpaqueModel(position, null, 0, lod);
+    public static OpaqueModel loadOpaqueModel(Mesh mesh) {
+        Vector3i position = mesh.getWorldCoordinate();
+        if (mesh.opaqueVertices().length == 0) return new OpaqueModel(position, null, 0, mesh.lod());
         int vertexBuffer = GL46.glCreateBuffers();
-        GL46.glNamedBufferData(vertexBuffer, vertices, GL46.GL_STATIC_DRAW);
-        return new OpaqueModel(position, vertexCounts, vertexBuffer, lod);
+        GL46.glNamedBufferData(vertexBuffer, mesh.opaqueVertices(), GL46.GL_STATIC_DRAW);
+        return new OpaqueModel(position, mesh.vertexCounts(), vertexBuffer, mesh.lod());
     }
 
-    public static TransparentModel loadTransparentModel(int[] vertices, int waterVertexCount, int glassVertexCount, Vector3i position, int lod) {
-        if (waterVertexCount + glassVertexCount == 0) return new TransparentModel(position, 0, 0, 0, lod);
+    public static TransparentModel loadTransparentModel(Mesh mesh) {
+        Vector3i position = mesh.getWorldCoordinate();
+        if (mesh.waterVertexCount() + mesh.glassVertexCount() == 0) return new TransparentModel(position, 0, 0, 0, mesh.lod());
         int vertexBuffer = GL46.glCreateBuffers();
-        GL46.glNamedBufferData(vertexBuffer, vertices, GL46.GL_STATIC_DRAW);
-        return new TransparentModel(position, waterVertexCount, glassVertexCount, vertexBuffer, lod);
+        GL46.glNamedBufferData(vertexBuffer, mesh.transparentVertices(), GL46.GL_STATIC_DRAW);
+        return new TransparentModel(position, mesh.waterVertexCount(), mesh.glassVertexCount(), vertexBuffer, mesh.lod());
     }
 
     public static Texture loadTexture(TextureIdentifier identifier) {

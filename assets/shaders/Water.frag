@@ -1,8 +1,8 @@
 #version 400 core
 
-flat in int textureData;
-in vec3 normal;
 in vec3 totalPosition;
+flat in vec3 normal;
+flat in int textureData;
 
 out vec4 fragColor;
 

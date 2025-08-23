@@ -6,7 +6,7 @@ import renderables.TextElement;
 import renderables.UiButton;
 import renderables.UiElement;
 import rendering_api.Window;
-import server.GameHandler;
+import server.Game;
 
 public final class PauseMenu extends UiElement {
     public PauseMenu() {
@@ -31,11 +31,11 @@ public final class PauseMenu extends UiElement {
     @Override
     public void setOnTop() {
         Window.setInput(new PauseMenuInput(this));
-        GameHandler.getWorld().pauseTicks();
+        Game.getWorld().pauseTicks();
     }
 
     private static Runnable getQuitButtonAction() {
-        return GameHandler::quit;
+        return Game::quit;
     }
 
     private static Runnable getSettingsButtonAction() {
@@ -45,8 +45,8 @@ public final class PauseMenu extends UiElement {
     private static Runnable getPlayButtonAction() {
         return () -> {
             Window.removeTopRenderable();
-            GameHandler.getWorld().startTicks();
-            GameHandler.getPlayer().setInput();
+            Game.getWorld().startTicks();
+            Game.getPlayer().setInput();
         };
     }
 }

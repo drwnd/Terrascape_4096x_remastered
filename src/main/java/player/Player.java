@@ -6,7 +6,7 @@ import player.rendering.Camera;
 import player.rendering.MeshCollector;
 import player.rendering.Renderer;
 import rendering_api.Window;
-import server.GameHandler;
+import server.Game;
 import utils.Position;
 
 public final class Player {
@@ -24,8 +24,9 @@ public final class Player {
 
     public void updateFrame() {
         meshCollector.uploadAllMeshes();
+        meshCollector.deleteOldMeshes();
 
-        float fraction = GameHandler.getWorld().getServer().getCurrentGameTickFraction();
+        float fraction = Game.getWorld().getServer().getCurrentGameTickFraction();
         fraction = Math.clamp(fraction, 0.0f, 1.0f);
 
         synchronized (this) {
@@ -61,6 +62,12 @@ public final class Player {
 
     public void registerKey(int key, int action) {
         movement.registerKey(key, action);
+    }
+
+    public Position getPosition() {
+        synchronized (this) {
+            return new Position(position);
+        }
     }
 
     private final MeshCollector meshCollector;

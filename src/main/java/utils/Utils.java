@@ -21,6 +21,12 @@ public final class Utils {
         return (chunkX * RENDERED_WORLD_WIDTH + chunkZ) * RENDERED_WORLD_HEIGHT + chunkY;
     }
 
+    public static boolean insideOfPlayerVisibility(int playerChunkX, int playerChunkY, int playerChunkZ, int chunkX, int chunkY, int chunkZ) {
+        return Math.abs(chunkX - playerChunkX) <= RENDER_DISTANCE_XZ + 2
+                && Math.abs(chunkZ - playerChunkZ) <= RENDER_DISTANCE_XZ + 2
+                && Math.abs(chunkY - playerChunkY) <= RENDER_DISTANCE_Y + 2;
+    }
+
     public static int mackEven(int value) {
         return value - (value & 1);
     }

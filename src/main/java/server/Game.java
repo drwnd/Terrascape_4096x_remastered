@@ -5,7 +5,7 @@ import rendering_api.Window;
 
 import java.io.File;
 
-public final class GameHandler {
+public final class Game {
 
     public static void play(File saveFile) {
         FileManager.loadUniversalFiles(saveFile);

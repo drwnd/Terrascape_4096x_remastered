@@ -7,16 +7,19 @@ public final class Constants {
 
     public static final int CHUNK_SIZE_BITS = 6;
     public static final int CHUNK_SIZE = 1 << CHUNK_SIZE_BITS;
+    public static final int CHUNK_SIZE_PADDED = CHUNK_SIZE + 2;
     public static final int CHUNK_SIZE_MASK = CHUNK_SIZE - 1;
     public static final int MAX_CHUNKS_XZ = 0xFFFFFF;
     public static final int MAX_CHUNKS_Y = 0xFFFF;
 
-    public static final byte RENDER_DISTANCE_XZ = 2;
-    public static final byte RENDER_DISTANCE_Y = 2;
-    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 1;
-    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 1;
+    // Make into settings later
+    public static final byte NUMBER_OF_GENERATION_THREADS = 3;
+    public static final byte RENDER_DISTANCE_XZ = 6;
+    public static final byte RENDER_DISTANCE_Y = 6;
+    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 7;
+    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 7;
 
-    public static final int LOD_COUNT = 10;
+    public static final int LOD_COUNT = 1;
 
     // Indices for the sides of blocks
     /**

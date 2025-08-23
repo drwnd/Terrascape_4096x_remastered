@@ -25,4 +25,14 @@ public record Position(Vector3i intPosition, Vector3f fractionPosition) {
     public Vector3f getInChunkPosition() {
         return new Vector3f(intPosition.x & CHUNK_SIZE_MASK, intPosition.y & CHUNK_SIZE_MASK, intPosition.z & CHUNK_SIZE_MASK).add(fractionPosition);
     }
+
+    public Vector3i getChunkCoordinate() {
+        return new Vector3i(intPosition.x >> CHUNK_SIZE_BITS, intPosition.y >> CHUNK_SIZE_BITS, intPosition.z >> CHUNK_SIZE_BITS);
+    }
+
+    public boolean sharesChunkWith(Position position) {
+        return intPosition.x >> CHUNK_SIZE_BITS == position.intPosition.x >> CHUNK_SIZE_BITS
+                && intPosition.y >> CHUNK_SIZE_BITS == position.intPosition.y >> CHUNK_SIZE_BITS
+                && intPosition.z >> CHUNK_SIZE_BITS == position.intPosition.z >> CHUNK_SIZE_BITS;
+    }
 }

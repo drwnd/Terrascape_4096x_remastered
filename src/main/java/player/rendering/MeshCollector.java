@@ -1,6 +1,8 @@
 package player.rendering;
 
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL46;
+import server.Game;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -10,9 +12,29 @@ import static utils.Constants.*;
 public final class MeshCollector {
 
     public void uploadAllMeshes() {
+        Vector3i playerChunkCoordinate = Game.getPlayer().getPosition().getChunkCoordinate();
         synchronized (meshQueue) {
-            for (Mesh mesh : meshQueue) upload(mesh);
+            for (Mesh mesh : meshQueue) {
+                int playerChunkX = playerChunkCoordinate.x >> mesh.lod();
+                int playerChunkY = playerChunkCoordinate.y >> mesh.lod();
+                int playerChunkZ = playerChunkCoordinate.z >> mesh.lod();
+                if (!Utils.insideOfPlayerVisibility(playerChunkX, playerChunkY, playerChunkZ, mesh.chunkX(), mesh.chunkY(), mesh.chunkZ()))
+                    continue;
+
+                upload(mesh);
+            }
             meshQueue.clear();
+        }
+    }
+
+    public void deleteOldMeshes() {
+        synchronized (toDeleteOpaqueModels) {
+            for (OpaqueModel opaqueModel : toDeleteOpaqueModels) GL46.glDeleteBuffers(opaqueModel.verticesBuffer());
+            toDeleteOpaqueModels.clear();
+        }
+        synchronized (toDeleteTransparentModels) {
+            for (TransparentModel transparentModel : toDeleteTransparentModels) GL46.glDeleteBuffers(transparentModel.verticesBuffer());
+            toDeleteTransparentModels.clear();
         }
     }
 
@@ -26,7 +48,7 @@ public final class MeshCollector {
         return (isMeshed[chunkIndex >> 6] & chunkIndex & 63) != 0;
     }
 
-    public void setMeshed(boolean meshed, int chunkIndex) {
+    public void setMeshed(boolean meshed, int chunkIndex, int lod) {
         if (meshed) isMeshed[chunkIndex >> 6] |= 1L << chunkIndex;
         else isMeshed[chunkIndex >> 6] &= ~(1L << chunkIndex);
     }
@@ -39,6 +61,37 @@ public final class MeshCollector {
         return transparentModels;
     }
 
+    public void removeMesh(int chunkIndex, int lod) {
+        OpaqueModel opaqueModel = getOpaqueModel(chunkIndex, lod);
+        if (opaqueModel != null) {
+            synchronized (toDeleteOpaqueModels) {
+                toDeleteOpaqueModels.add(opaqueModel);
+            }
+            setOpaqueModel(null, chunkIndex, lod);
+        }
+
+        TransparentModel transparentModel = getTransparentModel(chunkIndex, lod);
+        if (transparentModel != null) {
+            synchronized (toDeleteTransparentModels) {
+                toDeleteTransparentModels.add(transparentModel);
+            }
+            setTransparentModel(null, chunkIndex, lod);
+        }
+        setMeshed(false, chunkIndex, lod);
+    }
+
+
+    private void deleteMesh(int chunkIndex, int lod) {
+        OpaqueModel opaqueModel = getOpaqueModel(chunkIndex, lod);
+        TransparentModel transparentModel = getTransparentModel(chunkIndex, lod);
+
+        if (opaqueModel != null) GL46.glDeleteBuffers(opaqueModel.verticesBuffer());
+        if (transparentModel != null) GL46.glDeleteBuffers(transparentModel.verticesBuffer());
+
+        setOpaqueModel(null, chunkIndex, lod);
+        setTransparentModel(null, chunkIndex, lod);
+        setMeshed(false, chunkIndex, lod);
+    }
 
     private OpaqueModel getOpaqueModel(int chunkIndex, int lod) {
         return opaqueModels[chunkIndex];
@@ -57,22 +110,22 @@ public final class MeshCollector {
     }
 
     private void upload(Mesh mesh) {
+
+
         int chunkIndex = Utils.getChunkIndex(mesh.chunkX(), mesh.chunkY(), mesh.chunkZ());
-        int lod = mesh.lod();
+        deleteMesh(chunkIndex, mesh.lod());
 
-        OpaqueModel oldOpaqueModel = getOpaqueModel(chunkIndex, lod);
-        OpaqueModel newModel = ObjectLoader.loadOpaqueModel(mesh.opaqueVertices(), mesh.getWorldCoordinate(), mesh.vertexCounts(), lod);
-        setOpaqueModel(newModel, chunkIndex, lod);
-        if (oldOpaqueModel != null) GL46.glDeleteBuffers(oldOpaqueModel.verticesBuffer());
+        OpaqueModel opaqueModel = ObjectLoader.loadOpaqueModel(mesh);
+        setOpaqueModel(opaqueModel, chunkIndex, mesh.lod());
 
-        TransparentModel oldTransparentModel = getTransparentModel(chunkIndex, lod);
-        TransparentModel newTransparentModel = ObjectLoader.loadTransparentModel(mesh.transparentVertices(), mesh.waterVertexCount(), mesh.glassVertexCount(), mesh.getWorldCoordinate(), lod);
-        setTransparentModel(newTransparentModel, chunkIndex, lod);
-        if (oldTransparentModel != null) GL46.glDeleteBuffers(oldTransparentModel.verticesBuffer());
+        TransparentModel transparentModel = ObjectLoader.loadTransparentModel(mesh);
+        setTransparentModel(transparentModel, chunkIndex, mesh.lod());
     }
 
-
     private final ArrayList<Mesh> meshQueue = new ArrayList<>();
+    private final ArrayList<OpaqueModel> toDeleteOpaqueModels = new ArrayList<>();
+    private final ArrayList<TransparentModel> toDeleteTransparentModels = new ArrayList<>();
+
     private final OpaqueModel[] opaqueModels = new OpaqueModel[RENDERED_WORLD_WIDTH * RENDERED_WORLD_HEIGHT * RENDERED_WORLD_WIDTH];
     private final TransparentModel[] transparentModels = new TransparentModel[RENDERED_WORLD_WIDTH * RENDERED_WORLD_HEIGHT * RENDERED_WORLD_WIDTH];
     private final long[] isMeshed = new long[opaqueModels.length / 64 + 1];

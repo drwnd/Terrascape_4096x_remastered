@@ -41,9 +41,14 @@ public record OpaqueModel(int X, int Y, int Z, int LOD, int verticesBuffer, int[
 
     private static int[] getIndices(int[] vertexCounts) {
         int[] indices = new int[FACE_COUNT];
+        if (vertexCounts == null) return indices;
         indices[0] = 0;
         for (int index = 1; index < FACE_COUNT; index++)
             indices[index] = indices[index - 1] + vertexCounts[index - 1];
         return indices;
+    }
+
+    public boolean containsGeometry() {
+        return vertexCounts != null;
     }
 }

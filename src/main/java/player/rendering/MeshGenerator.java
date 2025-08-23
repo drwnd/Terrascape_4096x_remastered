@@ -1,7 +1,7 @@
 package player.rendering;
 
 import server.Chunk;
-import server.GameHandler;
+import server.Game;
 import server.Material;
 import utils.IntArrayList;
 
@@ -14,7 +14,7 @@ public final class MeshGenerator {
     }
 
     public void generateMesh() {
-        GameHandler.getPlayer().getMeshCollector().setMeshed(true, chunk.getIndex());
+        Game.getPlayer().getMeshCollector().setMeshed(true, chunk.INDEX, chunk.LOD);
 //        chunk.generateSurroundingChunks(); TODO
         waterVerticesList.clear();
         glassVerticesList.clear();
@@ -32,7 +32,7 @@ public final class MeshGenerator {
 
         Mesh mesh = new Mesh(opaqueVertices, vertexCounts, transparentVertices, waterVerticesList.size(), glassVerticesList.size(), chunk.X, chunk.Y, chunk.Z, chunk.LOD);
 
-        GameHandler.getPlayer().getMeshCollector().queueMesh(mesh);
+        Game.getPlayer().getMeshCollector().queueMesh(mesh);
     }
 
 
