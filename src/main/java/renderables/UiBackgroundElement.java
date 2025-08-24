@@ -19,15 +19,8 @@ public class UiBackgroundElement extends Renderable {
         GuiShader shader = (GuiShader) AssetManager.getShader(ShaderIdentifier.GUI_BACKGROUND);
         Texture background = AssetManager.getTexture(TextureIdentifier.GUI_ELEMENT_BACKGROUND);
         shader.bind();
-        shader.setUniform("rimWidth", RIM_WIDTH * FloatSetting.GUI_SIZE.value());
+        shader.setUniform("rimWidth", FloatSetting.RIM_THICKNESS.value() * FloatSetting.GUI_SIZE.value());
         shader.setUniform("aspectRatio", (float) Window.getWidth() / Window.getHeight());
         shader.drawQuad(position, size, background);
     }
-
-    @Override
-    protected void resizeSelfTo(int width, int height) {
-
-    }
-
-    private static final float RIM_WIDTH = 0.015625f;
 }

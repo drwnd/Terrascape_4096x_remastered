@@ -11,7 +11,8 @@ public enum FloatSetting {
     PLACE_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),
     DIG_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),
     INVENTORY_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),
-    MISCELLANEOUS_AUDIO(0.0f, 5.0f, 1.0f, 0.01f);
+    MISCELLANEOUS_AUDIO(0.0f, 5.0f, 1.0f, 0.01f),
+    RIM_THICKNESS(0.0f, 0.1f, 0.015625f);
 
     public static void setIfPresent(String name, String value) {
         try {

@@ -46,9 +46,10 @@ public final class Toggle extends UiButton {
         shader.drawQuad(position, size, texture);
     }
 
-    private void matchSetting() {
+    public void matchSetting() {
         value = setting.value();
     }
+
 
     private Clickable getAction() {
         return (Vector2i cursorPos, int button, int action) -> {

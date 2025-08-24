@@ -2,6 +2,7 @@ package renderables;
 
 import assets.identifiers.TextureIdentifier;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Input;
 import rendering_api.Window;
@@ -11,7 +12,7 @@ public final class KeySelector extends UiButton {
 
     public KeySelector(Vector2f sizeToParent, Vector2f offsetToParent, KeySetting setting) {
         super(sizeToParent, offsetToParent);
-        setAction(() -> Window.setInput(new KeySelectorInput(this)));
+        setAction(getAction());
         this.setting = setting;
 
         UiElement blackBox = new UiElement(new Vector2f(0.5f, 0.6f), new Vector2f(0.45f, 0.2f), TextureIdentifier.INVENTORY_OVERLAY);
@@ -41,9 +42,10 @@ public final class KeySelector extends UiButton {
         display.setText(getDisplayString(value));
     }
 
-    private void matchSetting() {
+    public void matchSetting() {
         setValue(setting.value());
     }
+
 
     private static String getDisplayString(int value) {
         return switch (value) {
@@ -88,6 +90,13 @@ public final class KeySelector extends UiButton {
                 if (Character.isDefined(value)) yield Character.toString(value);
                 yield String.valueOf(value);
             }
+        };
+    }
+
+    private Clickable getAction() {
+        return (Vector2i cursorPos, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
+            Window.setInput(new KeySelectorInput(this));
         };
     }
 

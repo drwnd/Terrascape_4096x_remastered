@@ -1,6 +1,5 @@
 package renderables;
 
-import menus.SettingsMenu;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -47,11 +46,13 @@ public final class Slider extends UiButton {
         action(pixelCoordinate, GLFW.GLFW_MOUSE_BUTTON_LEFT, GLFW.GLFW_PRESS);
     }
 
-    private void matchSetting() {
+    public void matchSetting() {
         setValue(setting.value());
     }
 
+
     private void action(Vector2i cursorPos, int button, int action) {
+        if (action != GLFW.GLFW_PRESS) return;
         Vector2f position = Window.toPixelCoordinate(getPosition());
         Vector2f size = Window.toPixelSize(getSize());
 
@@ -59,8 +60,8 @@ public final class Slider extends UiButton {
         fraction = Math.clamp(fraction, 0.0f, 1.0f);
         setValue(setting.valueFronFraction(fraction));
 
-        if (getParent() instanceof SettingsMenu)
-            ((SettingsMenu) getParent()).setSelectedSlider(this);
+        if (getParent() instanceof SettingsRenderable)
+            ((SettingsRenderable) getParent()).setSelectedSlider(this);
     }
 
     private final FloatSetting setting;

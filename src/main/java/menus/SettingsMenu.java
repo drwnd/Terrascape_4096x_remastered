@@ -7,163 +7,169 @@ import renderables.*;
 import rendering_api.Window;
 import settings.FloatSetting;
 import settings.KeySetting;
-import settings.Settings;
 import settings.ToggleSetting;
-
-import java.util.ArrayList;
 
 public final class SettingsMenu extends UiBackgroundElement {
 
     public SettingsMenu() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        input = new SettingsMenuInput(this);
-        Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
 
-        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), getCancelButtonAction());
-        TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Cancel");
-        closeApplicationButton.addRenderable(text);
+        UiButton backButton = new UiButton(new Vector2f(0.25f, 0.1f), new Vector2f(0.05f, 0.85f), getBackButtonAction());
+        TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Back");
+        backButton.addRenderable(text);
 
-        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.7f), getApplyChangesButtonAction());
-        text = new TextElement(new Vector2f(0.15f, 0.5f), "Apply");
-        applyChangesButton.addRenderable(text);
-
-        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.55f), getResetSettingsButtonAction());
-        text = new TextElement(new Vector2f(0.15f, 0.5f), "Reset All");
-        resetButton.addRenderable(text);
-
-        addRenderable(closeApplicationButton);
-        addRenderable(applyChangesButton);
-        addRenderable(resetButton);
-
-        int counter = 0;
-        for (FloatSetting setting : FloatSetting.values()) addSlider(setting, ++counter);
-        for (ToggleSetting setting : ToggleSetting.values()) addToggle(setting, ++counter);
-        for (KeySetting setting : KeySetting.values()) addKeySelector(setting, ++counter);
-    }
-
-    public void scrollSettingButtons(float scroll) {
-        Vector2f offset = new Vector2f(0, scroll);
-
-        for (Slider slider : sliders) slider.move(offset);
-        for (KeySelector keySelector : keySelectors) keySelector.move(offset);
-        for (Toggle toggle : toggles) toggle.move(offset);
-        for (UiButton resetButton : resetButtons) resetButton.move(offset);
-    }
-
-    public void setSelectedSlider(Slider slider) {
-        this.selectedSlider = slider;
-    }
-
-    private void addSlider(FloatSetting setting, int counter) {
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.05f, 0.5f);
 
-        Slider slider = new Slider(sizeToParent, offsetToParent, setting);
-        addRenderable(slider);
-        sliders.add(slider);
+        UiButton everythingSectionButton = new UiButton(sizeToParent, new Vector2f(0.35f, 0.85f), getSelectSectionButtonAction(getEverythingSection()));
+        text = new TextElement(offsetToParent, "Everything");
+        everythingSectionButton.addRenderable(text);
 
-        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
-            if (action == GLFW.GLFW_PRESS) slider.setToDefault();
-        });
+        UiButton controlsSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.7f), getSelectSectionButtonAction(getControlsSection()));
+        text = new TextElement(offsetToParent, "Controls");
+        controlsSection.addRenderable(text);
+
+        UiButton renderingSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.55f), getSelectSectionButtonAction(getRenderingSection()));
+        text = new TextElement(offsetToParent, "Rendering");
+        renderingSection.addRenderable(text);
+
+        UiButton uiSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.4f), getSelectSectionButtonAction(getUiSection()));
+        text = new TextElement(offsetToParent, "Ui Customization");
+        uiSection.addRenderable(text);
+
+        UiButton soundSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.25f), getSelectSectionButtonAction(getSoundSection()));
+        text = new TextElement(offsetToParent, "Sound");
+        soundSection.addRenderable(text);
+
+        UiButton debugSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.1f), getSelectSectionButtonAction(getDebugSection()));
+        text = new TextElement(offsetToParent, "Debug");
+        debugSection.addRenderable(text);
+
+        addRenderable(backButton);
+        addRenderable(everythingSectionButton);
+        addRenderable(controlsSection);
+        addRenderable(renderingSection);
+        addRenderable(uiSection);
+        addRenderable(soundSection);
+        addRenderable(debugSection);
     }
 
-    private void addKeySelector(KeySetting setting, int counter) {
-        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+    private SettingsRenderable getEverythingSection() {
+        SettingsRenderable section = new SettingsRenderable();
 
-        KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting);
-        addRenderable(keySelector);
-        keySelectors.add(keySelector);
+        for (FloatSetting setting : FloatSetting.values()) section.addSlider(setting);
+        for (ToggleSetting setting : ToggleSetting.values()) section.addToggle(setting);
+        for (KeySetting setting : KeySetting.values()) section.addKeySelector(setting);
 
-        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
-            if (action == GLFW.GLFW_PRESS) keySelector.setToDefault();
-        });
+        return section;
     }
 
-    private void addToggle(ToggleSetting setting, int counter) {
-        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * counter + input.getScroll());
+    private SettingsRenderable getControlsSection() {
+        SettingsRenderable section = new SettingsRenderable();
 
-        Toggle toggle = new Toggle(sizeToParent, offsetToParent, setting);
-        addRenderable(toggle);
-        toggles.add(toggle);
+        section.addToggle(ToggleSetting.SCROLL_HOT_BAR);
+        section.addToggle(ToggleSetting.RAW_MOUSE_INPUT);
 
-        createResetButton(counter).setAction((Vector2i cursorPos, int button, int action) -> {
-            if (action == GLFW.GLFW_PRESS) toggle.setToDefault();
-        });
+        section.addSlider(FloatSetting.SENSITIVITY);
+
+        section.addKeySelector(KeySetting.MOVE_FORWARD);
+        section.addKeySelector(KeySetting.MOVE_BACK);
+        section.addKeySelector(KeySetting.MOVE_RIGHT);
+        section.addKeySelector(KeySetting.MOVE_LEFT);
+        section.addKeySelector(KeySetting.JUMP);
+        section.addKeySelector(KeySetting.SPRINT);
+        section.addKeySelector(KeySetting.SNEAK);
+        section.addKeySelector(KeySetting.CRAWL);
+        section.addKeySelector(KeySetting.FLY_FAST);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_1);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_2);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_3);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_4);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_5);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_6);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_7);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_8);
+        section.addKeySelector(KeySetting.HOT_BAR_SLOT_9);
+        section.addKeySelector(KeySetting.DESTROY);
+        section.addKeySelector(KeySetting.USE);
+        section.addKeySelector(KeySetting.PICK_BLOCK);
+        section.addKeySelector(KeySetting.INVENTORY);
+        section.addKeySelector(KeySetting.ZOOM);
+        section.addKeySelector(KeySetting.INCREASE_BREAK_PLACE_SIZE);
+        section.addKeySelector(KeySetting.DECREASE_BREAK_PLACE_SIZE);
+        section.addKeySelector(KeySetting.DROP);
+        section.addKeySelector(KeySetting.RESIZE_WINDOW);
+
+        return section;
     }
 
-    private UiButton createResetButton(int counter) {
-        Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
-        UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
+    private SettingsRenderable getRenderingSection() {
+        SettingsRenderable section = new SettingsRenderable();
 
-        TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Reset");
-        resetButton.addRenderable(text);
+        section.addSlider(FloatSetting.FOV);
 
-        addRenderable(resetButton);
-        resetButtons.add(resetButton);
-        return resetButton;
+        section.addToggle(ToggleSetting.DO_SHADOW_MAPPING);
+
+        return section;
+    }
+
+    private SettingsRenderable getUiSection() {
+        SettingsRenderable section = new SettingsRenderable();
+
+        section.addSlider(FloatSetting.GUI_SIZE);
+        section.addSlider(FloatSetting.TEXT_SIZE);
+        section.addSlider(FloatSetting.RIM_THICKNESS);
+
+        return section;
+    }
+
+    private SettingsRenderable getSoundSection() {
+        SettingsRenderable section = new SettingsRenderable();
+
+        section.addSlider(FloatSetting.MASTER_AUDIO);
+        section.addSlider(FloatSetting.FOOTSTEPS_AUDIO);
+        section.addSlider(FloatSetting.PLACE_AUDIO);
+        section.addSlider(FloatSetting.DIG_AUDIO);
+        section.addSlider(FloatSetting.INVENTORY_AUDIO);
+        section.addSlider(FloatSetting.MISCELLANEOUS_AUDIO);
+
+        return section;
+    }
+
+    private SettingsRenderable getDebugSection() {
+        SettingsRenderable section = new SettingsRenderable();
+
+        section.addKeySelector(KeySetting.DEBUG_MENU);
+        section.addKeySelector(KeySetting.NO_CLIP);
+        section.addKeySelector(KeySetting.RESIZE_WINDOW);
+        section.addKeySelector(KeySetting.RELOAD_SETTINGS);
+        section.addKeySelector(KeySetting.RELOAD_ASSETS);
+        section.addKeySelector(KeySetting.TOGGLE_FLYING_FOLLOWING_MOVEMENT_STATE);
+
+        section.addToggle(ToggleSetting.X_RAY);
+        section.addToggle(ToggleSetting.V_SYNC);
+
+        section.addSlider(FloatSetting.REACH);
+
+        return section;
     }
 
     @Override
     public void setOnTop() {
-        float scroll = input == null ? 0.0f : input.getScroll();
-        input = new SettingsMenuInput(this);
-        input.setScroll(scroll);
-        Window.setInput(input);
-        selectedSlider = null;
+        Window.setInput(new SettingsMenuInput(this));
     }
 
-    @Override
-    public void dragOver(Vector2i pixelCoordinate) {
-        if (selectedSlider != null)
-            selectedSlider.dragOver(pixelCoordinate);
-        else super.dragOver(pixelCoordinate);
-    }
-
-    @Override
-    public void clickOn(Vector2i pixelCoordinate, int mouseButton, int action) {
-        boolean buttonFound = false;
-        for (Renderable renderable : getChildren())
-            if (renderable.isVisible() && renderable.containsPixelCoordinate(pixelCoordinate)) {
-                renderable.clickOn(pixelCoordinate, mouseButton, action);
-                buttonFound = true;
-                break;
-            }
-
-        if (!buttonFound) selectedSlider = null;
-    }
-
-    private Clickable getApplyChangesButtonAction() {
-        return (Vector2i pixelCoordinate, int button, int action) -> {
-            if (action != GLFW.GLFW_PRESS) return;
-            for (Slider slider : sliders) Settings.update(slider.getSetting(), slider.getValue());
-            for (KeySelector keySelector : keySelectors) Settings.update(keySelector.getSetting(), keySelector.getValue());
-            for (Toggle toggle : toggles) Settings.update(toggle.getSetting(), toggle.getValue());
-            Settings.writeToFile();
-            Window.removeTopRenderable();
-        };
-    }
-
-    private Clickable getResetSettingsButtonAction() {
-        return (Vector2i pixelCoordinate, int button, int action) -> {
-            if (action != GLFW.GLFW_PRESS) return;
-            for (UiButton resetButton : resetButtons) resetButton.clickOn(pixelCoordinate, button, action);
-        };
-    }
-
-    private Clickable getCancelButtonAction() {
+    private Clickable getBackButtonAction() {
         return (Vector2i pixelCoordinate, int button, int action) -> {
             if (action != GLFW.GLFW_PRESS) return;
             Window.removeTopRenderable();
         };
     }
 
-    private Slider selectedSlider;
-    private SettingsMenuInput input;
-    private final ArrayList<Slider> sliders = new ArrayList<>();
-    private final ArrayList<KeySelector> keySelectors = new ArrayList<>();
-    private final ArrayList<Toggle> toggles = new ArrayList<>();
-    private final ArrayList<UiButton> resetButtons = new ArrayList<>();
+    private Clickable getSelectSectionButtonAction(SettingsRenderable section) {
+        return (Vector2i pixelCoordinate, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
+            Window.setTopRenderable(section);
+        };
+    }
 }
