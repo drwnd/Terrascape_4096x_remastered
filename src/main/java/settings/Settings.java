@@ -1,5 +1,7 @@
 package settings;
 
+import settings.optionSettings.Option;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -17,6 +19,9 @@ public final class Settings {
         setting.setValue(value);
     }
 
+    public static void update(OptionSetting setting, Option<?> value) {
+        setting.setValue(value);
+    }
 
     public static void loadFromFile() {
         try {
@@ -35,9 +40,13 @@ public final class Settings {
             for (String line : lines) {
                 String[] tokens = line.split(":");
                 if (tokens.length != 2) continue;
-                FloatSetting.setIfPresent(tokens[0], tokens[1]);
-                KeySetting.setIfPresent(tokens[0], tokens[1]);
-                ToggleSetting.setIfPresent(tokens[0], tokens[1]);
+                String name = tokens[0], value = tokens[1];
+
+                FloatSetting.setIfPresent(name, value);
+                KeySetting.setIfPresent(name, value);
+                ToggleSetting.setIfPresent(name, value);
+                OptionSetting.setIfPresent(name, value);
+
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -55,6 +64,7 @@ public final class Settings {
             for (FloatSetting setting : FloatSetting.values()) writer.write("%s:%s%n".formatted(setting.name(), setting.value()));
             for (KeySetting setting : KeySetting.values()) writer.write("%s:%s%n".formatted(setting.name(), setting.value()));
             for (ToggleSetting setting : ToggleSetting.values()) writer.write("%s:%s%n".formatted(setting.name(), setting.value()));
+            for (OptionSetting setting : OptionSetting.values()) writer.write("%s:%s%n".formatted(setting.name(), setting.value()));
 
             writer.close();
 

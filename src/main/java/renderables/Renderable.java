@@ -6,7 +6,7 @@ import rendering_api.Window;
 
 import java.util.ArrayList;
 
-public class Renderable {
+public abstract class Renderable {
 
     public Renderable(Vector2f sizeToParent, Vector2f offsetToParent) {
         this.sizeToParent = sizeToParent;
@@ -23,13 +23,9 @@ public class Renderable {
     }
 
 
-    protected void renderSelf(Vector2f position, Vector2f size) {
+    protected abstract void renderSelf(Vector2f position, Vector2f size);
 
-    }
-
-    protected void resizeSelfTo(int width, int height) {
-
-    }
+    protected abstract void resizeSelfTo(int width, int height) ;
 
 
     public void setOnTop() {

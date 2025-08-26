@@ -7,6 +7,7 @@ import renderables.*;
 import rendering_api.Window;
 import settings.FloatSetting;
 import settings.KeySetting;
+import settings.OptionSetting;
 import settings.ToggleSetting;
 
 public final class SettingsMenu extends UiBackgroundElement {
@@ -60,6 +61,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         for (FloatSetting setting : FloatSetting.values()) section.addSlider(setting);
         for (ToggleSetting setting : ToggleSetting.values()) section.addToggle(setting);
         for (KeySetting setting : KeySetting.values()) section.addKeySelector(setting);
+        for (OptionSetting setting : OptionSetting.values()) section.addOption(setting);
 
         return section;
     }
@@ -150,6 +152,8 @@ public final class SettingsMenu extends UiBackgroundElement {
         section.addToggle(ToggleSetting.V_SYNC);
 
         section.addSlider(FloatSetting.REACH);
+
+        section.addOption(OptionSetting.FPS_VISIBILITY);
 
         return section;
     }

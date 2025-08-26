@@ -4,10 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import rendering_api.Window;
-import settings.FloatSetting;
-import settings.KeySetting;
-import settings.Settings;
-import settings.ToggleSetting;
+import settings.*;
 
 import java.util.ArrayList;
 
@@ -41,6 +38,8 @@ public final class SettingsRenderable extends UiBackgroundElement {
         for (Slider slider : sliders) slider.move(offset);
         for (KeySelector keySelector : keySelectors) keySelector.move(offset);
         for (Toggle toggle : toggles) toggle.move(offset);
+        for (OptionToggle option : options) option.move(offset);
+
         for (UiButton resetButton : resetButtons) resetButton.move(offset);
     }
 
@@ -98,6 +97,21 @@ public final class SettingsRenderable extends UiBackgroundElement {
         });
     }
 
+    public void addOption(OptionSetting setting) {
+        settingsCount++;
+        Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount + input.getScroll());
+
+        OptionToggle option = new OptionToggle(sizeToParent, offsetToParent, setting);
+        addRenderable(option);
+        options.add(option);
+
+        createResetButton(settingsCount).setAction((Vector2i cursorPos, int button, int action) -> {
+            if (action == GLFW.GLFW_PRESS) option.setToDefault();
+        });
+    }
+
+
     private UiButton createResetButton(int counter) {
         Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
         Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
@@ -143,9 +157,12 @@ public final class SettingsRenderable extends UiBackgroundElement {
     private Clickable getApplyChangesButtonAction() {
         return (Vector2i pixelCoordinate, int button, int action) -> {
             if (action != GLFW.GLFW_PRESS) return;
+
             for (Slider slider : sliders) Settings.update(slider.getSetting(), slider.getValue());
             for (KeySelector keySelector : keySelectors) Settings.update(keySelector.getSetting(), keySelector.getValue());
             for (Toggle toggle : toggles) Settings.update(toggle.getSetting(), toggle.getValue());
+            for (OptionToggle option : options) Settings.update(option.getSetting(), option.getValue());
+
             Settings.writeToFile();
             Window.removeTopRenderable();
         };
@@ -165,6 +182,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
             for (Slider slider : sliders) slider.matchSetting();
             for (KeySelector keySelector : keySelectors) keySelector.matchSetting();
             for (Toggle toggle : toggles) toggle.matchSetting();
+            for (OptionToggle option : options) option.matchSetting();
 
             Window.removeTopRenderable();
         };
@@ -177,5 +195,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
     private final ArrayList<Slider> sliders = new ArrayList<>();
     private final ArrayList<KeySelector> keySelectors = new ArrayList<>();
     private final ArrayList<Toggle> toggles = new ArrayList<>();
+    private final ArrayList<OptionToggle> options = new ArrayList<>();
+
     private final ArrayList<UiButton> resetButtons = new ArrayList<>();
 }
