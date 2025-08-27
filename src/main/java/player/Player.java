@@ -63,6 +63,10 @@ public final class Player {
         return camera;
     }
 
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
     public void registerKey(int key, int action) {
         movement.registerKey(key, action);
         if (key == KeySetting.DEBUG_MENU.value() && action == GLFW.GLFW_PRESS) renderer.toggleDebugScreen();

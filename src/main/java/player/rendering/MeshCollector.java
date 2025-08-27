@@ -118,6 +118,7 @@ public final class MeshCollector {
 
         TransparentModel transparentModel = ObjectLoader.loadTransparentModel(mesh);
         setTransparentModel(transparentModel, chunkIndex, mesh.lod());
+        setMeshed(true, chunkIndex, mesh.lod());
     }
 
     private final ArrayList<Mesh> meshQueue = new ArrayList<>();

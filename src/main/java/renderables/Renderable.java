@@ -25,7 +25,7 @@ public abstract class Renderable {
 
     protected abstract void renderSelf(Vector2f position, Vector2f size);
 
-    protected abstract void resizeSelfTo(int width, int height) ;
+    protected abstract void resizeSelfTo(int width, int height);
 
 
     public void setOnTop() {

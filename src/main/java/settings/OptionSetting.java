@@ -1,5 +1,6 @@
 package settings;
 
+import settings.optionSettings.ColorOption;
 import settings.optionSettings.Option;
 import settings.optionSettings.Visibility;
 
@@ -11,9 +12,17 @@ public enum OptionSetting {
     DIRECTION_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
     ROTATION_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
     SEED_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
-    CHUNK_IS_NULL_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
     CHUNK_STATUS_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
-    CHUNK_IDENTIFIERS_VISIBILITY(Visibility.WHEN_SCREEN_OPEN);
+    CHUNK_IDENTIFIERS_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
+    
+    FPS_COLOR(ColorOption.RED),
+    POSITION_COLOR(ColorOption.WHITE),
+    CHUNK_POSITION_COLOR(ColorOption.WHITE),
+    DIRECTION_COLOR(ColorOption.WHITE),
+    ROTATION_COLOR(ColorOption.GRAY),
+    SEED_COLOR(ColorOption.GRAY),
+    CHUNK_STATUS_COLOR(ColorOption.GREEN),
+    CHUNK_IDENTIFIERS_COLOR(ColorOption.GREEN);
 
     public static void setIfPresent(String name, String value) {
         try {

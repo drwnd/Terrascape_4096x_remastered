@@ -3,6 +3,7 @@ package renderables;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import player.rendering.DebugScreenLine;
 import rendering_api.Window;
 import settings.*;
 
@@ -41,6 +42,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
         for (OptionToggle option : options) option.move(offset);
 
         for (UiButton resetButton : resetButtons) resetButton.move(offset);
+        for (Renderable renderable : movingRenderables) renderable.move(offset);
     }
 
     public void setSelectedSlider(Slider slider) {
@@ -58,7 +60,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
     public void addSlider(FloatSetting setting) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount);
 
         Slider slider = new Slider(sizeToParent, offsetToParent, setting);
         addRenderable(slider);
@@ -72,7 +74,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
     public void addKeySelector(KeySetting setting) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount);
 
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting);
         addRenderable(keySelector);
@@ -86,7 +88,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
     public void addToggle(ToggleSetting setting) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount);
 
         Toggle toggle = new Toggle(sizeToParent, offsetToParent, setting);
         addRenderable(toggle);
@@ -100,7 +102,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
     public void addOption(OptionSetting setting) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.35f, 1.0f - 0.15f * settingsCount);
 
         OptionToggle option = new OptionToggle(sizeToParent, offsetToParent, setting);
         addRenderable(option);
@@ -111,10 +113,36 @@ public final class SettingsRenderable extends UiBackgroundElement {
         });
     }
 
+    public void addDebugLineSetting(DebugScreenLine debugLine) {
+        settingsCount++;
+
+        Vector2f sizeToParent = new Vector2f(0.15f, 0.1f);
+        float yOffset = 1.0f - 0.15f * settingsCount;
+
+        TextElement nameDisplay = new TextElement(new Vector2f(0.225f, 0), new Vector2f(0.375f, yOffset + 0.05f), debugLine.name());
+        nameDisplay.allowScaling(false);
+        OptionToggle colorOption = new OptionToggle(sizeToParent, new Vector2f(0.6f, yOffset), debugLine.color());
+        OptionToggle visibilityOption = new OptionToggle(sizeToParent, new Vector2f(0.8f, yOffset), debugLine.visibility());
+
+        addRenderable(nameDisplay);
+        addRenderable(colorOption);
+        addRenderable(visibilityOption);
+
+        movingRenderables.add(nameDisplay);
+        options.add(colorOption);
+        options.add(visibilityOption);
+
+        createResetButton(settingsCount).setAction((Vector2i cursorPos, int button, int action) -> {
+            if (action != GLFW.GLFW_PRESS) return;
+            colorOption.setToDefault();
+            visibilityOption.setToDefault();
+        });
+    }
+
 
     private UiButton createResetButton(int counter) {
         Vector2f sizeToParent = new Vector2f(0.1f, 0.1f);
-        Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter + input.getScroll());
+        Vector2f offsetToParent = new Vector2f(0.225f, 1.0f - 0.15f * counter);
         UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
 
         TextElement text = new TextElement(new Vector2f(0.15f, 0.5f), "Reset");
@@ -198,4 +226,5 @@ public final class SettingsRenderable extends UiBackgroundElement {
     private final ArrayList<OptionToggle> options = new ArrayList<>();
 
     private final ArrayList<UiButton> resetButtons = new ArrayList<>();
+    private final ArrayList<Renderable> movingRenderables = new ArrayList<>();
 }

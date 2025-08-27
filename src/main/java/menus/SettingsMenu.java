@@ -3,12 +3,15 @@ package menus;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import player.rendering.DebugScreenLine;
 import renderables.*;
 import rendering_api.Window;
 import settings.FloatSetting;
 import settings.KeySetting;
 import settings.OptionSetting;
 import settings.ToggleSetting;
+
+import java.util.ArrayList;
 
 public final class SettingsMenu extends UiBackgroundElement {
 
@@ -22,40 +25,60 @@ public final class SettingsMenu extends UiBackgroundElement {
         Vector2f sizeToParent = new Vector2f(0.6f, 0.1f);
         Vector2f offsetToParent = new Vector2f(0.05f, 0.5f);
 
-        UiButton everythingSectionButton = new UiButton(sizeToParent, new Vector2f(0.35f, 0.85f), getSelectSectionButtonAction(getEverythingSection()));
+        UiButton everythingSectionButton = new UiButton(sizeToParent, new Vector2f(0.35f, 0.85f), getSelectSectionButtonAction(createEverythingSection()));
         text = new TextElement(offsetToParent, "Everything");
         everythingSectionButton.addRenderable(text);
 
-        UiButton controlsSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.7f), getSelectSectionButtonAction(getControlsSection()));
+        UiButton controlsSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.7f), getSelectSectionButtonAction(createControlsSection()));
         text = new TextElement(offsetToParent, "Controls");
         controlsSection.addRenderable(text);
 
-        UiButton renderingSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.55f), getSelectSectionButtonAction(getRenderingSection()));
+        UiButton renderingSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.55f), getSelectSectionButtonAction(createRenderingSection()));
         text = new TextElement(offsetToParent, "Rendering");
         renderingSection.addRenderable(text);
 
-        UiButton uiSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.4f), getSelectSectionButtonAction(getUiSection()));
+        UiButton uiSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.4f), getSelectSectionButtonAction(createUiSection()));
         text = new TextElement(offsetToParent, "Ui Customization");
         uiSection.addRenderable(text);
 
-        UiButton soundSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.25f), getSelectSectionButtonAction(getSoundSection()));
+        UiButton soundSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.25f), getSelectSectionButtonAction(createSoundSection()));
         text = new TextElement(offsetToParent, "Sound");
         soundSection.addRenderable(text);
 
-        UiButton debugSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.1f), getSelectSectionButtonAction(getDebugSection()));
+        UiButton debugSection = new UiButton(sizeToParent, new Vector2f(0.35f, 0.1f), getSelectSectionButtonAction(createDebugSection()));
         text = new TextElement(offsetToParent, "Debug");
         debugSection.addRenderable(text);
 
+        UiButton debugScreenSection = new UiButton(sizeToParent, new Vector2f(0.35f, -0.05f), getSelectSectionButtonAction(createDebugScreenSection()));
+        text = new TextElement(offsetToParent, "Debug Screen");
+        debugScreenSection.addRenderable(text);
+
         addRenderable(backButton);
+
         addRenderable(everythingSectionButton);
         addRenderable(controlsSection);
         addRenderable(renderingSection);
         addRenderable(uiSection);
         addRenderable(soundSection);
         addRenderable(debugSection);
+        addRenderable(debugScreenSection);
+
+        sectionButtons.add(everythingSectionButton);
+        sectionButtons.add(controlsSection);
+        sectionButtons.add(renderingSection);
+        sectionButtons.add(uiSection);
+        sectionButtons.add(soundSection);
+        sectionButtons.add(debugSection);
+        sectionButtons.add(debugScreenSection);
     }
 
-    private SettingsRenderable getEverythingSection() {
+    public void scrollSectionButtons(float scroll) {
+        Vector2f offset = new Vector2f(0, scroll);
+
+        for (Renderable renderable : sectionButtons) renderable.move(offset);
+    }
+
+    private SettingsRenderable createEverythingSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         for (FloatSetting setting : FloatSetting.values()) section.addSlider(setting);
@@ -66,7 +89,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private SettingsRenderable getControlsSection() {
+    private SettingsRenderable createControlsSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addToggle(ToggleSetting.SCROLL_HOT_BAR);
@@ -105,7 +128,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private SettingsRenderable getRenderingSection() {
+    private SettingsRenderable createRenderingSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addSlider(FloatSetting.FOV);
@@ -115,7 +138,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private SettingsRenderable getUiSection() {
+    private SettingsRenderable createUiSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addSlider(FloatSetting.GUI_SIZE);
@@ -125,7 +148,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private SettingsRenderable getSoundSection() {
+    private SettingsRenderable createSoundSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addSlider(FloatSetting.MASTER_AUDIO);
@@ -138,7 +161,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private SettingsRenderable getDebugSection() {
+    private SettingsRenderable createDebugSection() {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addKeySelector(KeySetting.DEBUG_MENU);
@@ -158,9 +181,20 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
+    private SettingsRenderable createDebugScreenSection() {
+        SettingsRenderable section = new SettingsRenderable();
+
+        for (DebugScreenLine debugLine : DebugScreenLine.getDebugLines()) section.addDebugLineSetting(debugLine);
+
+        return section;
+    }
+
     @Override
     public void setOnTop() {
-        Window.setInput(new SettingsMenuInput(this));
+        float scroll = input == null ? 0.0f : input.getScroll();
+        input = new SettingsMenuInput(this);
+        input.setScroll(scroll);
+        Window.setInput(input);
     }
 
     private Clickable getBackButtonAction() {
@@ -176,4 +210,7 @@ public final class SettingsMenu extends UiBackgroundElement {
             Window.setTopRenderable(section);
         };
     }
+
+    private SettingsMenuInput input;
+    private final ArrayList<UiButton> sectionButtons = new ArrayList<>();
 }

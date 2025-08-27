@@ -10,6 +10,14 @@ public final class SettingsMenuInput extends Input {
         this.menu = menu;
     }
 
+    public float getScroll() {
+        return scroll;
+    }
+
+    public void setScroll(float scroll) {
+        this.scroll = scroll;
+    }
+
     @Override
     public void setInputMode() {
         setStandardInputMode();
@@ -30,7 +38,11 @@ public final class SettingsMenuInput extends Input {
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
+        float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0f);
+        menu.scrollSectionButtons(newScroll - scroll);
+        scroll = newScroll;
 
+        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
     }
 
     @Override
@@ -44,4 +56,5 @@ public final class SettingsMenuInput extends Input {
     }
 
     private final SettingsMenu menu;
+    private float scroll = 0;
 }
