@@ -2,7 +2,7 @@ package settings.optionSettings;
 
 import java.awt.*;
 
-public enum ColorOption implements Option<ColorOption> {
+public enum ColorOption implements Option {
 
     WHITE(Color.WHITE),
     LIGHT_GRAY(Color.LIGHT_GRAY),

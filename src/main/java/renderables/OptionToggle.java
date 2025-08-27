@@ -27,7 +27,7 @@ public class OptionToggle extends UiButton {
         return setting;
     }
 
-    public Option<?> getValue() {
+    public Option getValue() {
         return value;
     }
 
@@ -36,7 +36,7 @@ public class OptionToggle extends UiButton {
     }
 
 
-    private void setValue(Option<?> value) {
+    private void setValue(Option value) {
         this.value = value;
         textElement.setText(value.name());
     }
@@ -44,11 +44,12 @@ public class OptionToggle extends UiButton {
     private Clickable getAction() {
         return (Vector2i cursorPos, int button, int action) -> {
             if (action != GLFW.GLFW_PRESS) return;
-            setValue(value.next());
+            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) setValue(value.next());
+            if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) setValue(value.previous());
         };
     }
 
-    private Option<?> value;
+    private Option value;
     private final OptionSetting setting;
     private final TextElement textElement;
 }

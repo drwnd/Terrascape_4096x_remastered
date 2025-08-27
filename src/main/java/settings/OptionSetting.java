@@ -28,7 +28,7 @@ public enum OptionSetting {
         try {
             OptionSetting setting = valueOf(name);
 
-            Option<?> savedValue = setting.defaultValue.value(value);
+            Option savedValue = setting.defaultValue.value(value);
 
             if (savedValue != null) setting.setValue(savedValue);
         } catch (IllegalArgumentException ignore) {
@@ -36,23 +36,23 @@ public enum OptionSetting {
         }
     }
 
-    OptionSetting(Option<?> defaultValue) {
+    OptionSetting(Option defaultValue) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
     }
 
-    void setValue(Option<?> value) {
+    void setValue(Option value) {
         this.value = value;
     }
 
-    public Option<?> value() {
+    public Option value() {
         return value;
     }
 
-    public Option<?> defaultValue() {
+    public Option defaultValue() {
         return defaultValue;
     }
 
-    private Option<?> value;
-    private final Option<?> defaultValue;
+    private Option value;
+    private final Option defaultValue;
 }

@@ -19,7 +19,7 @@ public final class Settings {
         setting.setValue(value);
     }
 
-    public static void update(OptionSetting setting, Option<?> value) {
+    public static void update(OptionSetting setting, Option value) {
         setting.setValue(value);
     }
 

@@ -176,8 +176,6 @@ public final class SettingsMenu extends UiBackgroundElement {
 
         section.addSlider(FloatSetting.REACH);
 
-        section.addOption(OptionSetting.FPS_VISIBILITY);
-
         return section;
     }
 
