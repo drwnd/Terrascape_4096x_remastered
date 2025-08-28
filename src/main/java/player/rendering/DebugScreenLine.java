@@ -5,6 +5,7 @@ import assets.identifiers.ShaderIdentifier;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import player.interaction.Target;
 import renderables.TextElement;
 import rendering_api.shaders.TextShader;
 import server.Chunk;
@@ -50,22 +51,31 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
         lines.add(new DebugScreenLine(OptionSetting.POSITION_VISIBILITY, OptionSetting.POSITION_COLOR, () -> {
             Position playerPosition = Game.getPlayer().getPosition();
             return "Position %s, Fraction %s".formatted(playerPosition.intPositionToString(), playerPosition.fractionToString());
-        },"Player Position"));
+        }, "Player Position"));
 
         lines.add(new DebugScreenLine(OptionSetting.CHUNK_POSITION_VISIBILITY, OptionSetting.CHUNK_POSITION_COLOR, () -> {
             Position playerPosition = Game.getPlayer().getPosition();
             return "Chunk Position %s, In Chunk Position %s".formatted(playerPosition.chunkCoordinateToString(), playerPosition.inChunkPositionToString());
-        },"Chunk Position"));
+        }, "Chunk Position"));
 
         lines.add(new DebugScreenLine(OptionSetting.DIRECTION_VISIBILITY, OptionSetting.DIRECTION_COLOR, () -> {
             Vector3f direction = Game.getPlayer().getCamera().getDirection();
             return "Direction X:%s, Y:%s, Z:%s".formatted(direction.x, direction.y, direction.z);
-        },"Player Direction"));
+        }, "Player Direction"));
 
         lines.add(new DebugScreenLine(OptionSetting.ROTATION_VISIBILITY, OptionSetting.ROTATION_COLOR, () -> {
             Vector3f rotation = Game.getPlayer().getCamera().getRotation();
             return "Rotation Pitch:%s, Yaw:%s, Roll:%s".formatted(rotation.x, rotation.y, rotation.z);
-        },"Player Rotation"));
+        }, "Player Rotation"));
+
+        lines.add(new DebugScreenLine(OptionSetting.TARGET_VISIBILITY, OptionSetting.TARGET_COLOR, () -> {
+            Position playerPositon = Game.getPlayer().getPosition();
+            Vector3f playerDirection = Game.getPlayer().getCamera().getDirection();
+            Target target = Target.getTarget(playerPositon, playerDirection);
+
+            if (target == null) return "Nothing targeted.";
+            return target.toString();
+        }, "Target Information"));
 
         lines.add(new DebugScreenLine(OptionSetting.SEED_VISIBILITY, OptionSetting.SEED_COLOR, () -> "Seed: %s".formatted(WorldGeneration.SEED),
                 "Seed"));
@@ -76,7 +86,7 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
 
             if (chunk == null) return "Chunk is null";
             return "Current Chunk generated:%s, meshed:%s".formatted(chunk.isGenerated(), Game.getPlayer().getMeshCollector().isMeshed(chunk.INDEX, 0));
-        },"Chunk status"));
+        }, "Chunk status"));
 
         lines.add(new DebugScreenLine(OptionSetting.CHUNK_IDENTIFIERS_VISIBILITY, OptionSetting.CHUNK_IDENTIFIERS_COLOR, () -> {
             Vector3i chunkCoordinate = Game.getPlayer().getPosition().getChunkCoordinate();
@@ -84,7 +94,7 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
 
             if (chunk == null) return "Chunk is null";
             return "Chunk Index:%s, Chunk ID:%s".formatted(chunk.INDEX, chunk.ID);
-        },"Chunk Identifiers"));
+        }, "Chunk Identifiers"));
 
         return lines;
     }

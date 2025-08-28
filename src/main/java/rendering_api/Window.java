@@ -117,17 +117,21 @@ public final class Window {
         return height;
     }
 
+    public static float getAspectRatio() {
+        return (float) width / height;
+    }
+
     public static long getWindow() {
         return window;
     }
 
-    public static void setTopRenderable(Renderable element) {
+    public static void pushRenderable(Renderable element) {
         renderablesStack.add(element);
         element.setOnTop();
         GL46.glPolygonMode(GL46.GL_FRONT_AND_BACK, GL46.GL_FILL);
     }
 
-    public static void removeTopRenderable() {
+    public static void popRenderable() {
         renderablesStack.removeLast();
         if (renderablesStack.isEmpty()) GLFW.glfwSetWindowShouldClose(window, true);
         else renderablesStack.getLast().setOnTop();

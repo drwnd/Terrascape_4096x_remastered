@@ -2,18 +2,12 @@ package server;
 
 import utils.Utils;
 
-import static utils.Constants.RENDERED_WORLD_HEIGHT;
-import static utils.Constants.RENDERED_WORLD_WIDTH;
+import static utils.Constants.*;
 
 public final class World {
 
     public World() {
         chunks = new Chunk[RENDERED_WORLD_WIDTH * RENDERED_WORLD_HEIGHT * RENDERED_WORLD_WIDTH];
-        server = new Server();
-    }
-
-    public void init() {
-        startTicks();
     }
 
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ, int lod) {
@@ -35,6 +29,12 @@ public final class World {
         chunks[chunk.getIndex()] = chunk;
     }
 
+    public byte getMaterial(int x, int y, int z, int lod) {
+        Chunk chunk = getChunk(x >> CHUNK_SIZE_BITS, y >> CHUNK_SIZE_BITS, z >> CHUNK_SIZE_BITS, lod);
+        if (chunk == null) return OUT_OF_WORLD;
+        return chunk.getSaveMaterial(x & CHUNK_SIZE_MASK, y & CHUNK_SIZE_MASK, z & CHUNK_SIZE_MASK);
+    }
+
     public void setNull(int chunkIndex, int lod) {
         Chunk previousChunk = chunks[chunkIndex];
         if (previousChunk != null) previousChunk.cleanUp();
@@ -42,23 +42,10 @@ public final class World {
         chunks[chunkIndex] = null;
     }
 
-    public void pauseTicks() {
-        server.pauseTicks();
-    }
-
-    public void startTicks() {
-        server.startTicks();
-    }
-
     public void cleanUp() {
-        pauseTicks();
-        server.cleanUp();
+        for (Chunk chunk : chunks) if (chunk != null) chunk.cleanUp();
     }
 
-    public Server getServer() {
-        return server;
-    }
 
     private final Chunk[] chunks;
-    private final Server server;
 }

@@ -24,7 +24,7 @@ public final class ChunkGenerator {
             executor.getQueue().clear();
         }
         executor.getQueue().clear();
-        Game.getWorld().getServer().unloadDistantChunks(playerChunkPosition);
+        Game.getServer().unloadDistantChunks(playerChunkPosition);
 
         submitTasks(playerChunkPosition.x, playerChunkPosition.y, playerChunkPosition.z);
     }

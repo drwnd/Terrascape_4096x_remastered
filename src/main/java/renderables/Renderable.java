@@ -125,6 +125,10 @@ public abstract class Renderable {
         this.offsetToParent.set(offsetToParent);
     }
 
+    public void setSizeToParent(Vector2f sizeToParent) {
+        this.sizeToParent.set(sizeToParent);
+    }
+
     public boolean isVisible() {
         return isVisible;
     }

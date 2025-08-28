@@ -21,7 +21,7 @@ public final class Player {
         movement = new Movement(new Vector3f());
         renderer = new Renderer();
 
-        Window.setTopRenderable(renderer);
+        Window.pushRenderable(renderer);
         setInput();
     }
 
@@ -29,7 +29,7 @@ public final class Player {
         meshCollector.uploadAllMeshes();
         meshCollector.deleteOldMeshes();
 
-        float fraction = Game.getWorld().getServer().getCurrentGameTickFraction();
+        float fraction = Game.getServer().getCurrentGameTickFraction();
         fraction = Math.clamp(fraction, 0.0f, 1.0f);
 
         synchronized (this) {

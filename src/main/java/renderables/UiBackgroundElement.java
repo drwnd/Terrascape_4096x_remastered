@@ -20,7 +20,7 @@ public class UiBackgroundElement extends Renderable {
         Texture background = AssetManager.getTexture(TextureIdentifier.GUI_ELEMENT_BACKGROUND);
         shader.bind();
         shader.setUniform("rimWidth", FloatSetting.RIM_THICKNESS.value() * FloatSetting.GUI_SIZE.value());
-        shader.setUniform("aspectRatio", (float) Window.getWidth() / Window.getHeight());
+        shader.setUniform("aspectRatio", Window.getAspectRatio());
         shader.drawQuad(position, size, background);
     }
 

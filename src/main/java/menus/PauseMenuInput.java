@@ -40,8 +40,8 @@ public class PauseMenuInput extends Input {
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-            Window.removeTopRenderable();
-            Game.getWorld().startTicks();
+            Window.popRenderable();
+            Game.getServer().startTicks();
             Game.getPlayer().setInput();
         }
     }

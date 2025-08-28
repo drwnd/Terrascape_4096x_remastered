@@ -10,8 +10,11 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
 import player.Player;
 import renderables.Renderable;
+import renderables.UiElement;
+import rendering_api.Window;
 import rendering_api.shaders.Shader;
 import server.Game;
+import settings.FloatSetting;
 import settings.ToggleSetting;
 import utils.Position;
 import utils.Transformation;
@@ -26,6 +29,8 @@ public final class Renderer extends Renderable {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         allowScaling(false);
         debugLines = DebugScreenLine.getDebugLines();
+        crosshair = new UiElement(new Vector2f(), new Vector2f(), TextureIdentifier.CROSSHAIR);
+        addRenderable(crosshair);
     }
 
     public void toggleDebugScreen() {
@@ -52,10 +57,14 @@ public final class Renderer extends Renderable {
         renderDebugInfo();
     }
 
-    private static void setupRenderState() {
+    private void setupRenderState() {
         Game.getPlayer().getCamera().updateProjectionMatrix();
         GL46.glPolygonMode(GL46.GL_FRONT_AND_BACK, ToggleSetting.X_RAY.value() ? GL46.GL_LINE : GL46.GL_FILL);
         GLFW.glfwSwapInterval(ToggleSetting.V_SYNC.value() ? 1 : 0);
+
+        float crosshairSize = FloatSetting.CROSSHAIR_SIZE.value();
+        crosshair.setOffsetToParent(new Vector2f(0.5f - crosshairSize * 0.5f, 0.5f - crosshairSize * 0.5f * Window.getAspectRatio()));
+        crosshair.setSizeToParent(new Vector2f(crosshairSize, crosshairSize * Window.getAspectRatio()));
     }
 
     private static void renderSkybox(Camera camera) {
@@ -164,4 +173,5 @@ public final class Renderer extends Renderable {
     private boolean debugScreenOpen = false;
     private final ArrayList<Long> frameTimes = new ArrayList<>();
     private final ArrayList<DebugScreenLine> debugLines;
+    private final Renderable crosshair;
 }

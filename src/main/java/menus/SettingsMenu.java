@@ -132,6 +132,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addSlider(FloatSetting.FOV);
+        section.addSlider(FloatSetting.CROSSHAIR_SIZE);
 
         section.addToggle(ToggleSetting.DO_SHADOW_MAPPING);
 
@@ -198,14 +199,14 @@ public final class SettingsMenu extends UiBackgroundElement {
     private Clickable getBackButtonAction() {
         return (Vector2i pixelCoordinate, int button, int action) -> {
             if (action != GLFW.GLFW_PRESS) return;
-            Window.removeTopRenderable();
+            Window.popRenderable();
         };
     }
 
     private Clickable getSelectSectionButtonAction(SettingsRenderable section) {
         return (Vector2i pixelCoordinate, int button, int action) -> {
             if (action != GLFW.GLFW_PRESS) return;
-            Window.setTopRenderable(section);
+            Window.pushRenderable(section);
         };
     }
 

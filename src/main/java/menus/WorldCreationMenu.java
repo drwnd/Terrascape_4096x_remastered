@@ -40,7 +40,7 @@ public final class WorldCreationMenu extends UiBackgroundElement {
     }
 
     private static Runnable getBackButtonRunnable() {
-        return Window::removeTopRenderable;
+        return Window::popRenderable;
     }
 
     private static Runnable getCreateButtonRunnable(TextField nameField, TextField seedField) {
@@ -66,7 +66,7 @@ public final class WorldCreationMenu extends UiBackgroundElement {
                 throw new RuntimeException(e);
             }
 
-            Window.removeTopRenderable();
+            Window.popRenderable();
         };
     }
 

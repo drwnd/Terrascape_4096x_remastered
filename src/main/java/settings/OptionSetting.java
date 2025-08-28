@@ -14,7 +14,8 @@ public enum OptionSetting {
     SEED_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
     CHUNK_STATUS_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
     CHUNK_IDENTIFIERS_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
-    
+    TARGET_VISIBILITY(Visibility.WHEN_SCREEN_OPEN),
+
     FPS_COLOR(ColorOption.RED),
     POSITION_COLOR(ColorOption.WHITE),
     CHUNK_POSITION_COLOR(ColorOption.WHITE),
@@ -22,7 +23,8 @@ public enum OptionSetting {
     ROTATION_COLOR(ColorOption.GRAY),
     SEED_COLOR(ColorOption.GRAY),
     CHUNK_STATUS_COLOR(ColorOption.GREEN),
-    CHUNK_IDENTIFIERS_COLOR(ColorOption.GREEN);
+    CHUNK_IDENTIFIERS_COLOR(ColorOption.GREEN),
+    TARGET_COLOR(ColorOption.BLUE);
 
     public static void setIfPresent(String name, String value) {
         try {

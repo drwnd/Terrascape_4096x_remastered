@@ -18,7 +18,7 @@ public final class MainMenu extends UiBackgroundElement {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         Vector2f sizeToParent = new Vector2f(0.25f, 0.1f);
 
-        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::removeTopRenderable);
+        UiButton closeApplicationButton = new UiButton(sizeToParent, new Vector2f(0.05f, 0.85f), Window::popRenderable);
         TextElement text = new TextElement(new Vector2f(0.05f, 0.5f), "Quit Game");
         closeApplicationButton.addRenderable(text);
 
@@ -121,11 +121,11 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     private static Runnable getSettingsRunnable() {
-        return () -> Window.setTopRenderable(new SettingsMenu());
+        return () -> Window.pushRenderable(new SettingsMenu());
     }
 
     private static Runnable getCreateWorldRunnable() {
-        return () -> Window.setTopRenderable(new WorldCreationMenu());
+        return () -> Window.pushRenderable(new WorldCreationMenu());
     }
 
     private static Runnable getPlayWorldRunnable(File saveFile) {

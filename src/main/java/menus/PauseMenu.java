@@ -31,7 +31,7 @@ public final class PauseMenu extends UiElement {
     @Override
     public void setOnTop() {
         Window.setInput(new PauseMenuInput(this));
-        Game.getWorld().pauseTicks();
+        Game.getServer().pauseTicks();
     }
 
     private static Runnable getQuitButtonAction() {
@@ -39,13 +39,13 @@ public final class PauseMenu extends UiElement {
     }
 
     private static Runnable getSettingsButtonAction() {
-        return () -> Window.setTopRenderable(new SettingsMenu());
+        return () -> Window.pushRenderable(new SettingsMenu());
     }
 
     private static Runnable getPlayButtonAction() {
         return () -> {
-            Window.removeTopRenderable();
-            Game.getWorld().startTicks();
+            Window.popRenderable();
+            Game.getServer().startTicks();
             Game.getPlayer().setInput();
         };
     }

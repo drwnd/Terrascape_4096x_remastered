@@ -19,11 +19,11 @@ public final class Server {
     }
 
 
-    void pauseTicks() {
+    public void pauseTicks() {
         if (executor != null) executor.shutdownNow();
     }
 
-    void startTicks() {
+    public void startTicks() {
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(this::executeGameTickCatchException, 0, NANOSECONDS_PER_GAME_TICK, TimeUnit.NANOSECONDS);
 

@@ -19,8 +19,7 @@ public final class Camera {
     }
 
     public void updateProjectionMatrix() {
-        float aspectRatio = (float) Window.getWidth() / Window.getHeight();
-        projectionMatrix.setPerspective((float) Math.toRadians(FloatSetting.FOV.value()), aspectRatio, Z_NEAR, Z_FAR);
+        projectionMatrix.setPerspective((float) Math.toRadians(FloatSetting.FOV.value()), Window.getAspectRatio(), Z_NEAR, Z_FAR);
     }
 
     public Vector3f getDirection() {

@@ -54,7 +54,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
             selectedSlider = null;
             return;
         }
-        Window.removeTopRenderable();
+        Window.popRenderable();
     }
 
     public void addSlider(FloatSetting setting) {
@@ -192,7 +192,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
             for (OptionToggle option : options) Settings.update(option.getSetting(), option.getValue());
 
             Settings.writeToFile();
-            Window.removeTopRenderable();
+            Window.popRenderable();
         };
     }
 
@@ -212,7 +212,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
             for (Toggle toggle : toggles) toggle.matchSetting();
             for (OptionToggle option : options) option.matchSetting();
 
-            Window.removeTopRenderable();
+            Window.popRenderable();
         };
     }
 

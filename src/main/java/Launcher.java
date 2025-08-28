@@ -7,7 +7,7 @@ public final class Launcher {
     public static void main(String[] args) {
         Settings.loadFromFile();
         Window.init("Terrascape * 4096 remastered");
-        Window.setTopRenderable(new MainMenu());
+        Window.pushRenderable(new MainMenu());
         Window.renderLoop();
         Window.cleanUp();
     }

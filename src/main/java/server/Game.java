@@ -13,17 +13,20 @@ public final class Game {
 
         player = FileManager.loadPlayer();
         world = new World();
-        world.init();
+        server = new Server();
+        server.startTicks();
     }
 
     public static void quit() {
-        Window.removeTopRenderable();
+        Window.popRenderable();
         world.cleanUp();
         player.cleanUp();
-        Window.removeTopRenderable();
+        server.cleanUp();
+        Window.popRenderable();
 
         player = null;
         world = null;
+        server = null;
     }
 
     public static Player getPlayer() {
@@ -34,6 +37,11 @@ public final class Game {
         return world;
     }
 
+    public static Server getServer() {
+        return server;
+    }
+
     private static Player player;
     private static World world;
+    private static Server server;
 }

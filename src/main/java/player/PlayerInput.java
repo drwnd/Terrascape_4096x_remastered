@@ -37,7 +37,7 @@ public final class PlayerInput extends Input {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
-        if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) Window.setTopRenderable(new PauseMenu());
+        if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) Window.pushRenderable(new PauseMenu());
         Game.getPlayer().registerKey(key, action);
     }
 
