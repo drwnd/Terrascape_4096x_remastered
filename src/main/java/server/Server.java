@@ -75,11 +75,11 @@ public final class Server {
             for (Chunk chunk : Game.getWorld().getLod(lod)) {
                 if (chunk == null) continue;
 
-                if (Utils.insideOfPlayerVisibility(lodPlayerX, lodPlayerY, lodPlayerZ, chunk.X, chunk.Y, chunk.Z))
-                    continue;
+                if (Utils.outsideRenderKeepDistance(lodPlayerX, lodPlayerY, lodPlayerZ, chunk.X, chunk.Y, chunk.Z))
+                    meshCollector.removeMesh(chunk.INDEX, chunk.LOD);
 
-                Game.getWorld().setNull(chunk.INDEX, chunk.LOD);
-                meshCollector.removeMesh(chunk.INDEX, chunk.LOD);
+                if (Utils.outsideChunkKeepDistance(lodPlayerX, lodPlayerY, lodPlayerZ, chunk.X, chunk.Y, chunk.Z))
+                    Game.getWorld().setNull(chunk.INDEX, chunk.LOD);
             }
         }
     }

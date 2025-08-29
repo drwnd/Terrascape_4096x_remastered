@@ -1,12 +1,12 @@
 package player.interaction;
 
+import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFW;
 import server.Game;
 import settings.FloatSetting;
 import settings.KeySetting;
 
-import static utils.Constants.AIR;
-import static utils.Constants.CHUNK_SIZE;
+import static utils.Constants.*;
 
 public final class InteractionHandler {
 
@@ -14,8 +14,8 @@ public final class InteractionHandler {
         if (action == GLFW.GLFW_PRESS && button == KeySetting.INCREASE_BREAK_PLACE_SIZE.value()) placeBreakSize = Math.min(CHUNK_SIZE, placeBreakSize << 1);
         if (action == GLFW.GLFW_PRESS && button == KeySetting.DECREASE_BREAK_PLACE_SIZE.value()) placeBreakSize = Math.max(1, placeBreakSize >> 1);
 
-        if (button == KeySetting.DESTROY.value()) destroyHeld = action == GLFW.GLFW_PRESS;
-        if (button == KeySetting.USE.value()) useHeld = action == GLFW.GLFW_PRESS;
+        if (button == KeySetting.DESTROY.value()) updateInfo(action, destroyInfo);
+        if (button == KeySetting.USE.value()) updateInfo(action, useInfo);
     }
 
     public void updateGameTick() {
@@ -23,28 +23,40 @@ public final class InteractionHandler {
         handleUse();
     }
 
+
     private void handleUse() {
-        long currentGameTick = Game.getServer().getCurrentGameTick();
-        if (!useHeld || currentGameTick - lastUseAction < FloatSetting.BREAK_PLACE_INTERVALL.value()) return;
-
-        Target target = Target.getPlayerTarget();
-        if (target == null) return;
-
         byte material = Game.getPlayer().getHeldMaterial();
-        if (Game.getServer().requestBreakPlaceInteraction(target.positionWithOffset(), placeBreakSize, material)) lastUseAction = currentGameTick;
+        handleUseDestroy(useInfo, material, true);
     }
 
     private void handleDestroy() {
+        handleUseDestroy(destroyInfo, AIR, false);
+    }
+
+    private void handleUseDestroy(PlaceDestroyInfo info, byte material, boolean offsetPostion) {
         long currentGameTick = Game.getServer().getCurrentGameTick();
-        if (!destroyHeld || currentGameTick - lastDestroyAction < FloatSetting.BREAK_PLACE_INTERVALL.value()) return;
+        if (!info.forceAction && (!info.buttonIsHeld || currentGameTick - info.lastAction < FloatSetting.BREAK_PLACE_INTERVALL.value())) return;
+        info.forceAction = false;
 
         Target target = Target.getPlayerTarget();
         if (target == null) return;
 
-        if (Game.getServer().requestBreakPlaceInteraction(target.position(), placeBreakSize, AIR)) lastDestroyAction = currentGameTick;
+        Vector3i position = offsetPostion ? target.offsetPosition() : target.position();
+        if (Game.getServer().requestBreakPlaceInteraction(position, placeBreakSize, material)) info.lastAction = currentGameTick;
     }
 
-    private boolean destroyHeld = false, useHeld = false;
-    private long lastDestroyAction, lastUseAction;
+    private void updateInfo(int action, PlaceDestroyInfo info) {
+        info.buttonIsHeld = action == GLFW.GLFW_PRESS;
+        if (info.buttonIsHeld) info.forceAction = true;
+    }
+
+    private final PlaceDestroyInfo useInfo = new PlaceDestroyInfo();
+    private final PlaceDestroyInfo destroyInfo = new PlaceDestroyInfo();
     private int placeBreakSize = 16;
+
+    private static class PlaceDestroyInfo {
+        public long lastAction = 0;
+        public boolean forceAction = false;
+        public boolean buttonIsHeld = false;
+    }
 }

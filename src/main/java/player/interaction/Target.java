@@ -75,12 +75,11 @@ public record Target(Vector3i position, int side, byte material) {
     }
 
 
-    public Vector3i positionWithOffset() {
+    public Vector3i offsetPosition() {
         return Utils.offsetByNormal(new Vector3i(position), side);
     }
 
-    @Override
-    public String toString() {
+    public String string() {
         return "Targeted Position:[X:%s, Y:%s, Z:%s], Intersected Side:%s, Targeted Material:%s".formatted(position.x, position.y, position.z, side, material);
     }
 }

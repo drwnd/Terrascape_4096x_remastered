@@ -140,6 +140,7 @@ public final class Renderer extends Renderable {
                 playerPosition.intPosition().z & ~CHUNK_SIZE_MASK);
         shader.setUniform("cameraPosition", playerPosition.getInChunkPosition());
         shader.setUniform("textureAtlas", 0);
+        shader.setUniform("time", 1.0f);
 
         GL46.glBindVertexArray(AssetManager.getVertexArray(VertexArrayIdentifier.SKYBOX).getID()); // Just bind something IDK
         GL46.glEnable(GL46.GL_DEPTH_TEST);

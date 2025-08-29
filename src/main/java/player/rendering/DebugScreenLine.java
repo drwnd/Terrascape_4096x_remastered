@@ -72,7 +72,7 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
             Target target = Target.getPlayerTarget();
 
             if (target == null) return "Nothing targeted.";
-            return target.toString();
+            return target.string();
         }, "Target Information"));
 
         lines.add(new DebugScreenLine(OptionSetting.SEED_VISIBILITY, OptionSetting.SEED_COLOR, () -> "Seed: %s".formatted(WorldGeneration.SEED),

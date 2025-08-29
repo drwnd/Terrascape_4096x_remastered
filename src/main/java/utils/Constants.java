@@ -16,8 +16,10 @@ public final class Constants {
     public static final byte NUMBER_OF_GENERATION_THREADS = 3;
     public static final byte RENDER_DISTANCE_XZ = 6;
     public static final byte RENDER_DISTANCE_Y = 6;
-    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 7;
-    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 7;
+    public static final byte RENDER_KEEP_DISTANCE = 2;
+
+    public static final byte RENDERED_WORLD_WIDTH = RENDER_DISTANCE_XZ * 2 + 3 + RENDER_KEEP_DISTANCE * 2;
+    public static final byte RENDERED_WORLD_HEIGHT = RENDER_DISTANCE_Y * 2 + 3 + RENDER_KEEP_DISTANCE * 2;
 
     public static final int LOD_COUNT = 1;
 

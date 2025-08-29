@@ -23,10 +23,16 @@ public final class Utils {
         return (chunkX * RENDERED_WORLD_WIDTH + chunkZ) * RENDERED_WORLD_HEIGHT + chunkY;
     }
 
-    public static boolean insideOfPlayerVisibility(int playerChunkX, int playerChunkY, int playerChunkZ, int chunkX, int chunkY, int chunkZ) {
-        return Math.abs(chunkX - playerChunkX) <= RENDER_DISTANCE_XZ + 2
-                && Math.abs(chunkZ - playerChunkZ) <= RENDER_DISTANCE_XZ + 2
-                && Math.abs(chunkY - playerChunkY) <= RENDER_DISTANCE_Y + 2;
+    public static boolean outsideChunkKeepDistance(int playerChunkX, int playerChunkY, int playerChunkZ, int chunkX, int chunkY, int chunkZ) {
+        return Math.abs(chunkX - playerChunkX) > RENDER_DISTANCE_XZ + RENDER_KEEP_DISTANCE + 1
+                || Math.abs(chunkZ - playerChunkZ) > RENDER_DISTANCE_XZ + RENDER_KEEP_DISTANCE + 1
+                || Math.abs(chunkY - playerChunkY) > RENDER_DISTANCE_Y + RENDER_KEEP_DISTANCE + 1;
+    }
+
+    public static boolean outsideRenderKeepDistance(int playerChunkX, int playerChunkY, int playerChunkZ, int chunkX, int chunkY, int chunkZ) {
+        return Math.abs(chunkX - playerChunkX) > RENDER_DISTANCE_XZ + RENDER_KEEP_DISTANCE
+                || Math.abs(chunkZ - playerChunkZ) > RENDER_DISTANCE_XZ + RENDER_KEEP_DISTANCE
+                || Math.abs(chunkY - playerChunkY) > RENDER_DISTANCE_Y + RENDER_KEEP_DISTANCE;
     }
 
     public static int mackEven(int value) {
