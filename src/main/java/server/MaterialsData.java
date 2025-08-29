@@ -59,20 +59,10 @@ public final class MaterialsData {
         }
     }
 
-    public void setToUncompressedMaterials(byte[] uncompressedMaterials) {
-        ByteArrayList data = new ByteArrayList(1000);
-        compressMaterials(data, uncompressedMaterials, CHUNK_SIZE_BITS - 1, 0, 0, 0, 0);
-        synchronized (this) {
-            this.data = new byte[data.size()];
-            data.copyInto(this.data, 0);
-        }
-    }
-
     public void storeMaterial(int inChunkX, int inChunkY, int inChunkZ, byte material, int size) {
         byte[] uncompressedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
         fillUncompressedMaterialsInto(uncompressedMaterials);
 
-        size = 1 << size;
         for (int x = 0; x < size; x++)
             for (int z = 0; z < size; z++)
                 for (int y = 0; y < size; y++)

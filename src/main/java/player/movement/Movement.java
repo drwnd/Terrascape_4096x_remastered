@@ -27,8 +27,8 @@ public final class Movement {
         velocity.normalize(max);
     }
 
-    public void registerKey(int key, int action) {
-        state.registerKeyInput(key, action);
+    public void handleInput(int button, int action) {
+        state.handleInput(button, action);
     }
 
     private MovementState state = new FlyingState();

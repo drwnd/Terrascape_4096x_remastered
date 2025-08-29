@@ -12,8 +12,9 @@ public final class Game {
         Material.init();
 
         player = FileManager.loadPlayer();
+        server = FileManager.loadServer();
         world = new World();
-        server = new Server();
+
         server.startTicks();
     }
 

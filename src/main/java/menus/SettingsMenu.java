@@ -176,6 +176,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         section.addToggle(ToggleSetting.V_SYNC);
 
         section.addSlider(FloatSetting.REACH);
+        section.addSlider(FloatSetting.BREAK_PLACE_INTERVALL);
 
         return section;
     }

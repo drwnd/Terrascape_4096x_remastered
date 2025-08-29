@@ -69,9 +69,7 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
         }, "Player Rotation"));
 
         lines.add(new DebugScreenLine(OptionSetting.TARGET_VISIBILITY, OptionSetting.TARGET_COLOR, () -> {
-            Position playerPositon = Game.getPlayer().getPosition();
-            Vector3f playerDirection = Game.getPlayer().getCamera().getDirection();
-            Target target = Target.getTarget(playerPositon, playerDirection);
+            Target target = Target.getPlayerTarget();
 
             if (target == null) return "Nothing targeted.";
             return target.toString();

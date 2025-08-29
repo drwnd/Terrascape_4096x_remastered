@@ -1,5 +1,7 @@
 package utils;
 
+import org.joml.Vector3i;
+
 import static utils.Constants.*;
 
 public final class Utils {
@@ -111,6 +113,18 @@ public final class Utils {
             result |= currentByte;
         }
         return result;
+    }
+
+    public static Vector3i offsetByNormal(Vector3i value, int side) {
+        switch (side) {
+            case NORTH -> value.add(0, 0, 1);
+            case TOP -> value.add(0, 1, 0);
+            case WEST -> value.add(1, 0, 0);
+            case SOUTH -> value.add(0, 0, -1);
+            case BOTTOM -> value.add(0, -1, 0);
+            case EAST -> value.add(-1, 0, 0);
+        }
+        return value;
     }
 
     private Utils() {

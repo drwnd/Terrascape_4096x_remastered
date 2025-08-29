@@ -13,7 +13,7 @@ public final class FollowDirectionState extends MovementState {
 
 
     @Override
-    protected void registerKeyInput(int key, int action) {
+    protected void handleInput(int key, int action) {
         if (key == KeySetting.TOGGLE_FLYING_FOLLOWING_MOVEMENT_STATE.value() && action == GLFW.GLFW_PRESS)
             next = new FlyingState();
     }

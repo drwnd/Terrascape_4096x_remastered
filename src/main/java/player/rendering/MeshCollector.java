@@ -53,6 +53,10 @@ public final class MeshCollector {
         else isMeshed[chunkIndex >> 6] &= ~(1L << chunkIndex);
     }
 
+    public void setMeshed(boolean meshed, int chunkX, int chunkY, int chunkZ, int lod) {
+        setMeshed(meshed, Utils.getChunkIndex(chunkX, chunkY, chunkZ), lod);
+    }
+
     public OpaqueModel[] getOpaqueModels(int lod) {
         return opaqueModels;
     }

@@ -17,5 +17,5 @@ public abstract class MovementState {
      */
     abstract void computeNextGameTickVelocity(Vector3f playerDirection, Position lastPositon, Vector3f inOutVelocity);
 
-    abstract void registerKeyInput(int key, int action);
+    abstract void handleInput(int key, int action);
 }

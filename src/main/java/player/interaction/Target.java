@@ -6,10 +6,17 @@ import server.Game;
 import server.Material;
 import settings.FloatSetting;
 import utils.Position;
+import utils.Utils;
 
 import static utils.Constants.*;
 
 public record Target(Vector3i position, int side, byte material) {
+
+    public static Target getPlayerTarget() {
+        Position playerPosition = Game.getPlayer().getPosition();
+        Vector3f playerDirection = Game.getPlayer().getCamera().getDirection();
+        return Target.getTarget(playerPosition, playerDirection);
+    }
 
     public static Target getTarget(Position origin, Vector3f dir) {
 
@@ -65,6 +72,11 @@ public record Target(Vector3i position, int side, byte material) {
             }
         }
         return null;
+    }
+
+
+    public Vector3i positionWithOffset() {
+        return Utils.offsetByNormal(new Vector3i(position), side);
     }
 
     @Override

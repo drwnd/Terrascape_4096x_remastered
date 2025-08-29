@@ -15,6 +15,10 @@ public final class FileManager {
         return new Player(new Position(new Vector3i(), new Vector3f()));
     }
 
+    public static Server loadServer() {
+        return new Server(0);
+    }
+
     public static void loadUniversalFiles(File saveFile) {
         if (!saveFile.exists()) //noinspection ResultOfMethodCallIgnored
             saveFile.mkdirs();
