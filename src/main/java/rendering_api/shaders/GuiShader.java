@@ -23,7 +23,14 @@ public class GuiShader extends Shader {
     }
 
     public void drawQuad(Vector2f position, Vector2f size, Texture texture) {
-        float guiSize = FloatSetting.GUI_SIZE.value();
+        drawQuadCustomScale(position, size, texture, FloatSetting.GUI_SIZE.value());
+    }
+
+    public void drawQuadNoGuiScale(Vector2f position, Vector2f size, Texture texture) {
+        drawQuadCustomScale(position, size, texture, 1.0f);
+    }
+
+    public void drawQuadCustomScale(Vector2f position, Vector2f size, Texture texture, float scale) {
         GuiElement quad = AssetManager.getGuiElement(GuiElementIdentifier.QUAD);
 
         GL46.glBindVertexArray(quad.getVao());
@@ -34,8 +41,8 @@ public class GuiShader extends Shader {
         GL46.glBindTexture(GL46.GL_TEXTURE_2D, texture.getID());
 
         setUniform("image", 0);
-        setUniform("position", (position.x - 0.5f) * guiSize, (position.y - 0.5f) * guiSize);
-        setUniform("size", size.x * guiSize, size.y * guiSize);
+        setUniform("position", (position.x - 0.5f) * scale, (position.y - 0.5f) * scale);
+        setUniform("size", size.x * scale, size.y * scale);
 
         GL46.glDrawArrays(GL46.GL_TRIANGLES, 0, quad.getVertexCount());
     }

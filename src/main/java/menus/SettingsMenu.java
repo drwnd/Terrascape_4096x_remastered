@@ -133,6 +133,7 @@ public final class SettingsMenu extends UiBackgroundElement {
 
         section.addSlider(FloatSetting.FOV);
         section.addSlider(FloatSetting.CROSSHAIR_SIZE);
+        section.addSlider(FloatSetting.HOTBAR_SIZE);
 
         section.addToggle(ToggleSetting.DO_SHADOW_MAPPING);
 
@@ -145,6 +146,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         section.addSlider(FloatSetting.GUI_SIZE);
         section.addSlider(FloatSetting.TEXT_SIZE);
         section.addSlider(FloatSetting.RIM_THICKNESS);
+        section.addSlider(FloatSetting.HOTBAR_INDICATOR_SCALER);
 
         return section;
     }

@@ -8,6 +8,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
+import player.Hotbar;
 import player.Player;
 import renderables.Renderable;
 import renderables.UiElement;
@@ -27,10 +28,24 @@ import static utils.Constants.*;
 public final class Renderer extends Renderable {
     public Renderer() {
         super(new Vector2f(1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        allowScaling(false);
+        setAllowFocusScaling(false);
         debugLines = DebugScreenLine.getDebugLines();
+
         crosshair = new UiElement(new Vector2f(), new Vector2f(), TextureIdentifier.CROSSHAIR);
+        crosshair.setScaleWithGuiSize(false);
+        crosshair.setAllowFocusScaling(false);
+
+        hotbar = new UiElement(new Vector2f(), new Vector2f(), TextureIdentifier.HOTBAR);
+        hotbar.setScaleWithGuiSize(false);
+        hotbar.setAllowFocusScaling(false);
+
+        hotBarSelectionIndicator = new UiElement(new Vector2f(), new Vector2f(), TextureIdentifier.HOTBAR_SELECTION_INDICATOR);
+        hotBarSelectionIndicator.setScaleWithGuiSize(false);
+        hotBarSelectionIndicator.setAllowFocusScaling(false);
+
         addRenderable(crosshair);
+        addRenderable(hotbar);                      // Order important here
+        addRenderable(hotBarSelectionIndicator);    // Order important here
     }
 
     public void toggleDebugScreen() {
@@ -65,6 +80,16 @@ public final class Renderer extends Renderable {
         float crosshairSize = FloatSetting.CROSSHAIR_SIZE.value();
         crosshair.setOffsetToParent(new Vector2f(0.5f - crosshairSize * 0.5f, 0.5f - crosshairSize * 0.5f * Window.getAspectRatio()));
         crosshair.setSizeToParent(new Vector2f(crosshairSize, crosshairSize * Window.getAspectRatio()));
+
+        float hotbarSize = FloatSetting.HOTBAR_SIZE.value();
+        hotbar.setOffsetToParent(new Vector2f(0.5f - hotbarSize * Hotbar.LENGTH * 0.5f, 0));
+        hotbar.setSizeToParent(new Vector2f(hotbarSize * Hotbar.LENGTH, hotbarSize * Window.getAspectRatio()));
+
+        float hotbarIndicatorScaler = FloatSetting.HOTBAR_INDICATOR_SCALER.value();
+        float scalingOffset = -(hotbarSize * hotbarIndicatorScaler - hotbarSize) * 0.5f;
+        hotBarSelectionIndicator.setOffsetToParent(new Vector2f(
+                0.5f + hotbarSize * (Game.getPlayer().getHotbar().getSelectedSlot() - Hotbar.LENGTH * 0.5f) + scalingOffset, scalingOffset * Window.getAspectRatio()));
+        hotBarSelectionIndicator.setSizeToParent(new Vector2f(hotbarSize * hotbarIndicatorScaler, hotbarSize * hotbarIndicatorScaler * Window.getAspectRatio()));
     }
 
     private static void renderSkybox(Camera camera) {
@@ -174,5 +199,5 @@ public final class Renderer extends Renderable {
     private boolean debugScreenOpen = false;
     private final ArrayList<Long> frameTimes = new ArrayList<>();
     private final ArrayList<DebugScreenLine> debugLines;
-    private final Renderable crosshair;
+    private final UiElement crosshair, hotbar, hotBarSelectionIndicator;
 }

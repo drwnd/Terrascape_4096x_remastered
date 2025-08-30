@@ -32,15 +32,15 @@ public abstract class Renderable {
 
     }
 
-    public void allowScaling(boolean allowScaling) {
-        this.allowScaling = allowScaling;
+    public void setAllowFocusScaling(boolean allowScaling) {
+        this.allowFocusScaling = allowScaling;
     }
 
     public final void render(Vector2f parentPosition, Vector2f parentSize) {
         if (!isVisible) return;
         Vector2f thisSize = new Vector2f(parentSize).mul(sizeToParent);
         Vector2f thisPosition = new Vector2f(parentPosition).add(new Vector2f(parentSize).mul(offsetToParent));
-        if (isFocused && allowScaling) scaleForFocused(thisPosition, thisSize);
+        if (isFocused && allowFocusScaling) scaleForFocused(thisPosition, thisSize);
 
         renderSelf(thisPosition, thisSize);
         for (Renderable child : children) child.render(thisPosition, thisSize);
@@ -134,7 +134,7 @@ public abstract class Renderable {
     }
 
     private final ArrayList<Renderable> children = new ArrayList<>();
-    private boolean isVisible = true, isFocused = false, allowScaling = true;
+    private boolean isVisible = true, isFocused = false, allowFocusScaling = true;
     private final Vector2f sizeToParent;
     private final Vector2f offsetToParent;
     private Renderable parent = DummyRenderable.dummy;

@@ -26,6 +26,7 @@ public final class InteractionHandler {
 
     private void handleUse() {
         byte material = Game.getPlayer().getHeldMaterial();
+        if (material == AIR) return;
         handleUseDestroy(useInfo, material, true);
     }
 

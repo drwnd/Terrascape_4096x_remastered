@@ -11,7 +11,7 @@ public final class Slider extends UiButton {
     public Slider(Vector2f sizeToParent, Vector2f offsetToParent, FloatSetting setting) {
         super(sizeToParent, offsetToParent);
         setAction(this::action);
-        allowScaling(false);
+        setAllowFocusScaling(false);
         this.setting = setting;
 
         slider = new UiBackgroundElement(new Vector2f(0.05f, 1.0f), new Vector2f(0.0f, 0.0f));

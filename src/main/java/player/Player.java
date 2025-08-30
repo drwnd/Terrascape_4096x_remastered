@@ -12,8 +12,6 @@ import server.Game;
 import settings.KeySetting;
 import utils.Position;
 
-import static utils.Constants.*;
-
 public final class Player {
 
     public Player(Position position) {
@@ -23,6 +21,7 @@ public final class Player {
         movement = new Movement(new Vector3f());
         renderer = new Renderer();
         interactionHandler = new InteractionHandler();
+        hotbar = new Hotbar();
 
         this.position = position;
         Window.pushRenderable(renderer);
@@ -56,12 +55,13 @@ public final class Player {
     public void handleInput(int button, int action) {
         movement.handleInput(button, action);
         interactionHandler.handleInput(button, action);
+        hotbar.handleInput(button, action);
         if (button == KeySetting.DEBUG_MENU.value() && action == GLFW.GLFW_PRESS) renderer.toggleDebugScreen();
     }
 
 
     public byte getHeldMaterial() {
-        return STONE;
+        return hotbar.contents[hotbar.getSelectedSlot()];
     }
 
     public MeshCollector getMeshCollector() {
@@ -82,6 +82,9 @@ public final class Player {
         }
     }
 
+    public Hotbar getHotbar() {
+        return hotbar;
+    }
 
     public void setInput() {
         Window.setInput(input);
@@ -97,6 +100,7 @@ public final class Player {
     private final Movement movement;
     private final Renderer renderer;
     private final InteractionHandler interactionHandler;
+    private final Hotbar hotbar;
 
     private Position position;
 }

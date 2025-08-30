@@ -120,7 +120,7 @@ public final class SettingsRenderable extends UiBackgroundElement {
         float yOffset = 1.0f - 0.15f * settingsCount;
 
         TextElement nameDisplay = new TextElement(new Vector2f(0.225f, 0), new Vector2f(0.375f, yOffset + 0.05f), debugLine.name());
-        nameDisplay.allowScaling(false);
+        nameDisplay.setAllowFocusScaling(false);
         OptionToggle colorOption = new OptionToggle(sizeToParent, new Vector2f(0.6f, yOffset), debugLine.color());
         OptionToggle visibilityOption = new OptionToggle(sizeToParent, new Vector2f(0.8f, yOffset), debugLine.visibility());
 
