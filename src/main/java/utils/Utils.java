@@ -1,5 +1,6 @@
 package utils;
 
+import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import static utils.Constants.*;
@@ -131,6 +132,32 @@ public final class Utils {
             case EAST -> value.add(-1, 0, 0);
         }
         return value;
+    }
+
+    public static Vector3f getDirection(Vector3f rotation) {
+
+        float rotationXRadians = (float) Math.toRadians(rotation.y);
+        float rotationYRadians = (float) Math.toRadians(rotation.x);
+
+        float x = (float) Math.sin(rotationXRadians);
+        float y = (float) -Math.sin(rotationYRadians);
+        float z = (float) -Math.cos(rotationXRadians);
+
+        float normalizer = (float) Math.sqrt(1 - y * y);
+
+        x *= normalizer;
+        z *= normalizer;
+
+        return new Vector3f(x, y, z);
+    }
+
+    public static Vector3f getHorizontalDirection(Vector3f rotation) {
+        float rotationXRadians = (float) Math.toRadians(rotation.y);
+
+        float x = (float) Math.sin(rotationXRadians);
+        float z = (float) -Math.cos(rotationXRadians);
+
+        return new Vector3f(x, 0, z);
     }
 
     private Utils() {

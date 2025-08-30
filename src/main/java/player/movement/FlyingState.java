@@ -2,15 +2,17 @@ package player.movement;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import utils.Position;
 import rendering_api.Input;
 import settings.KeySetting;
+import utils.Position;
+import utils.Utils;
 
 public final class FlyingState extends MovementState {
     @Override
-    protected void computeNextGameTickVelocity(Vector3f playerDirection, Position lastPositon, Vector3f inOutVelocity) {
+    protected void computeNextGameTickVelocity(Vector3f playerRotation, Position lastPositon, Vector3f inOutVelocity) {
 
         Vector3f velocityChange = new Vector3f();
+        Vector3f playerDirection = Utils.getHorizontalDirection(playerRotation);
 
         if (Input.isKeyPressed(KeySetting.MOVE_FORWARD))
             velocityChange.add(playerDirection.x * HORIZONTAL_FLY_SPEED, 0, playerDirection.z * HORIZONTAL_FLY_SPEED);

@@ -9,10 +9,10 @@ public final class Movement {
         velocity = initialVelocity;
     }
 
-    public Position computeNextGameTickPosition(Position lastPosition, Vector3f direction) {
+    public Position computeNextGameTickPosition(Position lastPosition, Vector3f rotation) {
         Position position = new Position(lastPosition);
         position.add(velocity.x, velocity.y, velocity.z);
-        state.computeNextGameTickVelocity(direction, lastPosition, velocity);
+        state.computeNextGameTickVelocity(rotation, lastPosition, velocity);
         state = state.next;
         return position;
     }

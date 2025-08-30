@@ -48,7 +48,7 @@ public final class Player {
 
     public void updateGameTick() {
         synchronized (this) {
-            position = movement.computeNextGameTickPosition(position, camera.getDirection());
+            position = movement.computeNextGameTickPosition(position, camera.getRotation());
         }
         interactionHandler.updateGameTick();
     }

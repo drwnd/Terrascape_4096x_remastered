@@ -4,6 +4,7 @@ import org.joml.*;
 import rendering_api.Window;
 import settings.FloatSetting;
 import utils.Position;
+import utils.Utils;
 
 import java.lang.Math;
 
@@ -23,23 +24,9 @@ public final class Camera {
     }
 
     public Vector3f getDirection() {
-
-        float rotationXRadians, rotationYRadians;
         synchronized (this) {
-            rotationXRadians = (float) Math.toRadians(rotation.y);
-            rotationYRadians = (float) Math.toRadians(rotation.x);
+            return Utils.getDirection(rotation);
         }
-
-        float x = (float) Math.sin(rotationXRadians);
-        float y = (float) -Math.sin(rotationYRadians);
-        float z = (float) -Math.cos(rotationXRadians);
-
-        float normalizer = (float) Math.sqrt(1 - y * y);
-
-        x *= normalizer;
-        z *= normalizer;
-
-        return new Vector3f(x, y, z);
     }
 
     private void moveRotation(float yaw, float pitch) {
