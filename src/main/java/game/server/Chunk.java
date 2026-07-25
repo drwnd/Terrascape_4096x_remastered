@@ -48,12 +48,12 @@ public final class Chunk {
     }
 
     public void generateToMeshFacesMaps(long[][][] toMeshFacesMaps, byte[] uncompressedMaterials, ByteArrayList[] adjacentChunkLayers, ChunkNeighbors neighbors) {
-        neighbors.north().materials.fillSideLayerInto(adjacentChunkLayers[NORTH], SOUTH);
-        neighbors.top().materials.fillSideLayerInto(adjacentChunkLayers[TOP], BOTTOM);
-        neighbors.west().materials.fillSideLayerInto(adjacentChunkLayers[WEST], EAST);
-        neighbors.south().materials.fillSideLayerInto(adjacentChunkLayers[SOUTH], NORTH);
-        neighbors.bottom().materials.fillSideLayerInto(adjacentChunkLayers[BOTTOM], TOP);
-        neighbors.east().materials.fillSideLayerInto(adjacentChunkLayers[EAST], WEST);
+        neighbors.north().materials.fillSideLayerInto(adjacentChunkLayers[NORTH], SOUTH, 0);
+        neighbors.top().materials.fillSideLayerInto(adjacentChunkLayers[TOP], BOTTOM, 0);
+        neighbors.west().materials.fillSideLayerInto(adjacentChunkLayers[WEST], EAST, 0);
+        neighbors.south().materials.fillSideLayerInto(adjacentChunkLayers[SOUTH], NORTH, 0);
+        neighbors.bottom().materials.fillSideLayerInto(adjacentChunkLayers[BOTTOM], TOP, 0);
+        neighbors.east().materials.fillSideLayerInto(adjacentChunkLayers[EAST], WEST, 0);
         materials.fillUncompressedMaterialsInto(uncompressedMaterials);
 
         byte[][] adjacentChunkLayersData = {

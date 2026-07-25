@@ -44,9 +44,9 @@ public final class MeshGenerator {
         AABB occluder = chunk.getMaterials().getOccluder();
         chunk.generateToMeshFacesMaps(toMeshFacesMaps, materials, adjacentChunkLayers, neighbors);
 
-        xStart = (int) chunk.X << CHUNK_SIZE_BITS;
-        yStart = (int) chunk.Y << CHUNK_SIZE_BITS;
-        zStart = (int) chunk.Z << CHUNK_SIZE_BITS;
+        startX = (int) chunk.X << CHUNK_SIZE_BITS;
+        startY = (int) chunk.Y << CHUNK_SIZE_BITS;
+        startZ = (int) chunk.Z << CHUNK_SIZE_BITS;
 
         clear();
         addNorthSouthFaces();
@@ -64,24 +64,48 @@ public final class MeshGenerator {
         int endY = structure.sizeY();
         int endZ = structure.sizeZ();
         clear();
+        MaterialsData surfaceEquivalent = structure.materials().getSurfaceEquivalent();
 
-        for (xStart = 0; xStart < endX; xStart += CHUNK_SIZE)
-            for (yStart = 0; yStart < endY; yStart += CHUNK_SIZE)
-                for (zStart = 0; zStart < endZ; zStart += CHUNK_SIZE) {
-                    int chunkX = xStart >>> CHUNK_SIZE_BITS;
-                    int chunkY = yStart >>> CHUNK_SIZE_BITS;
-                    int chunkZ = zStart >>> CHUNK_SIZE_BITS;
+        for (startX = 0; startX < endX; startX += CHUNK_SIZE)
+            for (startY = 0; startY < endY; startY += CHUNK_SIZE)
+                for (startZ = 0; startZ < endZ; startZ += CHUNK_SIZE) {
                     structure.materials().fillUncompressedMaterialsInto(materials,
                             0, 0, 0,
-                            xStart, yStart, zStart,
+                            startX, startY, startZ,
                             CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
-                    structure.materials().generateToMeshFacesMaps(toMeshFacesMaps, materials, chunkX, chunkY, chunkZ);
+
+                    for (ByteArrayList list : adjacentChunkLayers) list.clear();
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[NORTH], surfaceEquivalent, SOUTH, 0, 0, CHUNK_SIZE);
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[TOP], surfaceEquivalent, BOTTOM, 0, CHUNK_SIZE, 0);
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[WEST], surfaceEquivalent, EAST, CHUNK_SIZE, 0, 0);
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[SOUTH], surfaceEquivalent, NORTH, 0, 0, -CHUNK_SIZE);
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[BOTTOM], surfaceEquivalent, TOP, 0, -CHUNK_SIZE, 0);
+                    fillStructureSideLayerInto(structure, adjacentChunkLayers[EAST], surfaceEquivalent, WEST, -CHUNK_SIZE, 0, 0);
+
+                    byte[][] adjacentChunkLayersData = {
+                            adjacentChunkLayers[NORTH].getData(), adjacentChunkLayers[TOP].getData(), adjacentChunkLayers[WEST].getData(),
+                            adjacentChunkLayers[SOUTH].getData(), adjacentChunkLayers[BOTTOM].getData(), adjacentChunkLayers[EAST].getData()};
+
+                    surfaceEquivalent.generateToMeshFacesMaps(toMeshFacesMaps, materials, adjacentChunkLayersData, startX, startY, startZ);
 
                     addNorthSouthFaces();
                     addTopBottomFaces();
                     addWestEastFaces();
                 }
         return loadMesh(0, 0, 0, 0, null, null);
+    }
+
+    private void fillStructureSideLayerInto(Structure structure, ByteArrayList materials, MaterialsData surfaceEquivalent, int side, int offsetX, int offsetY, int offsetZ) {
+        int startX = this.startX + offsetX;
+        int startY = this.startY + offsetY;
+        int startZ = this.startZ + offsetZ;
+        if (!structure.contains(startX, startY, startZ)) {
+            materials.add((byte) (MaterialsData.CONTAINS_TRANSPARENT | MaterialsData.HOMOGENOUS));
+            materials.add(AIR);
+            return;
+        }
+        int startIndex = surfaceEquivalent.startIndexOf(startX, startY, startZ, CHUNK_SIZE_BITS);
+        surfaceEquivalent.fillSideLayerInto(materials, side, startIndex);
     }
 
 
@@ -438,13 +462,13 @@ public final class MeshGenerator {
     }
 
     private void addFace(IntArrayList vertices, int side, int materialX, int materialY, int materialZ, byte material, int faceSize1, int faceSize2) {
-        vertices.add(xStart | materialX);
-        vertices.add(yStart | materialY);
-        vertices.add(zStart | materialZ);
+        vertices.add(startX | materialX);
+        vertices.add(startY | materialY);
+        vertices.add(startZ | materialZ);
         vertices.add(Material.getProperties(material) << PROPERTIES_OFFSET | faceSize1 << 17 | faceSize2 << 11 | side << 8 | material & 0xFF);
     }
 
-    private int xStart, yStart, zStart;
+    private int startX, startY, startZ;
 
     private final long[][][] toMeshFacesMaps = new long[6][CHUNK_SIZE][CHUNK_SIZE];
     private final byte[] materialsLayer = new byte[CHUNK_SIZE * CHUNK_SIZE];
