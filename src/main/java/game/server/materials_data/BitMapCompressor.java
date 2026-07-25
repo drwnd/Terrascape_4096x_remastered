@@ -17,7 +17,7 @@ final class BitMapCompressor {
         if (sizeBits <= 1) {
             int uncompressedIndex = getUncompressedIndex(inChunkX, inChunkY, inChunkZ);
             byte target = getBitMapByte(bitMap, uncompressedIndex >> 3);
-            data.add((byte) (getType(material) | DETAIL));
+            data.add((byte) (getType(material) | CONTAINS_TRANSPARENT | DETAIL));
             data.add((target & 1 << 0) == 0 ? AIR : material);
             data.add((target & 1 << 2) == 0 ? AIR : material);
             data.add((target & 1 << 1) == 0 ? AIR : material);

@@ -85,7 +85,6 @@ public final class MeshGenerator {
                     byte[][] adjacentChunkLayersData = {
                             adjacentChunkLayers[NORTH].getData(), adjacentChunkLayers[TOP].getData(), adjacentChunkLayers[WEST].getData(),
                             adjacentChunkLayers[SOUTH].getData(), adjacentChunkLayers[BOTTOM].getData(), adjacentChunkLayers[EAST].getData()};
-
                     surfaceEquivalent.generateToMeshFacesMaps(toMeshFacesMaps, materials, adjacentChunkLayersData, startX, startY, startZ);
 
                     addNorthSouthFaces();
