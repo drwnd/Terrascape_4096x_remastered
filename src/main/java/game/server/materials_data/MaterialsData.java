@@ -825,6 +825,10 @@ public final class MaterialsData {
         }
 
 //        if (identifier == DETAIL)
+        inChunkX &= CHUNK_SIZE_MASK;
+        inChunkY &= CHUNK_SIZE_MASK;
+        inChunkZ &= CHUNK_SIZE_MASK;
+
         generateToMeshFacesDetail(toMeshFacesMaps, uncompressedMaterials, adjacentChunkLayers, inChunkX, inChunkY, inChunkZ);
         generateToMeshFacesDetail(toMeshFacesMaps, uncompressedMaterials, adjacentChunkLayers, inChunkX, inChunkY, inChunkZ + 1);
         generateToMeshFacesDetail(toMeshFacesMaps, uncompressedMaterials, adjacentChunkLayers, inChunkX, inChunkY + 1, inChunkZ);
@@ -844,7 +848,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousNorthLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX, inChunkY);
+        generateToMeshFacesHomogenousNorthLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX & CHUNK_SIZE_MASK, inChunkY);
     }
 
     private void generateToMeshFacesHomogenousNorthLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkX, int inChunkY) {
@@ -862,10 +866,10 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkY + 1;
     }
 
     private void generateToMeshFacesHomogenousSouthLayer(long[] toMeshFacesMap, byte[][] adjacentChunkLayers, int sizeBits, byte material, int inChunkX, int inChunkY, int inChunkZ) {
@@ -877,7 +881,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousSouthLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX, inChunkY);
+        generateToMeshFacesHomogenousSouthLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX & CHUNK_SIZE_MASK, inChunkY);
     }
 
     private void generateToMeshFacesHomogenousSouthLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkX, int inChunkY) {
@@ -895,10 +899,10 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkY + 1;
     }
 
     private void generateToMeshFacesHomogenousTopLayer(long[] toMeshFacesMap, byte[][] adjacentChunkLayers, int sizeBits, byte material, int inChunkX, int inChunkY, int inChunkZ) {
@@ -910,7 +914,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousTopLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX, inChunkZ);
+        generateToMeshFacesHomogenousTopLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX & CHUNK_SIZE_MASK, inChunkZ);
     }
 
     private void generateToMeshFacesHomogenousTopLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkX, int inChunkZ) {
@@ -928,10 +932,10 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkZ + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkZ + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkZ + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkZ + 1;
     }
 
     private void generateToMeshFacesHomogenousBottomLayer(long[] toMeshFacesMap, byte[][] adjacentChunkLayers, int sizeBits, byte material, int inChunkX, int inChunkY, int inChunkZ) {
@@ -943,7 +947,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousBottomLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX, inChunkZ);
+        generateToMeshFacesHomogenousBottomLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkX & CHUNK_SIZE_MASK, inChunkZ);
     }
 
     private void generateToMeshFacesHomogenousBottomLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkX, int inChunkZ) {
@@ -961,10 +965,10 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkX + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkX + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkZ + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkZ + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkX + 0] |= 1L << inChunkZ + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkZ + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkX + 1] |= 1L << inChunkZ + 1;
     }
 
     private void generateToMeshFacesHomogenousWestLayer(long[] toMeshFacesMap, byte[][] adjacentChunkLayers, int sizeBits, byte material, int inChunkX, int inChunkY, int inChunkZ) {
@@ -976,7 +980,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousWestLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkY, inChunkZ);
+        generateToMeshFacesHomogenousWestLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkY, inChunkZ & CHUNK_SIZE_MASK);
     }
 
     private void generateToMeshFacesHomogenousWestLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkY, int inChunkZ) {
@@ -994,10 +998,10 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkZ + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkZ + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkZ + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkZ + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 1])) toMeshFacesMap[inChunkZ + 0] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 2])) toMeshFacesMap[inChunkZ + 0] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 3])) toMeshFacesMap[inChunkZ + 1] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 4])) toMeshFacesMap[inChunkZ + 1] |= 1L << inChunkY + 1;
     }
 
     private void generateToMeshFacesHomogenousEastLayer(long[] toMeshFacesMap, byte[][] adjacentChunkLayers, int sizeBits, byte material, int inChunkX, int inChunkY, int inChunkZ) {
@@ -1009,7 +1013,7 @@ public final class MaterialsData {
         }
 
         int startIndex = startIndexOf(inChunkX, inChunkY, inChunkZ, sizeBits);
-        generateToMeshFacesHomogenousEastLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkY, inChunkZ);
+        generateToMeshFacesHomogenousEastLayerInside(toMeshFacesMap, sizeBits, material, startIndex, inChunkY, inChunkZ & CHUNK_SIZE_MASK);
     }
 
     private void generateToMeshFacesHomogenousEastLayerInside(long[] toMeshFacesMap, int sizeBits, byte material, int startIndex, int inChunkY, int inChunkZ) {
@@ -1027,24 +1031,20 @@ public final class MaterialsData {
             return;
         }
 //        if (identifier == DETAIL)
-        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkZ + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkZ + 0 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
-        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkZ + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 0;
-        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkZ + 1 & CHUNK_SIZE_MASK] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 5])) toMeshFacesMap[inChunkZ + 0] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 6])) toMeshFacesMap[inChunkZ + 0] |= 1L << inChunkY + 1;
+        if (MeshGenerator.isVisible(material, data[startIndex + 7])) toMeshFacesMap[inChunkZ + 1] |= 1L << inChunkY + 0;
+        if (MeshGenerator.isVisible(material, data[startIndex + 8])) toMeshFacesMap[inChunkZ + 1] |= 1L << inChunkY + 1;
     }
 
     private static void fillToMeshFacesMapHomogenous(long[] toMeshFacesMap, int sizeBits, byte material, byte occludingMaterial, int inChunkA, int inChunkB) {
         if (!MeshGenerator.isVisible(material, occludingMaterial)) return;
         int length = 1 << sizeBits;
         long mask = getMask(length, inChunkB);
-        for (int a = inChunkA; a < inChunkA + length; a++) toMeshFacesMap[a & CHUNK_SIZE_MASK] |= mask;
+        for (int a = inChunkA & CHUNK_SIZE_MASK, endA = a + length; a < endA; a++) toMeshFacesMap[a] |= mask;
     }
 
-    private void generateToMeshFacesDetail(long[][][] toMeshFacesMap, byte[] uncompressedMaterials, byte[][] adjacentChunkLayers, int inChunkX, int inChunkY, int inChunkZ) {
-        inChunkX &= CHUNK_SIZE_MASK;
-        inChunkY &= CHUNK_SIZE_MASK;
-        inChunkZ &= CHUNK_SIZE_MASK;
-
+    private static void generateToMeshFacesDetail(long[][][] toMeshFacesMap, byte[] uncompressedMaterials, byte[][] adjacentChunkLayers, int inChunkX, int inChunkY, int inChunkZ) {
         byte material = uncompressedMaterials[getUncompressedIndex(inChunkX, inChunkY, inChunkZ)];
         if (material == AIR) return;
 
@@ -1063,15 +1063,15 @@ public final class MaterialsData {
         if (MeshGenerator.isVisible(material, eastMaterial)) toMeshFacesMap[EAST][inChunkX][inChunkZ] |= 1L << inChunkY;
     }
 
-    private byte getMaterial(byte[] uncompressedMaterials, byte[][] adjacentChunkLayers, int inChunkX, int inChunkY, int inChunkZ) {
+    private static byte getMaterial(byte[] uncompressedMaterials, byte[][] adjacentChunkLayers, int inChunkX, int inChunkY, int inChunkZ) {
         if (inChunkX == -1) return getMaterial2D(adjacentChunkLayers[EAST], inChunkZ, inChunkY);
-        if (inChunkX == 1 << totalSizeBits) return getMaterial2D(adjacentChunkLayers[WEST], inChunkZ, inChunkY);
+        if (inChunkX == CHUNK_SIZE) return getMaterial2D(adjacentChunkLayers[WEST], inChunkZ, inChunkY);
         if (inChunkY == -1) return getMaterial2D(adjacentChunkLayers[BOTTOM], inChunkX, inChunkZ);
-        if (inChunkY == 1 << totalSizeBits) return getMaterial2D(adjacentChunkLayers[TOP], inChunkX, inChunkZ);
+        if (inChunkY == CHUNK_SIZE) return getMaterial2D(adjacentChunkLayers[TOP], inChunkX, inChunkZ);
         if (inChunkZ == -1) return getMaterial2D(adjacentChunkLayers[SOUTH], inChunkX, inChunkY);
-        if (inChunkZ == 1 << totalSizeBits) return getMaterial2D(adjacentChunkLayers[NORTH], inChunkX, inChunkY);
+        if (inChunkZ == CHUNK_SIZE) return getMaterial2D(adjacentChunkLayers[NORTH], inChunkX, inChunkY);
 
-        return uncompressedMaterials[getUncompressedIndex(inChunkX & CHUNK_SIZE_MASK, inChunkY & CHUNK_SIZE_MASK, inChunkZ & CHUNK_SIZE_MASK)];
+        return uncompressedMaterials[getUncompressedIndex(inChunkX, inChunkY, inChunkZ)];
     }
 
     private static void generateToMeshFacesHomogenousSideLayer(long[] toMeshFacesMap, byte[] adjacentChunkLayer, int startIndex, int sizeBits, byte material, int inChunkA, int inChunkB) {
