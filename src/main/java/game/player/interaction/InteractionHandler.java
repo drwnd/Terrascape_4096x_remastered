@@ -3,6 +3,7 @@ package game.player.interaction;
 import core.rendering_api.Input;
 import core.utils.Vector3l;
 
+import game.player.interaction.placeable_shapes.CapsulePlaceable;
 import game.player.interaction.placeable_shapes.CubePlaceable;
 import game.server.Game;
 import game.settings.IntSettings;
@@ -125,7 +126,14 @@ public final class InteractionHandler {
 
         int targetedSide = target.side();
         Vector3l position = offsetPosition ? target.offsetPosition() : target.position();
-        if (placeable instanceof ShapePlaceable shapePlaceable) {
+
+        if (placeable instanceof CapsulePlaceable capsulePlaceable) {
+            if (startTarget != null) target = startTarget;
+            Vector3l startPosition = offsetPosition ? target.offsetPosition() : target.position();
+            capsulePlaceable.setStartEndPositions(startPosition, position);
+            targetedSide = target.side();
+
+        } else if (placeable instanceof ShapePlaceable shapePlaceable) {
             if (startTarget != null) target = startTarget;
             Vector3l startPosition = offsetPosition ? target.offsetPosition() : target.position();
             placeable = new RepeatPlaceable(shapePlaceable, startPosition, position);

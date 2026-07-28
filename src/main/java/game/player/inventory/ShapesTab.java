@@ -156,18 +156,19 @@ public final class ShapesTab extends Renderable implements InventoryTab {
         shapeDisplays.clear();
         shapePlaceableSettingSliders.clear();
 
-        shapeDisplays.add(new ShapeDisplay(0, new CubePlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(1, new SpherePlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(2, new CylinderPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(3, new ConePlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(4, new SlabPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(5, new EllipsoidPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(6, new StairPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(7, new InsideStairPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(8, new OutsideStairPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(9, new ArcPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(10, new InsideArcPlaceable(STONE).updateBitMap(false), this));
-        shapeDisplays.add(new ShapeDisplay(11, new OutsideArcPlaceable(STONE).updateBitMap(false), this));
+        shapeDisplays.add(new ShapeDisplay(0, new CubePlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(1, new SpherePlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(2, new CylinderPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(3, new ConePlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(4, new SlabPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(5, new EllipsoidPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(6, new StairPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(7, new InsideStairPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(8, new OutsideStairPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(9, new ArcPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(10, new InsideArcPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(11, new OutsideArcPlaceable(STONE), this));
+        shapeDisplays.add(new ShapeDisplay(12, new CapsulePlaceable(STONE), this));
 
         for (Renderable renderable : shapeDisplays) addRenderable(renderable);
         selectedDisplay = shapeDisplays.getFirst();

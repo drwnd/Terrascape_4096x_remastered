@@ -237,8 +237,9 @@ public final class MaterialsData {
         }
     }
 
-    // Miscellaneous functions
-    private void compressIntoData(byte[] uncompressedMaterials) {
+    public void compressIntoData(byte[] uncompressedMaterials) {
+        if (uncompressedMaterials.length != 1 << totalSizeBits * 3)
+            throw new IllegalArgumentException("uncompressedMaterials bust be %d long, but was %d long".formatted(1 << totalSizeBits * 3, uncompressedMaterials.length));
         ByteArrayList dataList = new ByteArrayList(1000);
         LongArrayCompressor.compressMaterials(dataList, uncompressedMaterials, totalSizeBits);
 
@@ -248,6 +249,7 @@ public final class MaterialsData {
         }
     }
 
+    // Miscellaneous functions
     private static void storeLowerLODChunk(Chunk chunk, byte[] uncompressedMaterials, int startX, int startY, int startZ) {
         if (chunk == null) return;
 

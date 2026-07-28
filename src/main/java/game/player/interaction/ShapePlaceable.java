@@ -195,8 +195,21 @@ public abstract class ShapePlaceable implements Placeable {
         this.shaderIdentifier = shaderIdentifier;
     }
 
+    protected boolean isBitMapInValid(int settingsHash, int preferredSize) {
+        return bitMap == null || settingsHash != this.settingsHash || this.preferredSize != preferredSize;
+    }
 
-    private void fillBitMap(long[] bitMap, int size, boolean forceSize) {
+    protected int settingsHash() {
+        return Objects.hash((Object[]) settings);
+    }
+
+    protected void setBitMap(long[] bitMap) {
+        this.bitMap = bitMap;
+        settingsHash = settingsHash();
+        preferredSize = getPreferredSize();
+    }
+
+    protected void fillBitMap(long[] bitMap, int size, boolean forceSize) {
         int lengthX = forceSize ? size : Math.min(getLengthX(), size);
         int lengthY = forceSize ? size : Math.min(getLengthY(), size);
         int lengthZ = forceSize ? size : Math.min(getLengthZ(), size);
@@ -214,6 +227,7 @@ public abstract class ShapePlaceable implements Placeable {
         glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, bitMap);
     }
 
+
     private int genBuffer(int size) {
         if (size == bufferSize) return buffer;
         glDeleteBuffers(buffer);
@@ -223,24 +237,10 @@ public abstract class ShapePlaceable implements Placeable {
         return buffer;
     }
 
-    private boolean isBitMapInValid(int settingsHash, int preferredSize) {
-        return bitMap == null || settingsHash != this.settingsHash || this.preferredSize != preferredSize;
-    }
-
-    private int settingsHash() {
-        return Objects.hash((Object[]) settings);
-    }
-
-    private void setBitMap(long[] bitMap) {
-        this.bitMap = bitMap;
-        settingsHash = settingsHash();
-        preferredSize = getPreferredSize();
-    }
-
 
     private int buffer, bufferSize = -1;
-    private int settingsHash, preferredSize;
-    private long[] bitMap;
+    protected int settingsHash, preferredSize;
+    protected long[] bitMap;
     private final byte material;
     private ShapeSetting[] settings;
 
