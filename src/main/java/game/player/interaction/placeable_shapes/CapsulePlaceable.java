@@ -1,6 +1,7 @@
 package game.player.interaction.placeable_shapes;
 
 import core.settings.stand_alones.StandAloneIntSetting;
+import core.utils.MathUtils;
 import core.utils.Saver;
 import core.utils.Vector3l;
 
@@ -14,6 +15,7 @@ import game.server.Game;
 import game.server.generation.Structure;
 import game.server.materials_data.MaterialsData;
 import game.server.saving.ChunkSaver;
+import game.settings.IntSettings;
 import game.settings.OptionSettings;
 import game.utils.Utils;
 
@@ -23,6 +25,7 @@ import org.joml.primitives.AABBi;
 import org.joml.primitives.Intersectionf;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static game.utils.Constants.*;
 
@@ -45,6 +48,13 @@ public final class CapsulePlaceable extends ShapePlaceable {
         this.endPosition = endPosition;
     }
 
+    public Structure getDisplayStructure() {
+        int size = getPreferredSizePowOf2();
+        long[] bitMap = new long[size * size * size / 64];
+        fillBitMap(bitMap, 0, false);
+        return new Structure(Integer.numberOfTrailingZeros(size), material, bitMap);
+    }
+
 
     @Override
     public void save(Saver<?> saver) {
@@ -57,11 +67,16 @@ public final class CapsulePlaceable extends ShapePlaceable {
     @Override
     protected void fillBitMap(long[] bitMap, int size, boolean forceSize) {
         if (startPosition == null || endPosition == null) return;
-        for (int x = 0; x < size; x++)
-            for (int y = 0; y < size; y++)
-                for (int z = 0; z < size; z++) {
+
+        int radius = this.radius.value();
+        Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius, radius, radius);
+        Vector3l maxPosition = Utils.max(startPosition, endPosition).add(radius, radius, radius);
+
+        for (long x = minPosition.x; x < maxPosition.x; x++)
+            for (long y = minPosition.y; y < maxPosition.y; y++)
+                for (long z = minPosition.z; z < maxPosition.z; z++) {
                     if (isOutside(x, y, z)) continue;
-                    int index = MaterialsData.getUncompressedIndex(x, y, z);
+                    int index = MaterialsData.getUncompressedIndex((int) (x - minPosition.x), (int) (y - minPosition.y), (int) (z - minPosition.z));
                     bitMap[index >> 6] |= 1L << index;
                 }
     }
@@ -112,7 +127,21 @@ public final class CapsulePlaceable extends ShapePlaceable {
     @Override
     public void offsetPosition(Vector3l position, int targetedSide) {
         if (startPosition == null || endPosition == null) return;
-        RepeatPlaceable.offsetPositions(startPosition, endPosition, targetedSide, null);
+        offsetPositions(startPosition, endPosition, targetedSide);
+    }
+
+    public static void offsetPositions(Vector3l startPosition, Vector3l endPosition, int targetedSide) {
+        int length = 1 << IntSettings.BREAK_PLACE_ALIGN.value();
+        int startMask = -length;
+
+        RepeatPlaceable.offsetPositionFromGround(startPosition, targetedSide, length, length, length);
+        startPosition.x &= startMask;
+        startPosition.y &= startMask;
+        startPosition.z &= startMask;
+
+        endPosition.x -= MathUtils.mod(endPosition.x - startPosition.x, length);
+        endPosition.y -= MathUtils.mod(endPosition.y - startPosition.y, length);
+        endPosition.z -= MathUtils.mod(endPosition.z - startPosition.z, length);
     }
 
     @Override
@@ -135,6 +164,42 @@ public final class CapsulePlaceable extends ShapePlaceable {
         };
     }
 
+    @Override
+    public boolean allowBreak() {
+        return Game.getPlayer().getInteractionHandler().getStartTarget() != null;
+    }
+
+    @Override
+    public boolean allowPlace() {
+        return Game.getPlayer().getInteractionHandler().getStartTarget() != null;
+    }
+
+    @Override
+    public boolean offsetOnBreak() {
+        return true;
+    }
+
+    @Override
+    public int getLengthX() {
+        if (startPosition == null || endPosition == null) return 16;
+        return (int) Math.abs(startPosition.x - endPosition.x) + 2 * radius.value();
+    }
+
+    @Override
+    public int getLengthY() {
+        if (startPosition == null || endPosition == null) return 16;
+        return (int) Math.abs(startPosition.y - endPosition.y) + 2 * radius.value();
+    }
+
+    @Override
+    public int getLengthZ() {
+        if (startPosition == null || endPosition == null) return 16;
+        return (int) Math.abs(startPosition.z - endPosition.z) + 2 * radius.value();
+    }
+
+    public int getRadius() {
+        return radius.value();
+    }
 
     private boolean intersectsAABB(long minX, long minY, long minZ, long maxX, long maxY, long maxZ) {
         int radius = this.radius.value();
@@ -209,7 +274,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
         Vector3l ba = new Vector3l(b).sub(a);
 
         double h = Math.clamp(dot(pa, ba) / dot(ba, ba), 0, 1);
-        return new Vector3d(pa.x, pa.y, pa.z).sub(new Vector3d(ba.x, ba.y, ba.z).mul(h)).length() - radius.value() > 0;
+        return new Vector3d(pa.x, pa.y, pa.z).sub(new Vector3d(ba.x, ba.y, ba.z).mul(h)).length() - radius.value() >= 0;
     }
 
     private static double dot(Vector3l a, Vector3l b) {

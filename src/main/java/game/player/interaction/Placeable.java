@@ -74,6 +74,18 @@ public interface Placeable {
         return true;
     }
 
+    default boolean allowPlace() {
+        return true;
+    }
+
+    default boolean offsetOnPlace() {
+        return true;
+    }
+
+    default boolean offsetOnBreak() {
+        return false;
+    }
+
     default int getLengthX() {
         return 1 << IntSettings.BREAK_PLACE_SIZE.value();
     }

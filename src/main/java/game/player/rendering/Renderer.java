@@ -26,6 +26,7 @@ import game.assets.VertexArrays;
 import game.player.ChatTextField;
 import game.player.Player;
 import game.player.interaction.*;
+import game.player.interaction.placeable_shapes.CapsulePlaceable;
 import game.player.particles.ParticleEffect;
 import game.server.*;
 import game.server.generation.Structure;
@@ -662,24 +663,79 @@ public final class Renderer extends Renderable {
         Target lockedTarget = player.getInteractionHandler().getLockedTarget();
         Target startTarget = player.getInteractionHandler().getStartTarget();
         PlacingState state = player.getInteractionHandler().getState(currentTarget);
-        Placeable placeable = player.getHeldPlaceable();
 
         if (!state.shouldRender()) return;
         switch (state) {
-            case REPEAT -> renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, currentTarget);
-            case REPEAT_LOCKED -> renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, lockedTarget);
+            case REPEAT -> renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, currentTarget, player.getHeldPlaceable());
+            case REPEAT_LOCKED -> renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, lockedTarget, player.getHeldPlaceable());
 
             case STRUCTURE_SELECT, SHAPE ->
-                    renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget == null ? currentTarget : startTarget, currentTarget);
+                    renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget == null ? currentTarget : startTarget, currentTarget, player.getHeldPlaceable());
             case STRUCTURE_SELECT_LOCKED ->
-                    renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget == null ? lockedTarget : startTarget, lockedTarget);
+                    renderRepeatVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget == null ? lockedTarget : startTarget, lockedTarget, player.getHeldPlaceable());
 
-            case STRUCTURE_PLACE -> renderStructureVolumeIndicator(cameraPosition, projectionViewMatrix, currentTarget, (StructurePlaceable) placeable);
-            case STRUCTURE_PLACE_LOCKED -> renderStructureVolumeIndicator(cameraPosition, projectionViewMatrix, lockedTarget, (StructurePlaceable) placeable);
+            case STRUCTURE_PLACE -> renderStructureVolumeIndicator(cameraPosition, projectionViewMatrix, currentTarget);
+            case STRUCTURE_PLACE_LOCKED -> renderStructureVolumeIndicator(cameraPosition, projectionViewMatrix, lockedTarget);
+
+            case CAPSULE -> renderCapsuleVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, currentTarget);
+            case CAPSULE_LOCKED -> renderCapsuleVolumeIndicator(cameraPosition, projectionViewMatrix, startTarget, lockedTarget);
         }
     }
 
-    private void renderStructureVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target target, StructurePlaceable placeable) {
+    private void renderCapsuleVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target startTarget, Target endTarget) {
+        if (startTarget == null || endTarget == null) return;
+
+        CapsulePlaceable placeable = (CapsulePlaceable) player.getHeldPlaceable();
+        byte material = !Input.isKeyPressed(KeySettings.SPRINT)
+                && OptionSettings.PLACE_MODE.value() != PlaceMode.BREAK_HELD_ONLY ? placeable.getMaterial() : AIR;
+
+        Vector3l startPosition = material == AIR ? startTarget.position() : startTarget.offsetPosition();
+        Vector3l endPosition = material == AIR ? endTarget.position() : endTarget.offsetPosition();
+
+        TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
+        glEnable(GL_DEPTH_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
+        glDisable(GL_STENCIL_TEST);
+        glDepthMask(true);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, materialsTexture.id());
+
+        CapsulePlaceable.offsetPositions(startPosition, endPosition, startTarget.side());
+        Vector3l minPosition = Utils.min(startPosition, endPosition);
+
+        placeable.setStartEndPositions(startPosition, endPosition);
+        Structure structure = placeable.getDisplayStructure();
+        Mesh mesh = new MeshGenerator().generateMesh(structure);
+        OpaqueModel opaqueHologram = ObjectLoader.loadCombinedModel(mesh);
+
+        Shader shader = AssetManager.get(Shaders.VOLUME_INDICATOR);
+        shader.bind();
+        shader.setUniform("iCameraPosition",
+                cameraPosition.longX & ~CHUNK_SIZE_MASK,
+                cameraPosition.longY & ~CHUNK_SIZE_MASK,
+                cameraPosition.longZ & ~CHUNK_SIZE_MASK);
+        shader.setUniform("projectionViewMatrix", projectionViewMatrix);
+        shader.setUniform("modelMatrix", new Matrix4f());
+        shader.setUniform("sideTransform", new int[]{NORTH, TOP, WEST, SOUTH, BOTTOM, EAST});
+        shader.setUniform("instanceCount", 1, 1, 1);
+        shader.setUniform("instanceSize", placeable.getLengthX(), placeable.getLengthY(), placeable.getLengthZ());
+        shader.setUniform("startPosition", minPosition.x - placeable.getRadius(), minPosition.y - placeable.getRadius(), minPosition.z - placeable.getRadius());
+
+        shader.setUniform("textures", 0);
+        shader.setUniform("textureSizes", materialsTexture.textureSizes());
+        shader.setUniform("maxTextureSize", materialsTexture.maxTextureSize());
+        shader.setUniform("material", material);
+
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, opaqueHologram.bufferOrStart());
+        glDrawArrays(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum());
+
+        opaqueHologram.delete();
+    }
+
+    private void renderStructureVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target target) {
+        StructurePlaceable placeable = (StructurePlaceable) player.getHeldPlaceable();
         Vector3l position = target.offsetPosition();
         placeable.offsetPosition(position, target.side());
         synchronizeHologramModel(placeable);
@@ -687,18 +743,17 @@ public final class Renderer extends Renderable {
         renderHologram(cameraPosition, projectionViewMatrix, placeable.getModelMatrix(), placeable.getSideTransform(), position);
     }
 
-    private void renderRepeatVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target startTarget, Target currentTarget) {
-        Placeable placeable = player.getHeldPlaceable();
+    private void renderRepeatVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target startTarget, Target currentTarget, Placeable placeable) {
         byte material = placeable instanceof ShapePlaceable shapePlaceable
                 && !Input.isKeyPressed(KeySettings.SPRINT)
                 && OptionSettings.PLACE_MODE.value() != PlaceMode.BREAK_HELD_ONLY ? shapePlaceable.getMaterial() : AIR;
 
-        Vector3l startPositon = material == AIR ? startTarget.position() : startTarget.offsetPosition();
+        Vector3l startPosition = material == AIR ? startTarget.position() : startTarget.offsetPosition();
         Vector3l endPosition = material == AIR ? currentTarget.position() : currentTarget.offsetPosition();
 
-        RepeatPlaceable.offsetPositions(startPositon, endPosition, startTarget.side(), placeable);
-        Vector3l minPosition = Utils.min(startPositon, endPosition);
-        Vector3l maxPosition = Utils.max(startPositon, endPosition);
+        RepeatPlaceable.offsetPositions(startPosition, endPosition, startTarget.side(), placeable);
+        Vector3l minPosition = Utils.min(startPosition, endPosition);
+        Vector3l maxPosition = Utils.max(startPosition, endPosition);
         maxPosition.add(1, 1, 1);
 
         TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
