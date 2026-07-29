@@ -706,9 +706,7 @@ public final class Renderer extends Renderable {
         Vector3l minPosition = Utils.min(startPosition, endPosition);
 
         placeable.setStartEndPositions(startPosition, endPosition);
-        Structure structure = placeable.getDisplayStructure();
-        Mesh mesh = new MeshGenerator().generateMesh(structure);
-        OpaqueModel opaqueHologram = ObjectLoader.loadCombinedModel(mesh);
+        synchronizeHologramModel(placeable);
 
         Shader shader = AssetManager.get(Shaders.VOLUME_INDICATOR);
         shader.bind();
@@ -730,8 +728,6 @@ public final class Renderer extends Renderable {
 
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, opaqueHologram.bufferOrStart());
         glDrawArrays(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum());
-
-        opaqueHologram.delete();
     }
 
     private void renderStructureVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target target) {
@@ -970,7 +966,7 @@ public final class Renderer extends Renderable {
         if (!hologramModelsValid || hologramSize != preferredSize || this.hologramHash != hologramHash) {
             if (opaqueHologram != null) opaqueHologram.delete();
 
-            Structure structure = placeable.getStructure();
+            Structure structure = placeable instanceof CapsulePlaceable capsulePlaceable ? capsulePlaceable.getDisplayStructure() : placeable.getStructure();
             Mesh mesh = new MeshGenerator().generateMesh(structure);
             opaqueHologram = ObjectLoader.loadCombinedModel(mesh);
             hologramSize = preferredSize;

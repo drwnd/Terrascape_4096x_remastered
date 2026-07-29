@@ -25,6 +25,7 @@ import org.joml.primitives.AABBi;
 import org.joml.primitives.Intersectionf;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static game.utils.Constants.*;
 
@@ -194,6 +195,11 @@ public final class CapsulePlaceable extends ShapePlaceable {
     public int getLengthZ() {
         if (positionsInvalid()) return 16;
         return (int) Math.abs(startPosition.z - endPosition.z) + 2 * radius.value();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(material, radius.value(), startPosition, endPosition);
     }
 
     public int getRadius() {
