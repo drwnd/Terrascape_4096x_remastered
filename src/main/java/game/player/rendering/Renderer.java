@@ -702,7 +702,7 @@ public final class Renderer extends Renderable {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D_ARRAY, materialsTexture.id());
 
-        CapsulePlaceable.offsetPositions(startPosition, endPosition, startTarget.side());
+        CapsulePlaceable.offsetPositions(startPosition, endPosition);
         Vector3l minPosition = Utils.min(startPosition, endPosition);
 
         placeable.setStartEndPositions(startPosition, endPosition);
@@ -966,7 +966,7 @@ public final class Renderer extends Renderable {
         if (!hologramModelsValid || hologramSize != preferredSize || this.hologramHash != hologramHash) {
             if (opaqueHologram != null) opaqueHologram.delete();
 
-            Structure structure = placeable instanceof CapsulePlaceable capsulePlaceable ? capsulePlaceable.getDisplayStructure() : placeable.getStructure();
+            Structure structure = placeable.getStructure();
             Mesh mesh = new MeshGenerator().generateMesh(structure);
             opaqueHologram = ObjectLoader.loadCombinedModel(mesh);
             hologramSize = preferredSize;
