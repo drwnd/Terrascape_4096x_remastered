@@ -5,13 +5,16 @@ import core.utils.Saver;
 import core.utils.Vector3l;
 
 import game.language.UiMessages;
+import game.player.interaction.PlaceMode;
 import game.player.interaction.RepeatPlaceable;
 import game.player.interaction.ShapePlaceable;
 import game.player.interaction.ShapeSetting;
 import game.server.Chunk;
+import game.server.Game;
 import game.server.generation.Structure;
 import game.server.materials_data.MaterialsData;
 import game.server.saving.ChunkSaver;
+import game.settings.OptionSettings;
 import game.utils.Utils;
 
 import org.joml.Vector2f;
@@ -65,7 +68,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public Structure getSmallStructure() {
-        return new Structure(material);
+        return new Structure(4, material, CAPSULE_ICON_BITMAP);
     }
 
     @Override
@@ -97,8 +100,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public Structure getStructure() {
-        updateBitMap(true);
-        return super.getStructure();
+        return getSmallStructure();
     }
 
     @Override
@@ -170,6 +172,11 @@ public final class CapsulePlaceable extends ShapePlaceable {
         int sectionSize = 8 << lod;
         if (!intersectsAABB(totalX, totalY, totalZ, totalX + sectionSize, totalY + sectionSize, totalZ + sectionSize)) return false;
 
+        boolean paint = OptionSettings.PLACE_MODE.value() == PlaceMode.PAINT;
+        boolean replaceAir = OptionSettings.PLACE_MODE.value() == PlaceMode.REPLACE_AIR;
+        boolean breakHeldOnly = OptionSettings.PLACE_MODE.value() == PlaceMode.BREAK_HELD_ONLY;
+        byte heldMaterial = breakHeldOnly ? ((ShapePlaceable) Game.getPlayer().getHeldPlaceable()).getMaterial() : AIR;
+
         int startX = (int) totalX >> lod & CHUNK_SIZE_MASK;
         int startY = (int) totalY >> lod & CHUNK_SIZE_MASK;
         int startZ = (int) totalZ >> lod & CHUNK_SIZE_MASK;
@@ -183,8 +190,12 @@ public final class CapsulePlaceable extends ShapePlaceable {
                     long relativeZ = totalZ + ((long) inChunkZ - startZ << lod);
 
                     if (isOutside(relativeX, relativeY, relativeZ)) continue;
-                    int index = MaterialsData.getUncompressedIndex(inChunkX, inChunkY, inChunkZ);
-                    uncompressedMaterials[index] = material;
+                    int materialIndex = MaterialsData.getUncompressedIndex(inChunkX, inChunkY, inChunkZ);
+
+                    if (paint && uncompressedMaterials[materialIndex] == AIR
+                            || replaceAir && uncompressedMaterials[materialIndex] != AIR
+                            || breakHeldOnly && uncompressedMaterials[materialIndex] != heldMaterial) continue;
+                    uncompressedMaterials[materialIndex] = material;
                 }
         return true;
     }
@@ -211,4 +222,11 @@ public final class CapsulePlaceable extends ShapePlaceable {
     private final StandAloneIntSetting radius = new StandAloneIntSetting(1, 64, 8);
 
     private Vector3l startPosition, endPosition;
+
+    private static final long[] CAPSULE_ICON_BITMAP = new long[]{
+            0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0xFEA0C00000000000L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L, 0xDCFF004040C00000L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L,
+            0x0L, 0xBA00FF202000A000L, 0x0L, 0x0L, 0xFEA0C00000000000L, 0xDCFF004040C00000L, 0xBA00FF202000A000L, 0xFFFFFFFF70F0F0F8L, 0xFFFFFFFFFFFFFFFEL,
+            0x4FF005D5DFF00DCL, 0x200FF3B3B00FFBAL, 0x3057F7FFFFFFFL, 0xFEA0C00000000000L, 0xDCFF004040C00000L, 0xBA00FF202000A000L, 0xFFFFFFFFFFFFFFFEL,
+            0xFFAACC08FFEAEC88L, 0x4FF004C5DFF00CCL, 0x200FF2A3B00FFAAL, 0x3057F7FFFFFFFL, 0x0L, 0x0L, 0x4FF005D5DFF00DCL, 0x0L, 0x0L, 0x0L, 0x50004L, 0x0L,
+            0x0L, 0x200FF3B3B00FFBAL, 0x0L, 0x0L, 0x0L, 0x302L, 0x0L, 0x0L, 0x3057F7FFFFFFFL, 0x50004L, 0x302L, 0x0L, 0x0L, 0x0L, 0x0L, 0x0L};
 }
