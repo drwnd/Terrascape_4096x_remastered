@@ -25,7 +25,6 @@ import org.joml.primitives.AABBi;
 import org.joml.primitives.Intersectionf;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static game.utils.Constants.*;
 
@@ -66,7 +65,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     protected void fillBitMap(long[] bitMap, int size, boolean forceSize) {
-        if (startPosition == null || endPosition == null) return;
+        if (positionsInvalid()) return;
 
         int radius = this.radius.value();
         Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius, radius, radius);
@@ -88,7 +87,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public void place(Vector3l position, int lod) {
-        if (startPosition == null || endPosition == null) return;
+        if (positionsInvalid()) return;
 
         int radius = this.radius.value();
         Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius, radius, radius);
@@ -120,13 +119,13 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public boolean intersectsAABB(Vector3l position, Vector3l min, Vector3l max) {
-        if (startPosition == null || endPosition == null) return true;
+        if (positionsInvalid()) return true;
         return intersectsAABB(min.x, min.y, min.z, max.x, max.y, max.z);
     }
 
     @Override
     public void offsetPosition(Vector3l position, int targetedSide) {
-        if (startPosition == null || endPosition == null) return;
+        if (positionsInvalid()) return;
         offsetPositions(startPosition, endPosition, targetedSide);
     }
 
@@ -146,7 +145,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public void spawnParticles(Vector3l position) {
-        if (startPosition == null || endPosition == null) return;
+        if (positionsInvalid()) return;
         // TODO
     }
 
@@ -181,19 +180,19 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     @Override
     public int getLengthX() {
-        if (startPosition == null || endPosition == null) return 16;
+        if (positionsInvalid()) return 16;
         return (int) Math.abs(startPosition.x - endPosition.x) + 2 * radius.value();
     }
 
     @Override
     public int getLengthY() {
-        if (startPosition == null || endPosition == null) return 16;
+        if (positionsInvalid()) return 16;
         return (int) Math.abs(startPosition.y - endPosition.y) + 2 * radius.value();
     }
 
     @Override
     public int getLengthZ() {
-        if (startPosition == null || endPosition == null) return 16;
+        if (positionsInvalid()) return 16;
         return (int) Math.abs(startPosition.z - endPosition.z) + 2 * radius.value();
     }
 
@@ -263,6 +262,14 @@ public final class CapsulePlaceable extends ShapePlaceable {
                     uncompressedMaterials[materialIndex] = material;
                 }
         return true;
+    }
+
+    private boolean positionsInvalid() {
+        int maxDistance = 256 - radius.value() * 2;
+        return startPosition == null || endPosition == null
+                || Math.abs(startPosition.x - endPosition.x) > maxDistance
+                || Math.abs(startPosition.y - endPosition.y) > maxDistance
+                || Math.abs(startPosition.z - endPosition.z) > maxDistance;
     }
 
     private boolean isOutside(long x, long y, long z) {
