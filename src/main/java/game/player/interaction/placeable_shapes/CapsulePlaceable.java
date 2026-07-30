@@ -134,7 +134,10 @@ public final class CapsulePlaceable extends ShapePlaceable {
     @Override
     public void spawnParticles(Vector3l position) {
         if (positionsInvalid()) return;
-        // TODO
+
+        updateBitMap(false);
+        Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius.value(), radius.value(), radius.value());
+        Game.getPlayer().getParticleCollector().addBreakPlaceParticleEffect(minPosition.x, minPosition.y, minPosition.z, 1, 1, 1, this);
     }
 
     @Override
