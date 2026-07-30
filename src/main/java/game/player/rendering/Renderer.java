@@ -689,45 +689,18 @@ public final class Renderer extends Renderable {
         byte material = !Input.isKeyPressed(KeySettings.SPRINT)
                 && OptionSettings.PLACE_MODE.value() != PlaceMode.BREAK_HELD_ONLY ? placeable.getMaterial() : AIR;
 
-        Vector3l startPosition = material == AIR ? startTarget.position() : startTarget.offsetPosition();
-        Vector3l endPosition = material == AIR ? endTarget.position() : endTarget.offsetPosition();
+        setupHologramRendering();
 
-        TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
-        glEnable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_STENCIL_TEST);
-        glDepthMask(true);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, materialsTexture.id());
-
+        Vector3l startPosition = startTarget.offsetPosition(), endPosition = endTarget.offsetPosition();
         CapsulePlaceable.offsetPositions(startPosition, endPosition);
         Vector3l minPosition = Utils.min(startPosition, endPosition);
 
         placeable.setStartEndPositions(startPosition, endPosition);
         synchronizeHologramModel(placeable);
 
-        Shader shader = AssetManager.get(Shaders.VOLUME_INDICATOR);
-        shader.bind();
-        shader.setUniform("iCameraPosition",
-                cameraPosition.longX & ~CHUNK_SIZE_MASK,
-                cameraPosition.longY & ~CHUNK_SIZE_MASK,
-                cameraPosition.longZ & ~CHUNK_SIZE_MASK);
-        shader.setUniform("projectionViewMatrix", projectionViewMatrix);
-        shader.setUniform("modelMatrix", new Matrix4f());
-        shader.setUniform("sideTransform", new int[]{NORTH, TOP, WEST, SOUTH, BOTTOM, EAST});
-        shader.setUniform("instanceCount", 1, 1, 1);
-        shader.setUniform("instanceSize", placeable.getLengthX(), placeable.getLengthY(), placeable.getLengthZ());
-        shader.setUniform("startPosition", minPosition.x - placeable.getRadius(), minPosition.y - placeable.getRadius(), minPosition.z - placeable.getRadius());
-
-        shader.setUniform("textures", 0);
-        shader.setUniform("textureSizes", materialsTexture.textureSizes());
-        shader.setUniform("maxTextureSize", materialsTexture.maxTextureSize());
-        shader.setUniform("material", material);
-
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, opaqueHologram.bufferOrStart());
-        glDrawArrays(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum());
+        renderHologram(cameraPosition, projectionViewMatrix, minPosition.sub(placeable.getRadius(), placeable.getRadius(), placeable.getRadius()),
+                new Matrix4f(), new int[]{NORTH, TOP, WEST, SOUTH, BOTTOM, EAST}, material,
+                placeable.getLengthX(), placeable.getLengthY(), placeable.getLengthZ(), 1, 1, 1);
     }
 
     private void renderStructureVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target target) {
@@ -736,7 +709,11 @@ public final class Renderer extends Renderable {
         placeable.offsetPosition(position, target.side());
         synchronizeHologramModel(placeable);
 
-        renderHologram(cameraPosition, projectionViewMatrix, placeable.getModelMatrix(), placeable.getSideTransform(), position);
+        setupHologramRendering();
+        glDisable(GL_CULL_FACE);
+
+        renderHologram(cameraPosition, projectionViewMatrix, position, placeable.getModelMatrix(), placeable.getSideTransform(), OUT_OF_WORLD,
+                hologramSize, hologramSize, hologramSize, 1, 1, 1);
     }
 
     private void renderRepeatVolumeIndicator(Position cameraPosition, Matrix4f projectionViewMatrix, Target startTarget, Target currentTarget, Placeable placeable) {
@@ -752,15 +729,7 @@ public final class Renderer extends Renderable {
         Vector3l maxPosition = Utils.max(startPosition, endPosition);
         maxPosition.add(1, 1, 1);
 
-        TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
-        glEnable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_STENCIL_TEST);
-        glDepthMask(true);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, materialsTexture.id());
+        setupHologramRendering();
 
         if (placeable instanceof ShapePlaceable shapePlaceable) {
             synchronizeHologramModel(shapePlaceable.updateBitMap(false));
@@ -769,26 +738,8 @@ public final class Renderer extends Renderable {
             int countY = (int) (maxPosition.y - minPosition.y) / placeable.getLengthY();
             int countZ = (int) (maxPosition.z - minPosition.z) / placeable.getLengthZ();
 
-            Shader shader = AssetManager.get(Shaders.VOLUME_INDICATOR);
-            shader.bind();
-            shader.setUniform("iCameraPosition",
-                    cameraPosition.longX & ~CHUNK_SIZE_MASK,
-                    cameraPosition.longY & ~CHUNK_SIZE_MASK,
-                    cameraPosition.longZ & ~CHUNK_SIZE_MASK);
-            shader.setUniform("projectionViewMatrix", projectionViewMatrix);
-            shader.setUniform("modelMatrix", new Matrix4f());
-            shader.setUniform("sideTransform", new int[]{NORTH, TOP, WEST, SOUTH, BOTTOM, EAST});
-            shader.setUniform("instanceCount", countX, countY, countZ);
-            shader.setUniform("instanceSize", placeable.getLengthX(), placeable.getLengthY(), placeable.getLengthZ());
-            shader.setUniform("startPosition", minPosition.x, minPosition.y, minPosition.z);
-
-            shader.setUniform("textures", 0);
-            shader.setUniform("textureSizes", materialsTexture.textureSizes());
-            shader.setUniform("maxTextureSize", materialsTexture.maxTextureSize());
-            shader.setUniform("material", material);
-
-            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, opaqueHologram.bufferOrStart());
-            glDrawArraysInstanced(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum(), countX * countY * countZ);
+            renderHologram(cameraPosition, projectionViewMatrix, minPosition, new Matrix4f(), new int[]{NORTH, TOP, WEST, SOUTH, BOTTOM, EAST}, material,
+                    placeable.getLengthX(), placeable.getLengthY(), placeable.getLengthZ(), countX, countY, countZ);
         } else {
             Shader shader = AssetManager.get(Shaders.AABB_INDICATOR);
             shader.bind();
@@ -804,17 +755,23 @@ public final class Renderer extends Renderable {
         }
     }
 
-    private void renderHologram(Position cameraPosition, Matrix4f projectionViewMatrix, Matrix4f modelMatrix, int[] sideTransform, Vector3l position) {
+    private static void setupHologramRendering() {
         TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
         glEnable(GL_DEPTH_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
         glDisable(GL_STENCIL_TEST);
         glDepthMask(true);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D_ARRAY, materialsTexture.id());
+    }
 
+    private void renderHologram(Position cameraPosition, Matrix4f projectionViewMatrix, Vector3l startPosition, Matrix4f modelMatrix,
+                                int[] sideTransform, byte material,
+                                int lengthX, int lengthY, int lengthZ,
+                                int countX, int countY, int countZ) {
+        TextureArray materialsTexture = AssetManager.get(TexturePack.get(TextureArrays.MATERIALS));
         Shader shader = AssetManager.get(Shaders.VOLUME_INDICATOR);
         shader.bind();
         shader.setUniform("iCameraPosition",
@@ -824,17 +781,17 @@ public final class Renderer extends Renderable {
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
         shader.setUniform("modelMatrix", modelMatrix);
         shader.setUniform("sideTransform", sideTransform);
-        shader.setUniform("instanceCount", 1, 1, 1);
-        shader.setUniform("instanceSize", hologramSize, hologramSize, hologramSize);
-        shader.setUniform("startPosition", position.x, position.y, position.z);
+        shader.setUniform("instanceCount", countX, countY, countZ);
+        shader.setUniform("instanceSize", lengthX, lengthY, lengthZ);
+        shader.setUniform("startPosition", startPosition);
 
         shader.setUniform("textures", 0);
         shader.setUniform("textureSizes", materialsTexture.textureSizes());
         shader.setUniform("maxTextureSize", materialsTexture.maxTextureSize());
-        shader.setUniform("material", OUT_OF_WORLD);
+        shader.setUniform("material", material);
 
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, opaqueHologram.bufferOrStart());
-        glDrawArraysInstanced(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum(), 1);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, opaqueHologram.vertexCountSum(), countX * countY * countZ);
     }
 
     private void renderChat() {

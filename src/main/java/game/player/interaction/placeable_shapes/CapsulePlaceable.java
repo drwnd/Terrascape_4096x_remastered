@@ -152,6 +152,13 @@ public final class CapsulePlaceable extends ShapePlaceable {
     }
 
     @Override
+    protected void loadSettings() {
+        ShapeSetting[] baseSettings = getSettings();
+        settings = new ShapeSetting[baseSettings.length];
+        System.arraycopy(baseSettings, 0, settings, 0, baseSettings.length);
+    }
+
+    @Override
     public boolean allowBreak() {
         return Game.getPlayer().getInteractionHandler().getStartTarget() != null;
     }
@@ -294,6 +301,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
     private boolean isOutside(long x, long y, long z) {
         long paX = x - startPosition.x, paY = y - startPosition.y, paZ = z - startPosition.z;
         long baX = endPosition.x - startPosition.x, baY = endPosition.y - startPosition.y, baZ = endPosition.z - startPosition.z;
+        if (baX == 0 && baY == 0 && baZ == 0) return lengthSquared(paX, paY, paZ) > radius.value() * radius.value();
 
         double h = Math.clamp(dot(paX, paY, paZ, baX, baY, baZ) / dot(baX, baY, baZ, baX, baY, baZ), 0.0, 1.0);
         return lengthSquared(paX - baX * h, paY - baY * h, paZ - baZ * h) >= radius.value() * radius.value();

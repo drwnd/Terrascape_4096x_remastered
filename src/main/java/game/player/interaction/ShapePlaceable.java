@@ -242,7 +242,7 @@ public abstract class ShapePlaceable implements Placeable {
     protected int settingsHash, preferredSize;
     protected long[] bitMap;
     private final byte material;
-    private ShapeSetting[] settings;
+    protected ShapeSetting[] settings;
 
     final ToggleSetting invert = new StandAloneToggleSetting(false);
     private final StandAloneOptionSetting rotation;
