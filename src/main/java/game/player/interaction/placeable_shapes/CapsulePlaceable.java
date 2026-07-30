@@ -235,10 +235,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
                 for (long totalZ = min.z; totalZ != max.z; totalZ += stepSize)
                     hasUpdated = hasUpdated | placeInSection(uncompressedMaterials, chunk.LOD, totalX, totalY, totalZ);
 
-        if (hasUpdated) {
-            chunk.getMaterials().compressIntoData(uncompressedMaterials);
-            chunk.setModified();
-        }
+        if (hasUpdated) chunk.getMaterials().compressIntoData(uncompressedMaterials);
     }
 
     private boolean placeInSection(byte[] uncompressedMaterials, int lod, long totalX, long totalY, long totalZ) {
