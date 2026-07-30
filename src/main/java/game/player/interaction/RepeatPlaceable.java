@@ -31,14 +31,15 @@ public final class RepeatPlaceable implements Placeable {
 
     public static void offsetPositionFromGround(Vector3l position, int targetedSide, int lengthX, int lengthY, int lengthZ) {
         int offset = 1 << IntSettings.BREAK_PLACE_ALIGN.value();
-        if (!ToggleSettings.OFFSET_FROM_GROUND.value() || targetedSide != WEST && targetedSide != EAST) position.x += offset - lengthX >> 1;
-        if (!ToggleSettings.OFFSET_FROM_GROUND.value() || targetedSide != TOP && targetedSide != BOTTOM) position.y += offset - lengthY >> 1;
-        if (!ToggleSettings.OFFSET_FROM_GROUND.value() || targetedSide != NORTH && targetedSide != SOUTH) position.z += offset - lengthZ >> 1;
+        boolean offsetFromGround = ToggleSettings.OFFSET_FROM_GROUND.value();
+        if (!offsetFromGround || targetedSide != WEST && targetedSide != EAST) position.x += offset - lengthX >> 1;
+        if (!offsetFromGround || targetedSide != TOP && targetedSide != BOTTOM) position.y += offset - lengthY >> 1;
+        if (!offsetFromGround || targetedSide != NORTH && targetedSide != SOUTH) position.z += offset - lengthZ >> 1;
 
         offset = 1 << IntSettings.BREAK_PLACE_ALIGN.value();
-        if (ToggleSettings.OFFSET_FROM_GROUND.value() && targetedSide == EAST) position.x += offset - lengthX;
-        if (ToggleSettings.OFFSET_FROM_GROUND.value() && targetedSide == BOTTOM) position.y += offset - lengthY;
-        if (ToggleSettings.OFFSET_FROM_GROUND.value() && targetedSide == SOUTH) position.z += offset - lengthZ;
+        if (offsetFromGround && targetedSide == EAST) position.x += offset - lengthX;
+        if (offsetFromGround && targetedSide == BOTTOM) position.y += offset - lengthY;
+        if (offsetFromGround && targetedSide == SOUTH) position.z += offset - lengthZ;
     }
 
     public static void offsetPositions(Vector3l startPosition, Vector3l endPosition, int targetedSide, Placeable placeable) {

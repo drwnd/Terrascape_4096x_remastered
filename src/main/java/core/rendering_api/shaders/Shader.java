@@ -3,6 +3,7 @@ package core.rendering_api.shaders;
 import core.assets.Asset;
 
 import core.rendering_api.Debug;
+import core.utils.Vector3l;
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -80,6 +81,10 @@ public abstract class Shader implements Asset {
 
     public void setUniform(String uniformName, long x, long y, long z) {
         glUniform3i(getUniform(uniformName), (int) x, (int) y, (int) z);
+    }
+
+    public void setUniform(String uniformName, Vector3l value) {
+        glUniform3i(getUniform(uniformName), (int) value.x, (int) value.y, (int) value.z);
     }
 
 

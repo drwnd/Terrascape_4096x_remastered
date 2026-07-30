@@ -102,6 +102,10 @@ public final class Chunk {
         generationStatus = status;
     }
 
+    public void setModified() {
+        modified = true;
+    }
+
     private MaterialsData materials;
     private boolean modified;
     private Status generationStatus = Status.NOT_STARTED;

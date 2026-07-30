@@ -3,6 +3,7 @@ package game.player.interaction;
 import core.rendering_api.Input;
 import core.utils.Vector3l;
 
+import game.player.interaction.placeable_shapes.CapsulePlaceable;
 import game.player.interaction.placeable_shapes.CubePlaceable;
 import game.server.Game;
 import game.settings.IntSettings;
@@ -70,6 +71,12 @@ public final class InteractionHandler {
         if (placeable instanceof ChunkRebuildPlaceable) return PlacingState.NONE;
         if (placeable instanceof StructureSelector) return isLocked ? PlacingState.STRUCTURE_SELECT_LOCKED : PlacingState.STRUCTURE_SELECT;
 
+        if (placeable instanceof CapsulePlaceable) {
+            if (isLocked) return PlacingState.CAPSULE_LOCKED;
+            if (currentTarget == null) return PlacingState.NONE;
+            return PlacingState.CAPSULE;
+        }
+
         if (placeable instanceof StructurePlaceable) {
             if (currentTarget == null && !isLocked) return PlacingState.NONE;
             return isLocked ? PlacingState.STRUCTURE_PLACE_LOCKED : PlacingState.STRUCTURE_PLACE;
@@ -88,12 +95,12 @@ public final class InteractionHandler {
 
     private void handleUse() {
         Placeable placeable = Game.getPlayer().getHeldPlaceable();
-        if (placeable == null || OptionSettings.PLACE_MODE.value() == PlaceMode.BREAK_HELD_ONLY) {
+        if (placeable == null || !placeable.allowPlace() || OptionSettings.PLACE_MODE.value() == PlaceMode.BREAK_HELD_ONLY) {
             useInfo.lastAction = Game.getServer().getCurrentGameTick();
             useInfo.forceAction = false;
             return;
         }
-        handleUseDestroy(useInfo, placeable, true);
+        handleUseDestroy(useInfo, placeable, placeable.offsetOnPlace());
     }
 
     private void handleDestroy() {
@@ -105,7 +112,7 @@ public final class InteractionHandler {
         }
         if (!(placeable instanceof ShapePlaceable shapePlaceable)) placeable = new CubePlaceable(AIR).setBitMapToFull();
         else placeable = shapePlaceable.copyWithMaterial(AIR);
-        handleUseDestroy(destroyInfo, placeable, false);
+        handleUseDestroy(destroyInfo, placeable, placeable.offsetOnBreak());
     }
 
     private void handleUseDestroy(PlaceDestroyInfo info, Placeable placeable, boolean offsetPosition) {
@@ -125,7 +132,14 @@ public final class InteractionHandler {
 
         int targetedSide = target.side();
         Vector3l position = offsetPosition ? target.offsetPosition() : target.position();
-        if (placeable instanceof ShapePlaceable shapePlaceable) {
+
+        if (placeable instanceof CapsulePlaceable capsulePlaceable) {
+            if (startTarget != null) target = startTarget;
+            Vector3l startPosition = offsetPosition ? target.offsetPosition() : target.position();
+            capsulePlaceable.setStartEndPositions(startPosition, position);
+            targetedSide = target.side();
+
+        } else if (placeable instanceof ShapePlaceable shapePlaceable) {
             if (startTarget != null) target = startTarget;
             Vector3l startPosition = offsetPosition ? target.offsetPosition() : target.position();
             placeable = new RepeatPlaceable(shapePlaceable, startPosition, position);
