@@ -122,7 +122,12 @@ public final class CapsulePlaceable extends ShapePlaceable {
     @Override
     public boolean intersectsAABB(Vector3l position, Vector3l min, Vector3l max) {
         if (positionsInvalid()) return true;
-        return intersectsAABB(min.x, min.y, min.z, max.x, max.y, max.z);
+
+        for (long x = min.x; x != max.x + 1; x++)
+            for (long y = min.y; y != max.y + 1; y++)
+                for (long z = min.z; z != max.z + 1; z++)
+                    if (!isOutside(x, y, z)) return true;
+        return false;
     }
 
     @Override
@@ -204,20 +209,20 @@ public final class CapsulePlaceable extends ShapePlaceable {
     }
 
 
-    private boolean intersectsAABB(long minX, long minY, long minZ, long maxX, long maxY, long maxZ) {
+    private boolean fastMissesAABB(long minX, long minY, long minZ, long maxX, long maxY, long maxZ) {
         int radius = this.radius.value();
         AABBi aabb = new AABBi(-radius, -radius, -radius, (int) (maxX - minX) + radius, (int) (maxY - minY) + radius, (int) (maxZ - minZ) + radius);
 
         return aabb.intersectLineSegment(
                 startPosition.x - minX, startPosition.y - minY, startPosition.z - minZ,
-                endPosition.x - minX, endPosition.y - minY, endPosition.z - minZ, new Vector2f()) != Intersectionf.OUTSIDE;
+                endPosition.x - minX, endPosition.y - minY, endPosition.z - minZ, new Vector2f()) == Intersectionf.OUTSIDE;
     }
 
     private void placeInChunk(Chunk chunk) {
         int bits = CHUNK_SIZE_BITS + chunk.LOD;
         Vector3l min = new Vector3l(chunk.X << bits, chunk.Y << bits, chunk.Z << bits);
         Vector3l max = new Vector3l(chunk.X + 1 << bits, chunk.Y + 1 << bits, chunk.Z + 1 << bits);
-        if (!intersectsAABB(null, min, max)) return;
+        if (fastMissesAABB(min.x, min.y, min.z, max.x, max.y, max.z)) return;
         affectedChunks.add(chunk);
 
         byte[] uncompressedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
@@ -238,7 +243,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
 
     private boolean placeInSection(byte[] uncompressedMaterials, int lod, long totalX, long totalY, long totalZ) {
         int sectionSize = 8 << lod;
-        if (!intersectsAABB(totalX, totalY, totalZ, totalX + sectionSize, totalY + sectionSize, totalZ + sectionSize)) return false;
+        if (fastMissesAABB(totalX, totalY, totalZ, totalX + sectionSize, totalY + sectionSize, totalZ + sectionSize)) return false;
 
         boolean paint = OptionSettings.PLACE_MODE.value() == PlaceMode.PAINT;
         boolean replaceAir = OptionSettings.PLACE_MODE.value() == PlaceMode.REPLACE_AIR;
@@ -277,7 +282,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
     }
 
     private void fillBitMap(long[] bitMap, Vector3l minPosition, int length, long totalX, long totalY, long totalZ) {
-        if (!intersectsAABB(totalX, totalY, totalZ, totalX + length, totalY + length, totalZ + length)) return;
+        if (fastMissesAABB(totalX, totalY, totalZ, totalX + length, totalY + length, totalZ + length)) return;
 
         if (length <= 8) {
             for (long x = totalX; x < totalX + 8; x++)
