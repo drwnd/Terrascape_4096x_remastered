@@ -166,7 +166,7 @@ public final class StructurePlaceable implements Placeable {
                 inChunkX, inChunkY, inChunkZ,
                 startX, startY, startZ,
                 lengthX, lengthY, lengthZ,
-                chunk.LOD, structure, transform);
+                chunk.LOD, structure, transform, false);
 
         affectedChunks.add(chunk);
         World world = Game.getWorld();

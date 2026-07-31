@@ -162,6 +162,10 @@ public final class Utils {
         return Math.max(a, b);
     }
 
+    public static boolean LessEqualWrapped(long a, long b) {
+        return wrappedMin(a, b) == a;
+    }
+
 
     public static String sanitizeFileName(String fileName) {
         char[] chars = fileName.strip().toCharArray();

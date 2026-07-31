@@ -56,14 +56,14 @@ public final class MaterialsData {
     }
 
     public static void fillStructureMaterialsInto(byte[] uncompressedMaterials, Structure structure, byte transform, int lod,
-                                                  Vector3i targetStart, Vector3i sourceStart, Vector3i size) {
+                                                  Vector3i targetStart, Vector3i sourceStart, Vector3i size, boolean forceOverride) {
         MaterialsData source = structure.materials();
         if ((transform & Structure.MIRROR_X) != 0) sourceStart.x = sourceStart.x + (1 << source.totalSizeBits) - structure.sizeX(transform);
         if (((transform & Structure.MIRROR_Z) == 0) == ((transform & Structure.ROTATE_90) != 0))
             sourceStart.z = sourceStart.z + (1 << source.totalSizeBits) - structure.sizeZ(transform);
 
         synchronized (source) {
-            source.fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, source.totalSizeBits, 0, 0, 0, 0);
+            source.fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, source.totalSizeBits, 0, 0, 0, 0);
         }
     }
 
@@ -145,7 +145,7 @@ public final class MaterialsData {
     public void storeStructureMaterials(int inChunkX, int inChunkY, int inChunkZ,
                                         int startX, int startY, int startZ,
                                         int lengthX, int lengthY, int lengthZ,
-                                        int lod, Structure structure, byte transform) {
+                                        int lod, Structure structure, byte transform, boolean forceOverride) {
 
         byte[] uncompressedMaterials = new byte[1 << totalSizeBits * 3];
         Vector3i targetStart = new Vector3i(inChunkX, inChunkY, inChunkZ);
@@ -153,7 +153,7 @@ public final class MaterialsData {
         Vector3i size = new Vector3i(lengthX, lengthY, lengthZ);
 
         fillUncompressedMaterialsInto(uncompressedMaterials);
-        fillStructureMaterialsInto(uncompressedMaterials, structure, transform, lod, targetStart, sourceStart, size);
+        fillStructureMaterialsInto(uncompressedMaterials, structure, transform, lod, targetStart, sourceStart, size, forceOverride);
         compressIntoData(uncompressedMaterials);
     }
 
@@ -396,21 +396,21 @@ public final class MaterialsData {
     }
 
     private void fillStructureMaterialsInto(byte[] uncompressedMaterials, byte transform, int lod, Vector3i targetStart, Vector3i sourceStart, Vector3i size,
-                                            int sizeBits, int startIndex, int currentX, int currentY, int currentZ) {
+                                            boolean forceOverride, int sizeBits, int startIndex, int currentX, int currentY, int currentZ) {
         int length = 1 << sizeBits;
         if (isInValidCoordinate(lod, sourceStart, size, currentX, currentY, currentZ, length)) return;
         byte identifier = getIdentifier(startIndex);
 
         if (identifier == SPLITTER) {
             int nextSize = 1 << --sizeBits;
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b000), currentX, currentY, currentZ);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b001), currentX, currentY, currentZ + nextSize);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b010), currentX, currentY + nextSize, currentZ);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b011), currentX, currentY + nextSize, currentZ + nextSize);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b100), currentX + nextSize, currentY, currentZ);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b101), currentX + nextSize, currentY, currentZ + nextSize);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b110), currentX + nextSize, currentY + nextSize, currentZ);
-            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, sizeBits, startIndex + getOffset(startIndex, transform, 0b111), currentX + nextSize, currentY + nextSize, currentZ + nextSize);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b000), currentX, currentY, currentZ);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b001), currentX, currentY, currentZ + nextSize);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b010), currentX, currentY + nextSize, currentZ);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b011), currentX, currentY + nextSize, currentZ + nextSize);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b100), currentX + nextSize, currentY, currentZ);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b101), currentX + nextSize, currentY, currentZ + nextSize);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b110), currentX + nextSize, currentY + nextSize, currentZ);
+            fillStructureMaterialsInto(uncompressedMaterials, transform, lod, targetStart, sourceStart, size, forceOverride, sizeBits, startIndex + getOffset(startIndex, transform, 0b111), currentX + nextSize, currentY + nextSize, currentZ + nextSize);
             return;
         }
 
@@ -428,12 +428,12 @@ public final class MaterialsData {
 
         if (identifier == HOMOGENOUS) {
             byte material = data[startIndex + 1];
-            if (material == AIR) return;
+            if (material == AIR && !forceOverride) return;
             for (int x = 0; x < lengthX; x++)
                 for (int z = 0; z < lengthZ; z++)
                     for (int y = 0; y < lengthY; y++) {
                         int targetIndex = getUncompressedIndex(targetStartX + x, targetStartY + y, targetStartZ + z);
-                        if (Properties.doesntHaveProperties(uncompressedMaterials[targetIndex], STRUCTURE_REPLACEABLE)
+                        if (!forceOverride && Properties.doesntHaveProperties(uncompressedMaterials[targetIndex], STRUCTURE_REPLACEABLE)
                                 && Properties.hasProperties(material, STRUCTURE_REPLACEABLE)) continue;
                         uncompressedMaterials[targetIndex] = material;
                     }
@@ -445,8 +445,8 @@ public final class MaterialsData {
                 for (int y = 0; y < lengthY; y++) {
                     int targetIndex = getUncompressedIndex(targetStartX + x, targetStartY + y, targetStartZ + z);
                     byte material = data[startIndex + getInDetailIndex(transform, x, y, z)];
-                    if (material == AIR) continue;
-                    if (Properties.doesntHaveProperties(uncompressedMaterials[targetIndex], STRUCTURE_REPLACEABLE)
+                    if (material == AIR && !forceOverride) continue;
+                    if (!forceOverride && Properties.doesntHaveProperties(uncompressedMaterials[targetIndex], STRUCTURE_REPLACEABLE)
                             && Properties.hasProperties(material, STRUCTURE_REPLACEABLE)) continue;
                     uncompressedMaterials[targetIndex] = material;
                 }
@@ -1322,8 +1322,6 @@ public final class MaterialsData {
     public static final byte HOMOGENOUS = 0;
     public static final byte DETAIL = 1;
     public static final byte SPLITTER = 2;
-    static final byte IDENTIFIER_MASK = 0xF;
-    static final int FULLY_HOMOGENOUS = 256;
 
     static final byte HOMOGENOUS_BYTE_SIZE = 2;
     static final byte DETAIL_BYTE_SIZE = 9;
@@ -1336,7 +1334,9 @@ public final class MaterialsData {
     public static final byte CONTAINS_OPAQUE = -128;
     public static final byte CONTAINS_TRANSPARENT = 64;
     public static final byte CONTAINS_SELF_OCCLUDING = 32;
-    static final byte TYPE_MASK = (byte) 0xF0;
+
+    private static final byte IDENTIFIER_MASK = 0x03;
+    private static final byte TYPE_MASK = (byte) 0xE0;
 
     private byte[] data;
     private final int totalSizeBits;

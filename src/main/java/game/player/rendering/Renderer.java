@@ -748,8 +748,8 @@ public final class Renderer extends Renderable {
                     cameraPosition.longY & ~CHUNK_SIZE_MASK,
                     cameraPosition.longZ & ~CHUNK_SIZE_MASK);
             shader.setUniform("projectionViewMatrix", projectionViewMatrix);
-            shader.setUniform("minPosition", minPosition.toInt());
-            shader.setUniform("maxPosition", maxPosition.toInt());
+            shader.setUniform("minPosition", minPosition);
+            shader.setUniform("maxPosition", maxPosition);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }

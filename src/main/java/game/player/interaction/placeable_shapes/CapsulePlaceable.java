@@ -282,9 +282,9 @@ public final class CapsulePlaceable extends ShapePlaceable {
         if (fastMissesAABB(totalX, totalY, totalZ, totalX + length, totalY + length, totalZ + length)) return;
 
         if (length <= 8) {
-            for (long x = totalX; x < totalX + 8; x++)
-                for (long y = totalY; y < totalY + 8; y++)
-                    for (long z = totalZ; z < totalZ + 8; z++) {
+            for (long x = totalX; x != totalX + 8; x++)
+                for (long y = totalY; y != totalY + 8; y++)
+                    for (long z = totalZ; z != totalZ + 8; z++) {
                         if (isOutside(x, y, z)) continue;
                         int index = MaterialsData.getUncompressedIndex((int) (x - minPosition.x), (int) (y - minPosition.y), (int) (z - minPosition.z));
                         bitMap[index >> 6] |= 1L << index;

@@ -139,7 +139,7 @@ public final class GenerationData {
         Vector3i size = new Vector3i(lengthX, lengthY, lengthZ);
 
         if (clearBeforeGenerating) fillUncompressedMaterialsWithAir();
-        MaterialsData.fillStructureMaterialsInto(uncompressedMaterials, tree.structure(), tree.transform(), LOD, targetStart, sourceStart, size);
+        MaterialsData.fillStructureMaterialsInto(uncompressedMaterials, tree.structure(), tree.transform(), LOD, targetStart, sourceStart, size, false);
         return true;
     }
 

@@ -65,12 +65,12 @@ public final class Chunk {
     public void storeStructureMaterials(int inChunkX, int inChunkY, int inChunkZ,
                                         int startX, int startY, int startZ,
                                         int lengthX, int lengthY, int lengthZ,
-                                        int lod, Structure structure, byte transform) {
+                                        int lod, Structure structure, byte transform, boolean forceOverride) {
         this.materials.storeStructureMaterials(
                 inChunkX, inChunkY, inChunkZ,
                 startX, startY, startZ,
                 lengthX, lengthY, lengthZ,
-                lod, structure, transform);
+                lod, structure, transform, forceOverride);
         modified = true;
     }
 

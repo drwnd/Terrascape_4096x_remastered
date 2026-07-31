@@ -79,9 +79,9 @@ public final class ParticleCollector {
         IntArrayList transparentParticles = new IntArrayList(addBreakEffect ? placeable.getPreferredSize() * countX * countY * countZ : 0);
         IntArrayList placeParticles = new IntArrayList(addPlaceEffect ? placeable.getPreferredSize() * countX * countY * countZ : 0);
 
-        for (long x = startX; x < startX + (long) countX * lengthX; x += lengthX)
-            for (long y = startY; y < startY + (long) countY * lengthY; y += lengthY)
-                for (long z = startZ; z < startZ + (long) countZ * lengthZ; z += lengthZ) {
+        for (long x = startX; x != startX + (long) countX * lengthX; x += lengthX)
+            for (long y = startY; y != startY + (long) countY * lengthY; y += lengthY)
+                for (long z = startZ; z != startZ + (long) countZ * lengthZ; z += lengthZ) {
                     if (addBreakEffect)
                         addBreakEffectLoop((int) (x - startX), (int) (y - startY), (int) (z - startZ), x, y, z, transparentParticles, opaqueParticles, placeable);
                     if (addPlaceEffect)

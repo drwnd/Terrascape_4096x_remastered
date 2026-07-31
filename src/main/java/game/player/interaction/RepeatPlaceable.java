@@ -57,11 +57,11 @@ public final class RepeatPlaceable implements Placeable {
         endPosition.y -= MathUtils.mod(endPosition.y - startPosition.y, lengthY);
         endPosition.z -= MathUtils.mod(endPosition.z - startPosition.z, lengthZ);
 
-        if (startPosition.x <= endPosition.x) endPosition.x += lengthX - 1;
+        if (Utils.LessEqualWrapped(startPosition.x, endPosition.x)) endPosition.x += lengthX - 1;
         else startPosition.x += lengthX - 1;
-        if (startPosition.y <= endPosition.y) endPosition.y += lengthY - 1;
+        if (Utils.LessEqualWrapped(startPosition.y, endPosition.y)) endPosition.y += lengthY - 1;
         else startPosition.y += lengthY - 1;
-        if (startPosition.z <= endPosition.z) endPosition.z += lengthZ - 1;
+        if (Utils.LessEqualWrapped(startPosition.z, endPosition.z)) endPosition.z += lengthZ - 1;
         else startPosition.z += lengthZ - 1;
     }
 
