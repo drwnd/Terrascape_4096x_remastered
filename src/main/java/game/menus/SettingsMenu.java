@@ -12,8 +12,6 @@ import game.settings.*;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class SettingsMenu extends UiBackgroundElement {
@@ -32,12 +30,6 @@ public final class SettingsMenu extends UiBackgroundElement {
         addSection(++index, SettingsMenu::createSoundSection, UiMessages.SOUND_SECTION);
         addSection(++index, SettingsMenu::createDebugSection, UiMessages.DEBUG_SECTION);
         addSection(++index, SettingsMenu::createDebugScreenSection, UiMessages.DEBUG_SCREEN_SECTION);
-    }
-
-    public void scrollSectionButtons(float scroll) {
-        Vector2f offset = new Vector2f(0.0F, scroll);
-
-        for (Renderable renderable : sectionButtons) renderable.move(offset);
     }
 
     @Override
@@ -207,13 +199,12 @@ public final class SettingsMenu extends UiBackgroundElement {
 
     private void addSection(int sectionNumber, SectionCreator sectionCreator, StringGetter name) {
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - sectionNumber * 0.15F);
+        Vector2f offsetToParent = new Vector2f(0.35F, 0.975F - sectionNumber * 0.125F);
 
         UiButton sectionButton = new UiButton(sizeToParent, offsetToParent, sectionButtonAction(sectionCreator));
         sectionButton.addRenderable(new TextElement(new Vector2f(0.05F, 0.5F), name));
 
         addRenderable(sectionButton);
-        sectionButtons.add(sectionButton);
     }
 
     private static Clickable sectionButtonAction(SectionCreator sectionCreator) {
@@ -225,7 +216,6 @@ public final class SettingsMenu extends UiBackgroundElement {
     }
 
     private SettingsMenuInput input;
-    private final ArrayList<UiButton> sectionButtons = new ArrayList<>();
 
     private interface SectionCreator {
         SettingsRenderable getSection();

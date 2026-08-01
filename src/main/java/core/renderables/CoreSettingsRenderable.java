@@ -14,20 +14,22 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class CoreSettingsRenderable extends UiBackgroundElement {
 
+    public static final float SETTING_DISTANCE = 0.125F;
+
     public CoreSettingsRenderable() {
         super(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F));
         input = new SettingsRenderableInput(this);
         Vector2f sizeToParent = new Vector2f(0.1F, 0.1F);
 
-        UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.85F), getBackButtonAction());
+        UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.875F), getBackButtonAction());
         TextElement text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.BACK);
         backButton.addRenderable(text);
 
-        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.7f), getApplyChangesButtonAction());
+        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.725f), getApplyChangesButtonAction());
         text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.APPLY_SETTINGS);
         applyChangesButton.addRenderable(text);
 
-        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.55F), getResetSettingsButtonAction());
+        UiButton resetButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.575F), getResetSettingsButtonAction());
         text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.RESET_ALL_SETTINGS);
         resetButton.addRenderable(text);
 
@@ -73,7 +75,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public <T extends Number> void addSlider(NumberSetting<T> setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.15F * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         Slider<T> slider = new Slider<>(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(slider);
@@ -89,7 +91,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addKeySelector(KeySetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.15F * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, settingName);
         addRenderable(keySelector);
@@ -105,13 +107,13 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addToggle(ToggleSetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.2875F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.15F * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         Toggle toggle = new Toggle(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(toggle);
         toggles.add(toggle);
 
-        offsetToParent = new Vector2f(0.6625F, 1.0F - 0.15F * settingsCount);
+        offsetToParent = new Vector2f(0.6625F, 1.0F - SETTING_DISTANCE * settingsCount);
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, CoreUiMessages.KEYBIND);
         addRenderable(keySelector);
         keySelectors.add(keySelector);
@@ -127,13 +129,13 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addOption(OptionSetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.2875F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.15F * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         OptionToggle option = new OptionToggle(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(option);
         options.add(option);
 
-        offsetToParent = new Vector2f(0.6625F, 1.0F - 0.15F * settingsCount);
+        offsetToParent = new Vector2f(0.6625F, 1.0F - SETTING_DISTANCE * settingsCount);
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, CoreUiMessages.KEYBIND);
         addRenderable(keySelector);
         keySelectors.add(keySelector);
@@ -149,7 +151,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
     protected UiButton createResetButton(int counter) {
         Vector2f sizeToParent = new Vector2f(0.1F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.225F, 1.0F - 0.15F * counter);
+        Vector2f offsetToParent = new Vector2f(0.225F, 1.0F - SETTING_DISTANCE * counter);
         UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
 
         TextElement text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.RESET_SETTING);

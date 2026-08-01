@@ -40,11 +40,7 @@ public final class SettingsMenuInput extends Input {
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
-        float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0F);
-        menu.scrollSectionButtons(newScroll - scroll);
-        scroll = newScroll;
 
-        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
     }
 
     @Override
