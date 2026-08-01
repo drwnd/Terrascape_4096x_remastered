@@ -8,7 +8,9 @@ public enum CoreTextures implements TextureIdentifier {
     TOGGLE_ACTIVATED("ToggleActivated.png"),
     TOGGLE_DEACTIVATED("ToggleDeactivated.png"),
     OVERLAY("InventoryOverlay.png"),
-    CURSOR_INDICATOR("CursorIndicator.png");
+    CURSOR_INDICATOR("CursorIndicator.png"),
+    UP_ARROW("UpArrow.png"),
+    DOWN_ARROW("DownArrow.png");
 
 
     CoreTextures(String fileName) {

@@ -1,5 +1,6 @@
 package core.rendering_api.shaders;
 
+import core.assets.AssetManager;
 import core.assets.identifiers.ShaderIdentifier;
 import core.rendering_api.Debug;
 import core.utils.FileManager;
@@ -10,8 +11,8 @@ public class RenderShader extends Shader {
 
     public RenderShader(String vertexShaderFilePath, String fragmentShaderFilePath, ShaderIdentifier identifier) {
 
-        String vertexShaderCode = FileManager.loadFileContents(SHADER_FOLDER_PATH + vertexShaderFilePath);
-        String fragmentShaderCode = FileManager.loadFileContents(SHADER_FOLDER_PATH + fragmentShaderFilePath);
+        String vertexShaderCode = FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH + vertexShaderFilePath));
+        String fragmentShaderCode = FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH + fragmentShaderFilePath));
         try {
             programID = createProgram();
             int vertexShaderID = createVertexShader(vertexShaderCode, programID);

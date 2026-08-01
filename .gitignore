@@ -5,7 +5,6 @@ build/
 !**/src/test/**/build/
 /saves/
 /idea/
-/core.assets/textData/Settings
 
 ### IntelliJ IDEA ###
 /.idea/
@@ -41,3 +40,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 /src/main/java/DebugLauncher.java
+/Settings

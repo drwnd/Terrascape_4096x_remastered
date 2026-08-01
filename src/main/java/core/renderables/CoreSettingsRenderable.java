@@ -168,7 +168,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
         Window.setInput(input);
     }
 
-    private Clickable getApplyChangesButtonAction() {
+    Clickable getApplyChangesButtonAction() {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
 
@@ -183,7 +183,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
         };
     }
 
-    private Clickable getResetSettingsButtonAction() {
+    Clickable getResetSettingsButtonAction() {
         return (Vector2i pixelCoordinate, int button, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
             for (UiButton resetButton : resetButtons) resetButton.clickOn(pixelCoordinate, button, action);
@@ -191,7 +191,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
         };
     }
 
-    private Clickable getBackButtonAction() {
+    Clickable getBackButtonAction() {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
 
@@ -206,7 +206,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     }
 
     protected int settingsCount = 0;
-    private SettingsRenderableInput input;
+    protected SettingsRenderableInput input;
 
     protected final ArrayList<Slider<? extends Number>> sliders = new ArrayList<>();
     protected final ArrayList<KeySelector> keySelectors = new ArrayList<>();

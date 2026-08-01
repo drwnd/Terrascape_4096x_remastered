@@ -1,5 +1,6 @@
 package game.server.saving;
 
+import core.assets.AssetManager;
 import core.utils.Saver;
 
 import game.server.materials_data.MaterialsData;
@@ -10,11 +11,11 @@ import static game.utils.Constants.*;
 public final class StructureSaver extends Saver<Structure> {
 
     public static String getSaveFileLocation(String structureName) {
-        return "assets/structures/%s".formatted(structureName);
+        return AssetManager.getAssetFilepath("structures/" + structureName);
     }
 
     public static String getSaveFileLocation() {
-        return "assets/structures";
+        return AssetManager.getAssetFilepath("structures");
     }
 
     @Override

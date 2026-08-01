@@ -8,7 +8,6 @@ import static org.lwjgl.glfw.GLFW.*;
 public enum CoreOptionSettings implements OptionSetting {
     FONT(new FontOption("Default")),
     LANGUAGE(new Language("English")),
-    TEXTURE_PACK(new TexturePack("Default")),
     LOG_MESSAGES(LogMessages.NONE);
 
     CoreOptionSettings(Option defaultValue) {

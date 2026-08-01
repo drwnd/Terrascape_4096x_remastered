@@ -25,7 +25,7 @@ public final class AssetLoader {
 
     //https://ahbejarano.gitbook.io/lwjglgamedev/chapter-16
     public static int loadSound(String filename, boolean appendSoundFolderPath) {
-        if (appendSoundFolderPath) filename = "assets/sounds/" + filename;
+        if (appendSoundFolderPath) filename = AssetManager.getAssetFilepath("sounds/" + filename);
         int buffer = alGenBuffers();
 
         STBVorbisInfo info = STBVorbisInfo.malloc();

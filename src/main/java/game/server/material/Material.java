@@ -47,7 +47,7 @@ public final class Material {
     }
 
     private static void loadMaterial(Materials identifier, Gson gson) {
-        String json = FileManager.loadJson("assets/materials/%s.json".formatted(identifier.name()));
+        String json = FileManager.loadJson(AssetManager.getAssetFilepath("materials/%s.json".formatted(identifier.name())));
         Material material = gson.fromJson(json, Material.class);
         int materialIndex = identifier.ordinal() & 0xFF;
 
