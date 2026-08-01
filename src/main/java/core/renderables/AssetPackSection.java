@@ -1,6 +1,7 @@
 package core.renderables;
 
 import core.assets.AssetManager;
+import core.assets.CoreTextures;
 import core.rendering_api.Input;
 import core.rendering_api.Window;
 import core.settings.KeySetting;
@@ -60,6 +61,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
 
         for (int index = 0; index < activePackElements.size(); index++)
             activePackElements.get(index).setOffsetToParent(0.6F, 0.9625F - (index + 1) * 0.1125F + scroll);
+        hoverOver(Input.getCursorPos());
     }
 
 
@@ -187,6 +189,15 @@ public class AssetPackSection extends CoreSettingsRenderable {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected void resizeSelfTo(int width, int height) {
+        for (ActivePackElement activePackElement : activePackElements) {
+            float sizeToParentX = 0.5F / activePackElement.getAspectRatio() / Window.getAspectRatio();
+            activePackElement.upButton.setSizeToParent(sizeToParentX, 0.5F);
+            activePackElement.downButton.setSizeToParent(sizeToParentX, 0.5F);
+        }
+    }
+
     private final ArrayList<Renderable> inactivePackElements = new ArrayList<>();
     private final ArrayList<ActivePackElement> activePackElements = new ArrayList<>();
 
@@ -199,9 +210,52 @@ public class AssetPackSection extends CoreSettingsRenderable {
             UiButton deactivateButton = new UiButton(new Vector2f(6 / 7F, 1.0F), new Vector2f(1 / 7F, 0.0F), deactivatePack(this));
             deactivateButton.addRenderable(new TextElement(new Vector2f(0.05F, 0.5F), new Message(packName)));
 
+            Vector2f sizeToParent = new Vector2f(0.5F / getAspectRatio() / Window.getAspectRatio(), 0.5F);
+            upButton = new UiButton(sizeToParent, new Vector2f(0.0F, 0.5F), upClickable(this));
+            downButton = new UiButton(sizeToParent, new Vector2f(0.0F, 0.0F), downClickable(this));
+            upButton.setRimThicknessMultiplier(0.5F);
+            downButton.setRimThicknessMultiplier(0.5F);
+            upButton.addRenderable(new UiElement(new Vector2f(0.8F), new Vector2f(0.1F), CoreTextures.UP_ARROW));
+            downButton.addRenderable(new UiElement(new Vector2f(0.8F), new Vector2f(0.1F), CoreTextures.DOWN_ARROW));
+
             addRenderable(deactivateButton);
+            addRenderable(upButton);
+            addRenderable(downButton);
+
             setDoAutoFocusScaling(false);
             setPlayFocusSound(false);
+        }
+
+        private Clickable upClickable(ActivePackElement activePackElement) {
+            return (Vector2i _, int _, int action) -> {
+                if (action != GLFW_PRESS) return ButtonResult.IGNORE;
+
+                int index = activePackElements.indexOf(activePackElement);
+                if (index == -1) return ButtonResult.FAILURE;
+                if (index == 0) return ButtonResult.IGNORE;
+
+                activePackElements.set(index, activePackElements.get(index - 1));
+                activePackElements.set(index - 1, activePackElement);
+
+                setButtonsVerticalPosition();
+                return ButtonResult.SUCCESS;
+            };
+        }
+
+        private Clickable downClickable(ActivePackElement activePackElement) {
+            return (Vector2i _, int _, int action) -> {
+                if (action != GLFW_PRESS) return ButtonResult.IGNORE;
+
+                int index = activePackElements.indexOf(activePackElement);
+                if (index == -1) return ButtonResult.FAILURE;
+                if (index == activePackElements.size() - 1) return ButtonResult.IGNORE;
+
+                activePackElements.set(index, activePackElements.get(index + 1));
+                activePackElements.set(index + 1, activePackElement);
+
+                setButtonsVerticalPosition();
+                return ButtonResult.SUCCESS;
+            };
         }
 
 
@@ -212,6 +266,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
         }
 
         private final String packName;
+        private final UiButton upButton, downButton;
     }
 
     private class InactivePackElement extends UiButton {
