@@ -24,6 +24,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
     public AssetPackSection() {
         super();
         ArrayList<String> activePacks = AssetManager.getActiveAssetPackNames();
+        activePacks.removeIf(packName -> !new File("assetPacks/" + packName).exists());
         ArrayList<String> inactivePacks = getInactivePacks(activePacks);
 
         loadButtons(inactivePacks, activePacks);
@@ -115,7 +116,6 @@ public class AssetPackSection extends CoreSettingsRenderable {
             AssetManager.setActiveAssetPackNames(activePacks);
 
             Window.popRenderable();
-            // TODO save activePacks to settings file
             return ButtonResult.SUCCESS;
         };
     }

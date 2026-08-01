@@ -8,6 +8,7 @@ import core.utils.FileManager;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class Settings {
@@ -16,6 +17,7 @@ public final class Settings {
         fileIdentifier = Settings::loadSettingsFile;
         settings = new ArrayList<>();
         registerSettingsEnums(CoreFloatSettings.class, CoreKeySettings.class, CoreToggleSettings.class, CoreOptionSettings.class);
+        registerSettings(List.of(new AssetPackSetting()));
     }
 
     @SafeVarargs
@@ -87,4 +89,44 @@ public final class Settings {
     private static final ArrayList<Setting> settings;
     private static final String SETTINGS_FILE_LOCATION = "Settings";
     private static final AssetIdentifier<SettingsFile> fileIdentifier;
+
+    private static class AssetPackSetting implements Setting {
+
+        @Override
+        public String name() {
+            return "ASSET_PACKS";
+        }
+
+        @Override
+        public String toSaveValue() {
+            ArrayList<String> activePacks = AssetManager.getActiveAssetPackNames();
+            StringBuilder builder = new StringBuilder();
+            for (int index = 0; index < activePacks.size(); index++) {
+                builder.append(activePacks.get(index));
+                if (index != activePacks.size() - 1) builder.append('#');
+            }
+            return builder.toString();
+        }
+
+        @Override
+        public boolean setIfPresent(String name, String value) {
+            if (!name().equalsIgnoreCase(name)) return false;
+            String[] packsArray = value.split("#");
+            ArrayList<String> packsList = new ArrayList<>(packsArray.length);
+            packsList.addAll(Arrays.asList(packsArray));
+            packsList.removeIf(packName -> !new File("assetPacks/" + packName).exists());
+            AssetManager.setActiveAssetPackNames(packsList);
+            return true;
+        }
+
+        @Override
+        public String translationFileName() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int ordinal() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }
