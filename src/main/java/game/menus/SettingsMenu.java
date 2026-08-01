@@ -28,6 +28,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         int index = 0;
         addSection(++index, SettingsMenu::createControlsSection, UiMessages.CONTROLS_SECTION);
         addSection(++index, SettingsMenu::createRenderingSection, UiMessages.RENDERING_SECTION);
+        addSection(++index, AssetPackSection::new, UiMessages.ASSET_PACKS_SECTION);
         addSection(++index, SettingsMenu::createUiSection, UiMessages.UI_CUSTOMIZATION_SECTION);
         addSection(++index, SettingsMenu::createSoundSection, UiMessages.SOUND_SECTION);
         addSection(++index, SettingsMenu::createDebugSection, UiMessages.DEBUG_SECTION);
@@ -227,6 +228,6 @@ public final class SettingsMenu extends UiBackgroundElement {
     private final ArrayList<UiButton> sectionButtons = new ArrayList<>();
 
     private interface SectionCreator {
-        SettingsRenderable getSection();
+        Renderable getSection();
     }
 }

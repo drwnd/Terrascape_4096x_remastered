@@ -51,12 +51,13 @@ public final class AssetManager {
         return "assetPacks/Default/" + assetName;
     }
 
-    public static ArrayList<String> getAssetPackNames() {
+    public static ArrayList<String> getActiveAssetPackNames() {
         return new ArrayList<>(assetPackNames);
     }
 
-    public static void setAssetPackNames(ArrayList<String> assetPackNames) {
+    public static void setActiveAssetPackNames(ArrayList<String> assetPackNames) {
         AssetManager.assetPackNames = new ArrayList<>(assetPackNames);
+        deleteAll();
     }
 
     public static Set<String> getAssetFilePathsInFolder(String folderName) {

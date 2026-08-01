@@ -14,17 +14,16 @@ public interface TextureArrayIdentifier extends AssetIdentifier<TextureArray> {
     FileIndexSet indexSet();
 
     default TextureArray generateAsset() {
-        String filepath = AssetManager.getAssetFilepath("textures/" + folderName());
-        Texture[] textures = getTextures(filepath, indexSet());
+        Texture[] textures = getTextures(indexSet());
         return CoreObjectLoader.generateTextureArray(textures);
     }
 
-    private static Texture[] getTextures(String folderName, FileIndexSet indexSet) {
+    private Texture[] getTextures(FileIndexSet indexSet) {
         Texture[] textures = new Texture[indexSet.getCount()];
 
         for (int index = 0; index < textures.length; index++) {
             String fileName = indexSet.getFileName(index);
-            String filepath = folderName + '/' + fileName;
+            String filepath = AssetManager.getAssetFilepath("textures/%s/%s".formatted(folderName(), fileName));
 
             textures[index] = AssetLoader.loadTexture2D(filepath);
         }
