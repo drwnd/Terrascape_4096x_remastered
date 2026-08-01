@@ -7,7 +7,6 @@ import core.renderables.Renderable;
 import core.renderables.TextField;
 import core.rendering_api.Input;
 import core.rendering_api.Window;
-import core.utils.FileManager;
 
 import game.language.UiMessages;
 import game.player.interaction.Placeable;
@@ -19,6 +18,7 @@ import org.joml.Vector2i;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -103,11 +103,12 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
         int structureCount = 0;
         Vector2f sizeToParent = new Vector2f(1.0F, 0.05F);
-        File[] structureFiles = FileManager.getChildren(new File("assets/structures"));
+        Set<String> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
         String filterText = filterTextField.getText().toLowerCase();
 
-        for (File structureFile : structureFiles) {
-            if (structureFile == null || !structureFile.getName().toLowerCase().contains(filterText)) continue;
+        for (String filepath : filePaths) {
+            File structureFile = new File(filepath);
+            if (!structureFile.getName().toLowerCase().contains(filterText)) continue;
             String structureName = structureFile.getName();
             Vector2f offsetToParent = new Vector2f(0.0F, 1.0F - ++structureCount * 0.065F + input.structureScroll);
 

@@ -6,7 +6,6 @@ import core.assets.Texture;
 import core.assets.identifiers.TextureIdentifier;
 import core.rendering_api.shaders.GuiShader;
 
-import core.settings.optionSettings.TexturePack;
 import org.joml.Vector2f;
 
 public class UiElement extends Renderable {
@@ -18,7 +17,7 @@ public class UiElement extends Renderable {
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
         GuiShader shader = (GuiShader) AssetManager.get(CoreShaders.GUI);
-        Texture background = AssetManager.get(TexturePack.get(texture));
+        Texture background = AssetManager.get(texture);
         shader.bind();
         if (scalesWithGuiSize()) shader.drawQuad(position, size, background);
         else shader.drawQuadNoGuiScale(position, size, background);

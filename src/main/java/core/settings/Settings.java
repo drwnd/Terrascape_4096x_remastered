@@ -85,6 +85,6 @@ public final class Settings {
     }
 
     private static final ArrayList<Setting> settings;
-    private static final String SETTINGS_FILE_LOCATION = "assets/textData/Settings";
+    private static final String SETTINGS_FILE_LOCATION = "Settings";
     private static final AssetIdentifier<SettingsFile> fileIdentifier;
 }

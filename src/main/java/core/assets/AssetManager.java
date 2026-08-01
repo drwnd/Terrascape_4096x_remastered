@@ -2,8 +2,13 @@ package core.assets;
 
 import core.assets.identifiers.*;
 import core.rendering_api.Debug;
+import core.utils.FileManager;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class AssetManager {
 
@@ -38,6 +43,37 @@ public final class AssetManager {
         }
     }
 
+    public static String getAssetFilepath(String assetName) {
+        for (String assetPackName : assetPackNames) {
+            String filepath = "assetPacks/%s/%s".formatted(assetPackName, assetName);
+            if (new File(filepath).exists()) return filepath;
+        }
+        return "assetPacks/Default/" + assetName;
+    }
+
+    public static ArrayList<String> getAssetPackNames() {
+        return new ArrayList<>(assetPackNames);
+    }
+
+    public static void setAssetPackNames(ArrayList<String> assetPackNames) {
+        AssetManager.assetPackNames = new ArrayList<>(assetPackNames);
+    }
+
+    public static Set<String> getAssetFilePathsInFolder(String folderName) {
+        Set<String> filePaths = new TreeSet<>();
+        for (String assetPackName : assetPackNames)
+            addAssetFilePathsInFolder(filePaths, "assetPacks/%s/%s".formatted(assetPackName, folderName));
+        addAssetFilePathsInFolder(filePaths, "assetPacks/Default/" + folderName);
+        return filePaths;
+    }
+
+
+    private static void addAssetFilePathsInFolder(Set<String> filePaths, String folderPath) {
+        File[] files = FileManager.getChildren(new File(folderPath));
+        if (files == null) return;
+        for (File file : files) filePaths.add(file.getPath());
+    }
 
     private static final HashMap<AssetIdentifier<?>, Asset> assets = new HashMap<>();
+    private static ArrayList<String> assetPackNames = new ArrayList<>();
 }

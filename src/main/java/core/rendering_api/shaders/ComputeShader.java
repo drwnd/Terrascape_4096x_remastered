@@ -1,5 +1,6 @@
 package core.rendering_api.shaders;
 
+import core.assets.AssetManager;
 import core.assets.identifiers.ShaderIdentifier;
 import core.rendering_api.Debug;
 import core.utils.FileManager;
@@ -8,7 +9,7 @@ import org.lwjgl.opengl.GL46;
 public class ComputeShader extends Shader {
 
     public ComputeShader(String computeShaderFilePath, ShaderIdentifier identifier) {
-        this(FileManager.loadFileContents(SHADER_FOLDER_PATH + computeShaderFilePath), identifier.toString());
+        this(FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH + computeShaderFilePath)), identifier.toString());
     }
 
     public ComputeShader(String computeShaderCode, String name) {
