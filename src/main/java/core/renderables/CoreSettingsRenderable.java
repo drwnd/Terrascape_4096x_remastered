@@ -14,8 +14,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class CoreSettingsRenderable extends UiBackgroundElement {
 
-    public static final float SETTING_DISTANCE = 0.125F;
-
     public CoreSettingsRenderable() {
         super(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F));
         input = new SettingsRenderableInput(this);
@@ -217,4 +215,6 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
     private final ArrayList<UiButton> resetButtons = new ArrayList<>();
     protected final ArrayList<Renderable> movingRenderables = new ArrayList<>();
+
+    private static final float SETTING_DISTANCE = 0.125F;
 }
