@@ -6,9 +6,9 @@ import java.nio.ByteBuffer;
 
 import static game.server.materials_data.MaterialsData.*;
 
-final class LongArrayCompressor {
+final class ByteArrayCompressor {
 
-    private LongArrayCompressor() {
+    private ByteArrayCompressor() {
 
     }
 

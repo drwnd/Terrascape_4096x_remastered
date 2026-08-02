@@ -44,7 +44,7 @@ public final class MaterialsData {
     public static MaterialsData getCompressedMaterials(int sizeBits, byte[] uncompressedMaterials) {
         if (sizeBits == 0) return new MaterialsData(0, uncompressedMaterials[0]);
         ByteArrayList dataList = new ByteArrayList(1000);
-        LongArrayCompressor.compressMaterials(dataList, uncompressedMaterials, sizeBits);
+        ByteArrayCompressor.compressMaterials(dataList, uncompressedMaterials, sizeBits);
         return new MaterialsData(sizeBits, dataList.toArray());
     }
 
@@ -241,7 +241,7 @@ public final class MaterialsData {
         if (uncompressedMaterials.length != 1 << totalSizeBits * 3)
             throw new IllegalArgumentException("uncompressedMaterials bust be %d long, but was %d long".formatted(1 << totalSizeBits * 3, uncompressedMaterials.length));
         ByteArrayList dataList = new ByteArrayList(1000);
-        LongArrayCompressor.compressMaterials(dataList, uncompressedMaterials, totalSizeBits);
+        ByteArrayCompressor.compressMaterials(dataList, uncompressedMaterials, totalSizeBits);
 
         byte[] data = dataList.toArray();
         synchronized (this) {
