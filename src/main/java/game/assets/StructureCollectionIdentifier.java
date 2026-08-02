@@ -2,12 +2,11 @@ package game.assets;
 
 import core.assets.AssetManager;
 import core.assets.identifiers.AssetIdentifier;
-import core.utils.FileManager;
 import game.server.generation.Structure;
-import game.server.saving.StructureSaver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
 public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCollection> {
     OAK_TREES("OakTree"),
@@ -23,11 +22,11 @@ public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCo
 
     @Override
     public StructureCollection generateAsset() {
-        File[] structureFiles = FileManager.getChildren(new File(StructureSaver.getSaveFileLocation()));
+        Set<String> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
         ArrayList<Structure> structuresList = new ArrayList<>();
 
-        for (File structureFile : structureFiles) {
-            String structureName = structureFile.getName().toLowerCase();
+        for (String structureFilepath : structureFilePaths) {
+            String structureName = new File(structureFilepath).getName().toLowerCase();
             if (!structureName.startsWith(structureBaseName)) continue;
             Structure structure = AssetManager.get(new StructureIdentifier(structureName));
             structuresList.add(structure);

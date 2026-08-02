@@ -157,8 +157,17 @@ public final class ChunkGenerator {
         @Override
         public void run() {
 
-            GenerationData generationData = new GenerationData(chunkX, chunkZ, lod);
+            GenerationData generationData;
             ChunkSaver saver = new ChunkSaver();
+            try {
+                generationData = new GenerationData(chunkX, chunkZ, lod);
+            } catch (Exception exception) {
+                Debug.err("Failed to create GenerationData");
+                Debug.err(exception.getClass());
+                exception.printStackTrace();
+                Debug.err("X:%d Z:%d%n", chunkX, chunkZ);
+                return;
+            }
 
             for (long chunkY = playerChunkY - IntSettings.RENDER_DISTANCE.value() - 1; chunkY != playerChunkY + IntSettings.RENDER_DISTANCE.value() + 2; chunkY++) {
                 try {

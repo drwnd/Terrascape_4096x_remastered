@@ -12,9 +12,12 @@ import static game.utils.Constants.*;
 
 public final class Material {
 
+    static {
+        AssetManager.addDeleteAllCallback(Material::loadMaterials);
+    }
+
     public static void loadMaterials() {
         long start = System.nanoTime();
-        AssetManager.deleteAll();
 
         Gson gson = new Gson();
         for (Materials identifier : Materials.values()) loadMaterial(identifier, gson);

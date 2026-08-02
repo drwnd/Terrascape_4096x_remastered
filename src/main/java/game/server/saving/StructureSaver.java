@@ -14,10 +14,6 @@ public final class StructureSaver extends Saver<Structure> {
         return AssetManager.getAssetFilepath("structures/" + structureName);
     }
 
-    public static String getSaveFileLocation() {
-        return AssetManager.getAssetFilepath("structures");
-    }
-
     @Override
     protected void save(Structure structure) {
         saveInt(structure.sizeX());

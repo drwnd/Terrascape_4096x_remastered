@@ -22,6 +22,7 @@ public final class AssetManager {
             for (Asset asset : assets.values()) asset.delete();
             assets.clear();
         }
+        for (Runnable callback : deleteAllCallbacks) callback.run();
     }
 
     public static void delete(AssetIdentifier<?> identifier) {
@@ -68,6 +69,11 @@ public final class AssetManager {
         return filePaths;
     }
 
+    public static void addDeleteAllCallback(Runnable callback) {
+        if (callback == null) return;
+        deleteAllCallbacks.add(callback);
+    }
+
 
     private static void addAssetFilePathsInFolder(Set<String> filePaths, String folderPath) {
         File[] files = FileManager.getChildren(new File(folderPath));
@@ -75,6 +81,7 @@ public final class AssetManager {
         for (File file : files) filePaths.add(file.getPath());
     }
 
+    private static final ArrayList<Runnable> deleteAllCallbacks = new ArrayList<>();
     private static final HashMap<AssetIdentifier<?>, Asset> assets = new HashMap<>();
     private static ArrayList<String> assetPackNames = new ArrayList<>();
 }
