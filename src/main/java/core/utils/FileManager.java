@@ -44,6 +44,7 @@ public final class FileManager {
     }
 
     public static File[] getChildren(File file) {
+        if (!file.exists()) return new File[0];
         file.mkdirs();
         return file.listFiles();
     }

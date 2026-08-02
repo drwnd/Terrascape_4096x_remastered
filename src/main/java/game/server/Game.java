@@ -1,5 +1,6 @@
 package game.server;
 
+import core.assets.AssetManager;
 import core.rendering_api.Debug;
 import game.player.Player;
 import core.rendering_api.Window;
@@ -13,6 +14,15 @@ import game.settings.IntSettings;
 import java.io.File;
 
 public final class Game {
+
+    static {
+        AssetManager.addDeleteAllCallback(() -> {
+            if (Game.getPlayer() == null || Game.getServer() == null) return;
+
+            Game.getPlayer().getMeshCollector().removeAll();
+            Game.getServer().scheduleGeneratorRestart();
+        });
+    }
 
     public static void play(File saveFile) {
         Material.loadMaterials();
