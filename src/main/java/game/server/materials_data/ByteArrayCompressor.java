@@ -18,6 +18,10 @@ final class ByteArrayCompressor {
         compressMaterials(data, longMaterials, sizeBits, 0, 0, 0, 0);
     }
 
+    static void compressMaterials(ByteArrayList data, long[] uncompressedMaterials, int sizeBits) {
+        compressMaterials(data, uncompressedMaterials, sizeBits, 0, 0, 0, 0);
+    }
+
     private static int compressMaterials(ByteArrayList data, long[] uncompressedMaterials, int sizeBits, int startIndex, int inChunkX, int inChunkY, int inChunkZ) {
         if (isHomogenous(MaterialsData.getUncompressedIndex(inChunkX, inChunkY, inChunkZ), 1 << sizeBits * 3, uncompressedMaterials))
             return addHomogenous(data, uncompressedMaterials, inChunkX, inChunkY, inChunkZ);

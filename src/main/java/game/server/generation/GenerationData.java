@@ -9,6 +9,8 @@ import game.server.biomes.Biome;
 
 import org.joml.Vector3i;
 
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.util.Arrays;
 
 import static game.server.generation.WorldGeneration.*;
@@ -148,7 +150,8 @@ public final class GenerationData {
     }
 
     public MaterialsData getCompressedMaterials() {
-        return MaterialsData.getCompressedMaterials(CHUNK_SIZE_BITS, uncompressedMaterials);
+        MemorySegment.copy(MemorySegment.ofArray(uncompressedMaterials), ValueLayout.OfByte.JAVA_LONG_UNALIGNED, 0, uncompressedMaterialLongs, 0, uncompressedMaterialLongs.length);
+        return MaterialsData.getCompressedMaterials(CHUNK_SIZE_BITS, uncompressedMaterialLongs);
     }
 
     public Tree treeMapValue(int index) {
@@ -414,6 +417,7 @@ public final class GenerationData {
     private final byte[] cachedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE >> 6];
 
     private final byte[] uncompressedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+    private final long[] uncompressedMaterialLongs = new long[uncompressedMaterials.length / 8];
 
 
     private static final double STONE_TYPE_FREQUENCY = 1 / 800.0;

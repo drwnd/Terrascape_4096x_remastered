@@ -48,6 +48,13 @@ public final class MaterialsData {
         return new MaterialsData(sizeBits, dataList.toArray());
     }
 
+    public static MaterialsData getCompressedMaterials(int sizeBits, long[] uncompressedMaterials) {
+        if (sizeBits == 0) return new MaterialsData(0, (byte) uncompressedMaterials[0]);
+        ByteArrayList dataList = new ByteArrayList(1000);
+        ByteArrayCompressor.compressMaterials(dataList, uncompressedMaterials, sizeBits);
+        return new MaterialsData(sizeBits, dataList.toArray());
+    }
+
     public static MaterialsData getCompressedMaterials(int sizeBits, long[] bitMap, byte material) {
         if (sizeBits == 0) return new MaterialsData(0, material);
         ByteArrayList dataList = new ByteArrayList(1000);
