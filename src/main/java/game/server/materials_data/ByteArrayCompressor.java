@@ -1,21 +1,53 @@
 package game.server.materials_data;
 
 import core.utils.ByteArrayList;
+import sun.misc.Unsafe;
 
-import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
+import java.lang.reflect.Field;
 
 import static game.server.materials_data.MaterialsData.*;
 
 final class ByteArrayCompressor {
 
+    private static Unsafe unsafe = null;
+    private static int longArrayClassPointer;
+    private static int byteArrayClassPointer;
+
+    static {
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            unsafe = (Unsafe) f.get(null);
+
+            longArrayClassPointer = unsafe.getInt(new long[0], 8);
+            byteArrayClassPointer = unsafe.getInt(new byte[0], 8);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
     private ByteArrayCompressor() {
 
     }
 
-    static void compressMaterials(ByteArrayList data, byte[] uncompressedMaterials, int sizeBits) {
-        long[] longMaterials = MemorySegment.ofArray(uncompressedMaterials).toArray(ValueLayout.OfByte.JAVA_LONG_UNALIGNED);
-        compressMaterials(data, longMaterials, sizeBits, 0, 0, 0, 0);
+    public static void compressMaterials(ByteArrayList data, Object uncompressedMaterialsObject, int sizeBits) {
+        if (uncompressedMaterialsObject == null) return;
+
+        int length = 1 << sizeBits * 3;
+        unsafe.putInt(uncompressedMaterialsObject, 12, length / 8);
+        unsafe.putInt(uncompressedMaterialsObject, 8, longArrayClassPointer);
+
+        try {
+            long[] longMaterials = (long[]) uncompressedMaterialsObject;
+            compressMaterials(data, longMaterials, sizeBits, 0, 0, 0, 0);
+        } catch (ClassCastException exception) {
+            exception.printStackTrace();
+            data.add((byte) (HOMOGENOUS | CONTAINS_SELF_OCCLUDING));
+            data.add((byte) 0);
+        }
+
+        unsafe.putInt(uncompressedMaterialsObject, 12, length);
+        unsafe.putInt(uncompressedMaterialsObject, 8, byteArrayClassPointer);
     }
 
     private static int compressMaterials(ByteArrayList data, long[] uncompressedMaterials, int sizeBits, int startIndex, int inChunkX, int inChunkY, int inChunkZ) {
