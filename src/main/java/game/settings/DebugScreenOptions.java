@@ -1,10 +1,12 @@
 package game.settings;
 
+import core.settings.KeySetting;
 import core.settings.OptionSetting;
 import core.settings.Setting;
 import core.settings.optionSettings.ColorOption;
 import core.settings.optionSettings.Option;
 import core.settings.optionSettings.Visibility;
+import core.settings.stand_alones.StandAloneKeySetting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,19 +96,15 @@ public enum DebugScreenOptions {
         }
 
         @Override
-        public void setKeybind(int keybind) {
-
+        public KeySetting nextKeySetting() {
+            return new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
         }
 
         @Override
-        public int keybind() {
-            return GLFW_KEY_UNKNOWN;
+        public KeySetting previousKeySetting() {
+            return new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
         }
 
-        @Override
-        public int defaultKeybind() {
-            return GLFW_KEY_UNKNOWN;
-        }
 
         @Override
         public String translationFileName() {

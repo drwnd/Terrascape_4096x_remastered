@@ -49,9 +49,15 @@ public final class StandardWindowInput extends Input {
                 toggleSetting.setValue(!toggleSetting.value());
                 settingUpdated = true;
             }
-            if (setting instanceof OptionSetting optionSetting && Input.isKeyPressed(optionSetting)) {
-                optionSetting.setValue(optionSetting.value().next());
-                settingUpdated = true;
+            if (setting instanceof OptionSetting optionSetting) {
+                if (Input.isKeyPressed(optionSetting.nextKeySetting())) {
+                    optionSetting.setValue(optionSetting.value().next());
+                    settingUpdated = true;
+                }
+                if (Input.isKeyPressed(optionSetting.previousKeySetting())) {
+                    optionSetting.setValue(optionSetting.value().previous());
+                    settingUpdated = true;
+                }
             }
         }
         if (settingUpdated) Settings.writeToFile();

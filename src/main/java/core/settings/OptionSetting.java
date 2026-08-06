@@ -2,7 +2,7 @@ package core.settings;
 
 import core.settings.optionSettings.Option;
 
-public interface OptionSetting extends KeySetting {
+public interface OptionSetting extends Setting {
 
     default boolean setIfPresent(String name, String value) {
         if (!name().equalsIgnoreCase(name)) return false;
@@ -13,12 +13,13 @@ public interface OptionSetting extends KeySetting {
         if (savedValue == null) return false;
         setValue(savedValue);
 
-        setKeybind(Integer.parseInt(values[1]));
+        if (values.length >= 2) nextKeySetting().setKeybind(Integer.parseInt(values[1]));
+        if (values.length >= 3) previousKeySetting().setKeybind(Integer.parseInt(values[2]));
         return true;
     }
 
     default String toSaveValue() {
-        return "%s#%d".formatted(String.valueOf(value()), keybind());
+        return "%s#%d#%d".formatted(String.valueOf(value()), nextKeySetting().keybind(), previousKeySetting().keybind());
     }
 
     void setValue(Option value);
@@ -26,4 +27,8 @@ public interface OptionSetting extends KeySetting {
     Option value();
 
     Option defaultValue();
+
+    KeySetting nextKeySetting();
+
+    KeySetting previousKeySetting();
 }

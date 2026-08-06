@@ -1,5 +1,6 @@
 package core.settings.stand_alones;
 
+import core.settings.KeySetting;
 import core.settings.OptionSetting;
 import core.settings.optionSettings.Option;
 
@@ -10,15 +11,15 @@ public final class StandAloneOptionSetting implements OptionSetting {
     public StandAloneOptionSetting(Option defaultValue) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
-        this.defaultKeybind = GLFW_KEY_UNKNOWN;
-        this.keybind = defaultKeybind;
+        nextKeySetting = new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
+        previousKeySetting = new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
     }
 
-    StandAloneOptionSetting(Option defaultValue, int defaultKeybind) {
+    StandAloneOptionSetting(Option defaultValue, int defaultNextKeybind, int defaultPreviousKeybind) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
-        this.defaultKeybind = defaultKeybind;
-        this.keybind = defaultKeybind;
+        nextKeySetting = new StandAloneKeySetting(defaultNextKeybind);
+        previousKeySetting = new StandAloneKeySetting(defaultPreviousKeybind);
     }
 
     @Override
@@ -37,18 +38,13 @@ public final class StandAloneOptionSetting implements OptionSetting {
     }
 
     @Override
-    public void setKeybind(int keybind) {
-        this.keybind = keybind;
+    public KeySetting nextKeySetting() {
+        return nextKeySetting;
     }
 
     @Override
-    public int keybind() {
-        return keybind;
-    }
-
-    @Override
-    public int defaultKeybind() {
-        return defaultKeybind;
+    public KeySetting previousKeySetting() {
+        return previousKeySetting;
     }
 
     @Override
@@ -64,6 +60,5 @@ public final class StandAloneOptionSetting implements OptionSetting {
     private Option value;
     private final Option defaultValue;
 
-    private final int defaultKeybind;
-    private int keybind;
+    private final StandAloneKeySetting nextKeySetting, previousKeySetting;
 }

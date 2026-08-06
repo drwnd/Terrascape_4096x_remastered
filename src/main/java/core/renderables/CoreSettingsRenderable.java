@@ -126,22 +126,28 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
     public void addOption(OptionSetting setting, StringGetter settingName) {
         settingsCount++;
-        Vector2f sizeToParent = new Vector2f(0.2875F, 0.1F);
+        Vector2f sizeToParent = new Vector2f(0.18333334F, 0.1F);
         Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         OptionToggle option = new OptionToggle(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(option);
         options.add(option);
 
-        offsetToParent = new Vector2f(0.6625F, 1.0F - SETTING_DISTANCE * settingsCount);
-        KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, CoreUiMessages.KEYBIND);
-        addRenderable(keySelector);
-        keySelectors.add(keySelector);
+        offsetToParent = new Vector2f(0.35F + sizeToParent.x + 0.025F, 1.0F - SETTING_DISTANCE * settingsCount);
+        KeySelector nextKeySelector = new KeySelector(sizeToParent, offsetToParent, setting.nextKeySetting(), CoreUiMessages.NEXT);
+        addRenderable(nextKeySelector);
+        keySelectors.add(nextKeySelector);
+
+        offsetToParent = new Vector2f(0.35F + 2 * sizeToParent.x + 0.05F, 1.0F - SETTING_DISTANCE * settingsCount);
+        KeySelector previeousKeySelector = new KeySelector(sizeToParent, offsetToParent, setting.previousKeySetting(), CoreUiMessages.PREVIOUS);
+        addRenderable(previeousKeySelector);
+        keySelectors.add(previeousKeySelector);
 
         createResetButton(settingsCount).setAction((Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
             option.setToDefault();
-            keySelector.setToDefault();
+            nextKeySelector.setToDefault();
+            previeousKeySelector.setToDefault();
             return ButtonResult.SUCCESS;
         });
     }

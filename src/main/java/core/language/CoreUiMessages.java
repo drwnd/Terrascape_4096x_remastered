@@ -7,7 +7,9 @@ public enum CoreUiMessages implements Translatable {
     APPLY_SETTINGS,
     RESET_ALL_SETTINGS,
     RESET_SETTING,
-    KEYBIND;
+    KEYBIND,
+    NEXT,
+    PREVIOUS;
 
     @Override
     public String translationFileName() {

@@ -153,7 +153,7 @@ public final class Camera {
     private final Matrix4f projectionMatrix = new Matrix4f();
 
     public enum Perspective implements Option, Translatable {
-        FIRST_PERSON, THIRD_PERSON, SECOND_PERSON;
+        FIRST_PERSON, SECOND_PERSON, THIRD_PERSON;
 
         @Override
         public String translationFileName() {

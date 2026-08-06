@@ -2,6 +2,7 @@ package core.settings;
 
 import core.settings.optionSettings.*;
 import core.language.Language;
+import core.settings.stand_alones.StandAloneKeySetting;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -13,15 +14,15 @@ public enum CoreOptionSettings implements OptionSetting {
     CoreOptionSettings(Option defaultValue) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
-        this.defaultKeybind = GLFW_KEY_UNKNOWN;
-        this.keybind = GLFW_KEY_UNKNOWN;
+        nextKeySetting = new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
+        previousKeySetting = new StandAloneKeySetting(GLFW_KEY_UNKNOWN);
     }
 
-    CoreOptionSettings(Option defaultValue, int defaultKeybind) {
+    CoreOptionSettings(Option defaultValue, int defaultNextKeybind, int defaultPreviousKeybind) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
-        this.defaultKeybind = defaultKeybind;
-        this.keybind = defaultKeybind;
+        nextKeySetting = new StandAloneKeySetting(defaultNextKeybind);
+        previousKeySetting = new StandAloneKeySetting(defaultPreviousKeybind);
     }
 
     @Override
@@ -40,19 +41,15 @@ public enum CoreOptionSettings implements OptionSetting {
     }
 
     @Override
-    public void setKeybind(int keybind) {
-        this.keybind = keybind;
+    public KeySetting nextKeySetting() {
+        return nextKeySetting;
     }
 
     @Override
-    public int keybind() {
-        return keybind;
+    public KeySetting previousKeySetting() {
+        return previousKeySetting;
     }
 
-    @Override
-    public int defaultKeybind() {
-        return defaultKeybind;
-    }
 
     @Override
     public String translationFileName() {
@@ -62,6 +59,5 @@ public enum CoreOptionSettings implements OptionSetting {
     private Option value;
     private final Option defaultValue;
 
-    private final int defaultKeybind;
-    private int keybind;
+    private final StandAloneKeySetting nextKeySetting, previousKeySetting;
 }
