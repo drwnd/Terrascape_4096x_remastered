@@ -63,6 +63,7 @@ public final class Game {
     public static void updateRenderDistance(int oldRenderDistance) {
         if (world == null || oldRenderDistance == IntSettings.RENDER_DISTANCE.value()) return;
         server = new Server(server);
+        player.getMeshCollector().uploadAllMeshes();
         world = new World(world, true);
         player.updateRenderDistance(oldRenderDistance);
 

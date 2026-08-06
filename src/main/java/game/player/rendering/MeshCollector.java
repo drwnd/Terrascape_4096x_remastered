@@ -21,7 +21,6 @@ public final class MeshCollector {
 
     public MeshCollector(MeshCollector oldMeshCollector, int oldRenderDistance) {
         oldMeshCollector.deleteOldMeshes();
-        oldMeshCollector.uploadAllMeshes();
         allocator = oldMeshCollector.allocator;
 
         Position playerPosition = Game.getPlayer().getPosition();
