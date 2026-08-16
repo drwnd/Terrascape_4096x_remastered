@@ -189,7 +189,7 @@ public final class Movement {
         if (requiredStepHeight == 0.0F) return false;
 
         boolean swimming = MovementState.intersectsLiquid(position, state);
-        float maxStepHeight = state.getMaxAutoStepHeight() * (swimming ? 2.5F : 1.0F);
+        float maxStepHeight = state.getMaxAutoStepHeight();
         if ((!checkThinGrounded(position) && !swimming) || requiredStepHeight > maxStepHeight) return false;
 
         Position steppedPosition = new Position(position);

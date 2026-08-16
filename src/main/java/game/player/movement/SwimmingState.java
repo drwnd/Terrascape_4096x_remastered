@@ -61,7 +61,7 @@ public final class SwimmingState extends MovementState {
 
     @Override
     int getMaxAutoStepHeight() {
-        return 1;
+        return 3;
     }
 
     @Override
