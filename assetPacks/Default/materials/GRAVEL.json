@@ -2,7 +2,16 @@
   "properties": [
     "HAS_GRAVITY"
   ],
-  "digSounds": "DIG_GRAVEL",
-  "stepSounds": "STEP_GRAVEl",
-  "jumpSounds": "JUMP_GRAVEL"
+  "digSounds": {
+    "folderPath": "sounds/dig",
+    "fileNamePrefix": "gravel"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "gravel"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/jump",
+    "fileNamePrefix": "gravel"
+  }
 }

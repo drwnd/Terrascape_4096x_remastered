@@ -9,7 +9,16 @@
     "USE_TRANSPARENT_RENDERING",
     "SHADOW_TRANSPARENT"
   ],
-  "digSounds": "SPLASH",
-  "stepSounds": "SWIM",
-  "jumpSounds": "SPLASH"
+  "digSounds": {
+    "folderPath": "sounds/random",
+    "fileNamePrefix": "splash"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/random",
+    "fileNamePrefix": "swim"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/random",
+    "fileNamePrefix": "splash"
+  }
 }

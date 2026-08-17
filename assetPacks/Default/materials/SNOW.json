@@ -1,6 +1,15 @@
 {
   "properties": [],
-  "digSounds": "DIG_SNOW",
-  "stepSounds": "STEP_SNOW",
-  "jumpSounds": "STEP_SNOW"
+  "digSounds": {
+    "folderPath": "sounds/dig",
+    "fileNamePrefix": "snow"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "snow"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "snow"
+  }
 }

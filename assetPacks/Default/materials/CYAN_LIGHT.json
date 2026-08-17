@@ -1,6 +1,17 @@
 {
   "properties": [],
-  "digSounds": "DIG_WOOD",
-  "stepSounds": "STEP_WOOD",
-  "jumpSounds": "STEP_WOOD"
+  "digSounds": {
+    "folderPath": "sounds/dig",
+    "fileNamePrefix": "wood"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "wood",
+    "gainMultiplier": 1.2
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "wood",
+    "gainMultiplier": 1.2
+  }
 }

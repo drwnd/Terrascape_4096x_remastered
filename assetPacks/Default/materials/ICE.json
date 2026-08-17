@@ -5,7 +5,16 @@
     "USE_TRANSPARENT_RENDERING",
     "SHADOW_TRANSPARENT"
   ],
-  "digSounds": "DIG_ICE",
-  "stepSounds": "STEP_GLASS",
-  "jumpSounds": "STEP_GLASS"
+  "digSounds": {
+    "folderPath": "sounds/dig",
+    "fileNamePrefix": "ice"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "glass"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/step",
+    "fileNamePrefix": "glass"
+  }
 }

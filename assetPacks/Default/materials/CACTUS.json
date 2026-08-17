@@ -1,6 +1,15 @@
 {
   "properties": [],
-  "digSounds": "DIG_FOLIAGE",
-  "stepSounds": "STEP_FOLIAGE",
-  "jumpSounds": "STEP_FOLIAGE"
+  "digSounds": {
+    "folderPath": "sounds/dig",
+    "fileNamePrefix": "vines"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/block/vine",
+    "fileNamePrefix": "climb"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/block/vine",
+    "fileNamePrefix": "climb"
+  }
 }

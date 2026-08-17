@@ -7,7 +7,16 @@
     "OCCLUDES_SELF_ONLY",
     "STRUCTURE_REPLACEABLE"
   ],
-  "digSounds": "POP",
-  "stepSounds": "POP",
-  "jumpSounds": "POP"
+  "digSounds": {
+    "folderPath": "sounds/liquid",
+    "fileNamePrefix": "lavapop"
+  },
+  "stepSounds": {
+    "folderPath": "sounds/liquid",
+    "fileNamePrefix": "lavapop"
+  },
+  "jumpSounds": {
+    "folderPath": "sounds/liquid",
+    "fileNamePrefix": "lavapop"
+  }
 }
