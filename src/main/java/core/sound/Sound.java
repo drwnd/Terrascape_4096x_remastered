@@ -72,6 +72,7 @@ public record Sound(int buffer, float gainMultiplier, float pitchMultiplier) imp
     }
 
     public static void playUI(SoundIdentifier identifier, FloatSetting gain, float gainMultiplier, float pitchMultiplier) {
+        if (identifier == null) return;
         AudioSource source = getNextFreeAudioSource();
         if (source == null) return;
 
@@ -83,6 +84,7 @@ public record Sound(int buffer, float gainMultiplier, float pitchMultiplier) imp
     }
 
     public static void play3D(SoundCollectionIdentifier identifier, FloatSetting gain, Distanceable distanceable, Vector3f velocity) {
+        if (identifier == null) return;
         SoundCollection sounds = AssetManager.get(identifier);
         if (sounds.identifiers().length == 0) return;
         SoundIdentifier singleIdentifier = sounds.identifiers()[(int) (Math.random() * sounds.identifiers().length)];
@@ -90,6 +92,7 @@ public record Sound(int buffer, float gainMultiplier, float pitchMultiplier) imp
     }
 
     public static void play3D(SoundIdentifier identifier, FloatSetting gain, Distanceable distanceable, Vector3f velocity) {
+        if (identifier == null || distanceable == null) return;
         AudioSource source = getNextFreeAudioSource();
         if (source == null) return;
 

@@ -55,9 +55,9 @@ public final class Material {
         int materialIndex = identifier.ordinal() & 0xFF;
 
         MATERIAL_PROPERTIES[materialIndex] = Properties.getCombinedValue(material.properties);
-        DIG_SOUNDS[materialIndex] = MaterialSounds.get(material.digSounds);
-        STEP_SOUNDS[materialIndex] = MaterialSounds.get(material.stepSounds);
-        JUMP_SOUNDS[materialIndex] = MaterialSounds.get(material.jumpSounds);
+        DIG_SOUNDS[materialIndex] = material.digSounds;
+        STEP_SOUNDS[materialIndex] = material.stepSounds;
+        JUMP_SOUNDS[materialIndex] = material.jumpSounds;
 
         Debug.log("Loaded Material " + identifier.name());
     }
@@ -74,5 +74,5 @@ public final class Material {
     @SuppressWarnings("unused")
     private ArrayList<String> properties;
     @SuppressWarnings("unused")
-    private String digSounds, stepSounds, jumpSounds;
+    private MaterialSounds digSounds, stepSounds, jumpSounds;
 }
