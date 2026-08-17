@@ -61,6 +61,7 @@ public record Sound(int buffer, float gainMultiplier, float pitchMultiplier) imp
     }
 
     public static void playUI(SoundCollectionIdentifier identifier, FloatSetting gain) {
+        if (identifier == null) return;
         SoundCollection sounds = AssetManager.get(identifier);
         if (sounds.identifiers().length == 0) return;
         SoundIdentifier singleIdentifier = sounds.identifiers()[(int) (Math.random() * sounds.identifiers().length)];

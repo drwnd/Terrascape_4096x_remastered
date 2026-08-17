@@ -50,15 +50,6 @@ public final class AssetManager {
         return "assetPacks/Default/" + assetName;
     }
 
-    public static ArrayList<String> getActiveAssetPackNames() {
-        return new ArrayList<>(assetPackNames);
-    }
-
-    public static void setActiveAssetPackNames(ArrayList<String> assetPackNames) {
-        AssetManager.assetPackNames = new ArrayList<>(assetPackNames);
-        deleteAll();
-    }
-
     public static ArrayList<String> getAssetFilePathsInFolder(String folderName) {
         ArrayList<String> filePaths = new ArrayList<>();
         for (String assetPackName : assetPackNames)
@@ -67,11 +58,29 @@ public final class AssetManager {
         return filePaths;
     }
 
+    public static ArrayList<String> getAssetFilePathsInFolderMatching(String folderName, String fileNamePrefix) {
+        ArrayList<String> assetFilesInFolder = getAssetFilePathsInFolder(folderName);
+        assetFilesInFolder.removeIf(path -> {
+            int beginIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+            String fileName = path.substring(beginIndex + 1);
+            return !fileName.startsWith(fileNamePrefix);
+        });
+        return assetFilesInFolder;
+    }
+
     public static void addDeleteAllCallback(Runnable callback) {
         if (callback == null) return;
         deleteAllCallbacks.add(callback);
     }
 
+    public static ArrayList<String> getActiveAssetPackNames() {
+        return new ArrayList<>(assetPackNames);
+    }
+
+    public static void setActiveAssetPackNames(ArrayList<String> assetPackNames) {
+        AssetManager.assetPackNames = new ArrayList<>(assetPackNames);
+        deleteAll();
+    }
 
     private static void addAssetFilePathsInFolder(ArrayList<String> filePaths, String folderPath) {
         File[] files = FileManager.getChildren(new File(folderPath));

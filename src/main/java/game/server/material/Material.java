@@ -59,6 +59,10 @@ public final class Material {
         STEP_SOUNDS[materialIndex] = material.stepSounds;
         JUMP_SOUNDS[materialIndex] = material.jumpSounds;
 
+        Debug.log(MaterialSounds.print(material.digSounds));
+        Debug.log(MaterialSounds.print(material.stepSounds));
+        Debug.log(MaterialSounds.print(material.jumpSounds));
+
         Debug.log("Loaded Material " + identifier.name());
     }
 
