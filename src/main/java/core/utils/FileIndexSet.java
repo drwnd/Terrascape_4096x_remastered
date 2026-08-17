@@ -1,20 +1,26 @@
 package core.utils;
 
-public final class FileIndexSet {
+public final class FileIndexSet<T> {
 
-    public FileIndexSet(FileNamer[] values, String suffix) {
+    public FileIndexSet(T[] values, ObjectToFileNameMapper<T> mapper, String suffix) {
         this.values = values;
         this.suffix = suffix;
+        this.mapper = mapper;
     }
 
     public String getFileName(int index) {
-        return values[index].name() + suffix;
+        return mapper.getFileNameFor(values[index]) + suffix;
     }
 
     public int getCount() {
         return values.length;
     }
 
-    private final FileNamer[] values;
+    private final T[] values;
     private final String suffix;
+    private final ObjectToFileNameMapper<T> mapper;
+
+    public interface ObjectToFileNameMapper<T> {
+        String getFileNameFor(T object);
+    }
 }

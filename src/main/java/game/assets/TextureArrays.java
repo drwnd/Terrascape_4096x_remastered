@@ -7,10 +7,10 @@ import game.server.material.Materials;
 
 public enum TextureArrays implements TextureArrayIdentifier {
 
-    MATERIALS("albedo", new FileIndexSet(Materials.values(), ".png")),
-    PROPERTIES("properties", new FileIndexSet(Materials.values(), ".png"));
+    MATERIALS("albedo", new FileIndexSet<>(Materials.values(), Materials::getAlbedoFileName, ".png")),
+    PROPERTIES("properties", new FileIndexSet<>(Materials.values(), Materials::getPropertiesFileName, ".png"));
 
-    TextureArrays(String folderName, FileIndexSet indexSet) {
+    TextureArrays(String folderName, FileIndexSet<Materials> indexSet) {
         this.folderName = folderName;
         this.indexSet = indexSet;
     }
@@ -21,10 +21,10 @@ public enum TextureArrays implements TextureArrayIdentifier {
     }
 
     @Override
-    public FileIndexSet indexSet() {
+    public FileIndexSet<?> indexSet() {
         return indexSet;
     }
 
     private final String folderName;
-    private final FileIndexSet indexSet;
+    private final FileIndexSet<Materials> indexSet;
 }

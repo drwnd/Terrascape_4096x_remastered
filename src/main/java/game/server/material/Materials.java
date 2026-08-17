@@ -1,9 +1,8 @@
 package game.server.material;
 
 import core.language.Translatable;
-import core.utils.FileNamer;
 
-public enum Materials implements Translatable, FileNamer {
+public enum Materials implements Translatable {
 
     AIR,
     OUT_OF_WORLD,
@@ -153,6 +152,14 @@ public enum Materials implements Translatable, FileNamer {
     CYAN_CRYSTAL,
     WHITE_CRYSTAL,
     BLACK_CRYSTAL;
+
+    public String getAlbedoFileName() {
+        return Material.getAlbedoFileName((byte) ordinal());
+    }
+
+    public String getPropertiesFileName() {
+        return Material.getPropertiesFileName((byte) ordinal());
+    }
 
     @Override
     public String translationFileName() {
