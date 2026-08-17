@@ -18,7 +18,6 @@ import org.joml.Vector2i;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -103,7 +102,7 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
         int structureCount = 0;
         Vector2f sizeToParent = new Vector2f(1.0F, 0.05F);
-        Set<String> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
+        ArrayList<String> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
         String filterText = filterTextField.getText().toLowerCase();
 
         for (String filepath : filePaths) {

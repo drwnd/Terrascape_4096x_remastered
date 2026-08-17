@@ -7,8 +7,6 @@ import core.utils.FileManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
 
 public final class AssetManager {
 
@@ -61,8 +59,8 @@ public final class AssetManager {
         deleteAll();
     }
 
-    public static Set<String> getAssetFilePathsInFolder(String folderName) {
-        Set<String> filePaths = new TreeSet<>();
+    public static ArrayList<String> getAssetFilePathsInFolder(String folderName) {
+        ArrayList<String> filePaths = new ArrayList<>();
         for (String assetPackName : assetPackNames)
             addAssetFilePathsInFolder(filePaths, "assetPacks/%s/%s".formatted(assetPackName, folderName));
         addAssetFilePathsInFolder(filePaths, "assetPacks/Default/" + folderName);
@@ -75,7 +73,7 @@ public final class AssetManager {
     }
 
 
-    private static void addAssetFilePathsInFolder(Set<String> filePaths, String folderPath) {
+    private static void addAssetFilePathsInFolder(ArrayList<String> filePaths, String folderPath) {
         File[] files = FileManager.getChildren(new File(folderPath));
         if (files == null) return;
         for (File file : files) filePaths.add(file.getPath());

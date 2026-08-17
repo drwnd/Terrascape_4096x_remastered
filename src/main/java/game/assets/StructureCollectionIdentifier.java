@@ -6,7 +6,6 @@ import game.server.generation.Structure;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Set;
 
 public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCollection> {
     OAK_TREES("OakTree"),
@@ -22,7 +21,7 @@ public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCo
 
     @Override
     public StructureCollection generateAsset() {
-        Set<String> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
+        ArrayList<String> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
         ArrayList<Structure> structuresList = new ArrayList<>();
 
         for (String structureFilepath : structureFilePaths) {
