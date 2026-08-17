@@ -137,7 +137,9 @@ public final class ChunkSaver extends Saver<Chunk> {
         byte[] materials = loadByteArray();
 
         Chunk chunk = new Chunk(x, y, z, lod);
-        chunk.setMaterials(new MaterialsData(CHUNK_SIZE_BITS, materials));
+        MaterialsData materialsData = new MaterialsData(CHUNK_SIZE_BITS, materials);
+        materialsData.recomputeTypes();
+        chunk.setMaterials(materialsData);
         return chunk;
     }
 

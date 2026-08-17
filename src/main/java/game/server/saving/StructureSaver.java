@@ -31,7 +31,9 @@ public final class StructureSaver extends Saver<Structure> {
         int totalSizeBits = loadInt();
         byte[] data = loadByteArray();
 
-        return new Structure(sizeX, sizeY, sizeZ, new MaterialsData(totalSizeBits, data));
+        MaterialsData materialsData = new MaterialsData(totalSizeBits, data);
+        materialsData.recomputeTypes();
+        return new Structure(sizeX, sizeY, sizeZ, materialsData);
     }
 
     @Override

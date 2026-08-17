@@ -249,6 +249,10 @@ public final class MaterialsData {
         }
     }
 
+    public void recomputeTypes() {
+        recomputeTypes(0);
+    }
+
     // Miscellaneous functions
     private static void storeLowerLODChunk(Chunk chunk, byte[] uncompressedMaterials, int startX, int startY, int startZ) {
         if (chunk == null) return;
@@ -308,6 +312,40 @@ public final class MaterialsData {
                         || breakHeldOnly && uncompressedMaterials[materialIndex] != heldMaterial) continue;
                 uncompressedMaterials[materialIndex] = material;
             }
+    }
+
+    private byte recomputeTypes(int startIndex) {
+        byte identifier = getIdentifier(startIndex);
+
+        if (identifier == HOMOGENOUS) {
+            byte type = getType(data[startIndex + 1]);
+            data[startIndex] = (byte) (type | HOMOGENOUS);
+            return type;
+        }
+        if (identifier == DETAIL) {
+            byte types = (byte) (getType(data[startIndex + 1])
+                    | getType(data[startIndex + 2])
+                    | getType(data[startIndex + 3])
+                    | getType(data[startIndex + 4])
+                    | getType(data[startIndex + 5])
+                    | getType(data[startIndex + 6])
+                    | getType(data[startIndex + 7])
+                    | getType(data[startIndex + 8]));
+            data[startIndex] = (byte) (types | DETAIL);
+            return types;
+        }
+//        if (identifier == SPLITTER)
+        byte types = 0;
+        types |= recomputeTypes(startIndex + SPLITTER_BYTE_SIZE);
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 1));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 4));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 7));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 10));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 13));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 16));
+        types |= recomputeTypes(startIndex + getOffset(startIndex + 19));
+        data[startIndex] = (byte) (types | SPLITTER);
+        return types;
     }
 
     // Functions to store data into something

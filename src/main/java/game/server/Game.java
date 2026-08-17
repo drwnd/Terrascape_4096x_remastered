@@ -19,6 +19,7 @@ public final class Game {
         AssetManager.addDeleteAllCallback(() -> {
             if (Game.getPlayer() == null || Game.getServer() == null) return;
 
+            Server.unloadAll();
             Game.getPlayer().getMeshCollector().removeAll();
             Game.getServer().scheduleGeneratorRestart();
         });
