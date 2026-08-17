@@ -40,6 +40,14 @@ public final class Material {
         return JUMP_SOUNDS[material & 0xFF];
     }
 
+    public static String getAlbedoFileName(byte material) {
+        return ALBEDO_FILE_NAMES[material & 0xFF];
+    }
+
+    public static String getPropertiesFileName(byte material) {
+        return PROPERTIES_FILE_NAMES[material & 0xFF];
+    }
+
     public static boolean isGlass(byte material) {
         return (material & 0xFF) >= (RED_GLASS & 0xFF) && (material & 0xFF) <= (BLACK_GLASS & 0xFF);
     }
@@ -58,6 +66,8 @@ public final class Material {
         DIG_SOUNDS[materialIndex] = material.digSounds;
         STEP_SOUNDS[materialIndex] = material.stepSounds;
         JUMP_SOUNDS[materialIndex] = material.jumpSounds;
+        ALBEDO_FILE_NAMES[materialIndex] = material.albedoTexture == null ? identifier.name() : material.albedoTexture;
+        PROPERTIES_FILE_NAMES[materialIndex] = material.propertiesTexture == null ? "NONE" : material.propertiesTexture;
 
         Debug.log(MaterialSounds.print(material.digSounds));
         Debug.log(MaterialSounds.print(material.stepSounds));
@@ -70,6 +80,8 @@ public final class Material {
     private static final MaterialSounds[] DIG_SOUNDS = new MaterialSounds[AMOUNT_OF_MATERIALS];
     private static final MaterialSounds[] STEP_SOUNDS = new MaterialSounds[AMOUNT_OF_MATERIALS];
     private static final MaterialSounds[] JUMP_SOUNDS = new MaterialSounds[AMOUNT_OF_MATERIALS];
+    private static final String[] ALBEDO_FILE_NAMES = new String[AMOUNT_OF_MATERIALS];
+    private static final String[] PROPERTIES_FILE_NAMES = new String[AMOUNT_OF_MATERIALS];
 
     private Material() {
     }
@@ -79,4 +91,6 @@ public final class Material {
     private ArrayList<String> properties;
     @SuppressWarnings("unused")
     private MaterialSounds digSounds, stepSounds, jumpSounds;
+    @SuppressWarnings("unused")
+    private String albedoTexture, propertiesTexture;
 }

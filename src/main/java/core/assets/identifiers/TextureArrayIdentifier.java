@@ -11,14 +11,14 @@ public interface TextureArrayIdentifier extends AssetIdentifier<TextureArray> {
 
     String folderName();
 
-    FileIndexSet indexSet();
+    FileIndexSet<?> indexSet();
 
     default TextureArray generateAsset() {
         Texture[] textures = getTextures(indexSet());
         return CoreObjectLoader.generateTextureArray(textures);
     }
 
-    private Texture[] getTextures(FileIndexSet indexSet) {
+    private Texture[] getTextures(FileIndexSet<?> indexSet) {
         Texture[] textures = new Texture[indexSet.getCount()];
 
         for (int index = 0; index < textures.length; index++) {

@@ -12,5 +12,6 @@
   "jumpSounds": {
     "folderPath": "sounds/jump",
     "fileNamePrefix": "stone"
-  }
+  },
+  "propertiesTexture": "FULL_BRIGHT"
 }

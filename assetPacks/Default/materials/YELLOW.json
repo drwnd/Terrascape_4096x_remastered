@@ -13,5 +13,6 @@
     "folderPath": "sounds/step",
     "fileNamePrefix": "stone",
     "gainMultiplier": 0.8
-  }
+  },
+  "propertiesTexture": "FULL_BRIGHT"
 }
