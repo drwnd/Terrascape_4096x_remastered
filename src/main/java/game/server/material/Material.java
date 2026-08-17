@@ -66,8 +66,8 @@ public final class Material {
         DIG_SOUNDS[materialIndex] = material.digSounds;
         STEP_SOUNDS[materialIndex] = material.stepSounds;
         JUMP_SOUNDS[materialIndex] = material.jumpSounds;
-        ALBEDO_FILE_NAMES[materialIndex] = material.albedoTexture;
-        PROPERTIES_FILE_NAMES[materialIndex] = material.propertiesTexture;
+        ALBEDO_FILE_NAMES[materialIndex] = material.albedoTexture == null ? identifier.name() : material.albedoTexture;
+        PROPERTIES_FILE_NAMES[materialIndex] = material.propertiesTexture == null ? "NONE" : material.propertiesTexture;
 
         Debug.log(MaterialSounds.print(material.digSounds));
         Debug.log(MaterialSounds.print(material.stepSounds));
@@ -91,6 +91,6 @@ public final class Material {
     private ArrayList<String> properties;
     @SuppressWarnings("unused")
     private MaterialSounds digSounds, stepSounds, jumpSounds;
-    @SuppressWarnings({"unused", "FieldMayBeFinal"})
-    private String albedoTexture = "AIR", propertiesTexture = "AIR";
+    @SuppressWarnings("unused")
+    private String albedoTexture, propertiesTexture;
 }
