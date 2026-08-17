@@ -13,5 +13,6 @@
     "folderPath": "sounds/step",
     "fileNamePrefix": "wood",
     "gainMultiplier": 1.2
-  }
+  },
+  "propertiesTexture": "FULL_BRIGHT"
 }

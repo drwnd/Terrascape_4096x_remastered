@@ -18,5 +18,6 @@
   "jumpSounds": {
     "folderPath": "sounds/liquid",
     "fileNamePrefix": "lavapop"
-  }
+  },
+  "propertiesTexture": "FULL_BRIGHT"
 }

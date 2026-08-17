@@ -11,5 +11,6 @@
   "jumpSounds": {
     "folderPath": "sounds/step",
     "fileNamePrefix": "glass"
-  }
+  },
+  "propertiesTexture": "FULL_BRIGHT"
 }
