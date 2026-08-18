@@ -20,7 +20,7 @@ import static game.utils.Constants.*;
 public final class Movement {
 
     public Movement() {
-        state = new WalkingState();
+        state = MovementState.load(WalkingState.class);
         state.movement = this;
     }
 

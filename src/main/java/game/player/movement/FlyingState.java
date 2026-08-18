@@ -19,14 +19,14 @@ public final class FlyingState extends MovementState {
         Vector3f velocityChange = new Vector3f();
         Vector3f playerDirection = MathUtils.getHorizontalDirection(playerRotation);
 
-        WalkingState.applyXZMovement(velocityChange, HORIZONTAL_FLY_SPEED, SPRINT_SPEED_MODIFIER);
+        WalkingState.applyXZMovement(velocityChange, horizontalFlySpeed, sprintSpeedModifier);
 
-        if (Input.isKeyPressed(KeySettings.SNEAK)) velocityChange.mul(SNEAK_SPEED_MODIFIER);
+        if (Input.isKeyPressed(KeySettings.SNEAK)) velocityChange.mul(sneakSpeedModifier);
 
-        if (Input.isKeyPressed(KeySettings.JUMP)) velocityChange.y += VERTICAL_FLY_SPEED;
-        if (Input.isKeyPressed(KeySettings.SNEAK)) velocityChange.y -= VERTICAL_FLY_SPEED;
+        if (Input.isKeyPressed(KeySettings.JUMP)) velocityChange.y += verticalFlySpeed;
+        if (Input.isKeyPressed(KeySettings.SNEAK)) velocityChange.y -= verticalFlySpeed;
 
-        if (Input.isKeyPressed(KeySettings.FLY_FAST)) velocityChange.mul(FLY_FAST_SPEED_MODIFIER);
+        if (Input.isKeyPressed(KeySettings.FLY_FAST)) velocityChange.mul(flyFastSpeedModifier);
         normalizeToMaxComponent(velocityChange);
         toWorldDirection(velocityChange, playerDirection);
 
@@ -36,13 +36,13 @@ public final class FlyingState extends MovementState {
     @Override
     void changeVelocity(Vector3f velocity, Vector3f acceleration, Position playerPosition, Vector3f playerRotation) {
         velocity.add(acceleration).mul(AIR_DRAG);
-        if (movement.isThinGrounded() && !ToggleSettings.NO_CLIP.value()) next = new WalkingState();
+        if (movement.isThinGrounded() && !ToggleSettings.NO_CLIP.value()) next = MovementState.load(WalkingState.class);
     }
 
     @Override
     protected void handleInput(int key, int action) {
         if (key == KeySettings.JUMP.keybind() && action == GLFW_PRESS) {
-            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new WalkingState();
+            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(WalkingState.class);
             lastJumpTime = System.nanoTime();
         }
     }
@@ -52,15 +52,6 @@ public final class FlyingState extends MovementState {
         return 3;
     }
 
-    @Override
-    public int ticksBetweenFootsteps() {
-        return -1;
-    }
-
-
-    private static final float VERTICAL_FLY_SPEED = 0.5F;
-    private static final float HORIZONTAL_FLY_SPEED = 1.0F;
-    private static final float SNEAK_SPEED_MODIFIER = 0.5F;
-    private static final float SPRINT_SPEED_MODIFIER = 2.0F;
-    private static final float FLY_FAST_SPEED_MODIFIER = 5.0F;
+    @SuppressWarnings("unused")
+    private float verticalFlySpeed, horizontalFlySpeed, sneakSpeedModifier, sprintSpeedModifier, flyFastSpeedModifier;
 }

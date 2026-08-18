@@ -14,17 +14,18 @@ public final class SneakingState extends MovementState {
 
     @Override
     Vector3f computeNextGameTickAcceleration(Vector3f playerRotation, Position lastPosition) {
-        if (!Input.isKeyPressed(KeySettings.SNEAK)) next = new WalkingState();
-        if (Input.isKeyPressed(KeySettings.CRAWL)) next = new CrawlingState();
-        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this)) next = new SwimmingState();
+        if (!Input.isKeyPressed(KeySettings.SNEAK)) next = MovementState.load(WalkingState.class);
+        if (Input.isKeyPressed(KeySettings.CRAWL)) next = MovementState.load(CrawlingState.class);
+        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this))
+            next = MovementState.load(CrawlingState.class);
 
         Vector3f velocityChange = new Vector3f();
         Vector3f playerDirection = MathUtils.getHorizontalDirection(playerRotation);
-        float speed = getMovementSpeed(lastPosition, SNEAKING_SPEED, IN_AIR_SPEED, SWIM_STRENGTH);
+        float speed = getMovementSpeed(lastPosition, sneakingSpeed, inAirSpeed, swimStrength);
 
         applyXZMovement(velocityChange, speed, 1.0F);
 
-        if (Input.isKeyPressed(KeySettings.JUMP)) handleJump(lastPosition, velocityChange, JUMP_STRENGTH, SWIM_STRENGTH);
+        if (Input.isKeyPressed(KeySettings.JUMP)) handleJump(lastPosition, velocityChange, jumpStrength, swimStrength);
 
         normalizeXZToMaxComponent(velocityChange);
         toWorldDirection(velocityChange, playerDirection);
@@ -35,7 +36,7 @@ public final class SneakingState extends MovementState {
     @Override
     void handleInput(int key, int action) {
         if (key == KeySettings.JUMP.keybind() && action == GLFW_PRESS) {
-            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new FlyingState();
+            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(FlyingState.class);
             lastJumpTime = System.nanoTime();
         }
     }
@@ -45,14 +46,6 @@ public final class SneakingState extends MovementState {
         return 2;
     }
 
-    @Override
-    public int ticksBetweenFootsteps() {
-        return -1;
-    }
-
-
-    private static final float JUMP_STRENGTH = 11.125F;
-    private static final float SWIM_STRENGTH = 0.00096268F;
-    private static final float SNEAKING_SPEED = 1.25F;
-    private static final float IN_AIR_SPEED = 0.15F;
+    @SuppressWarnings("unused")
+    private float jumpStrength, swimStrength, sneakingSpeed, inAirSpeed;
 }

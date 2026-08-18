@@ -15,7 +15,7 @@ public final class SwimmingState extends MovementState {
 
     @Override
     Vector3f computeNextGameTickAcceleration(Vector3f playerRotation, Position lastPosition) {
-        if (!Input.isKeyPressed(KeySettings.SPRINT) || !Input.isKeyPressed(KeySettings.MOVE_FORWARD)) next = new CrawlingState();
+        if (!Input.isKeyPressed(KeySettings.SPRINT) || !Input.isKeyPressed(KeySettings.MOVE_FORWARD)) next = MovementState.load(CrawlingState.class);
 
         Vector3f velocityChange = new Vector3f();
         Vector3f playerDirection = MathUtils.getDirection(playerRotation);
@@ -23,14 +23,14 @@ public final class SwimmingState extends MovementState {
         float liquidVolume = intersectedVolume(lastPosition, this, WATER) + intersectedVolume(lastPosition, this, LAVA);
         float airVolume = Math.min(intersectedVolume(lastPosition, this, AIR), 50.0F);
 
-        velocityChange.set(playerDirection).mul(liquidVolume * SWIM_SPEED * 0.5F + airVolume * SWIM_SPEED);
+        velocityChange.set(playerDirection).mul(liquidVolume * swimSpeed * 0.5F + airVolume * swimSpeed);
 
         return velocityChange;
     }
 
     @Override
     void changeVelocity(Vector3f velocity, Vector3f acceleration, Position playerPosition, Vector3f playerRotation) {
-        if (!intersectsLiquid(playerPosition, this)) next = new CrawlingState();
+        if (!intersectsLiquid(playerPosition, this)) next = MovementState.load(CrawlingState.class);
 
         float waterIntersection = intersectedVolume(playerPosition, this, WATER);
         float lavaIntersection = intersectedVolume(playerPosition, this, LAVA);
@@ -48,7 +48,7 @@ public final class SwimmingState extends MovementState {
     @Override
     void handleInput(int key, int action) {
         if (key == KeySettings.JUMP.keybind() && action == GLFW_PRESS) {
-            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new FlyingState();
+            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(FlyingState.class);
             lastJumpTime = System.nanoTime();
         }
     }
@@ -59,14 +59,10 @@ public final class SwimmingState extends MovementState {
     }
 
     @Override
-    public int ticksBetweenFootsteps() {
-        return 13;
-    }
-
-    @Override
     byte getStandingMaterial(Position position) {
         return WATER;
     }
 
-    private static final float SWIM_SPEED = 0.0045F;
+    @SuppressWarnings("unused")
+    private float swimSpeed;
 }

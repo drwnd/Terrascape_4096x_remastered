@@ -76,7 +76,7 @@ final class RecordCommand {
 
     private static class RecordPlaybackFunction implements Function {
 
-        private final MovementState state = new FlyingState();
+        private final MovementState state = MovementState.load(FlyingState.class);
         private final ArrayList<Position> positions;
         private final ArrayList<Vector3f> rotations;
         private final boolean playbackRotations;

@@ -14,16 +14,17 @@ public final class CrawlingState extends MovementState {
 
     @Override
     Vector3f computeNextGameTickAcceleration(Vector3f playerRotation, Position lastPosition) {
-        if (!Input.isKeyPressed(KeySettings.CRAWL)) next = new SneakingState();
-        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this)) next = new SwimmingState();
+        if (!Input.isKeyPressed(KeySettings.CRAWL)) next = MovementState.load(SneakingState.class);
+        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this))
+            next = MovementState.load(SwimmingState.class);
 
         Vector3f velocityChange = new Vector3f();
         Vector3f playerDirection = MathUtils.getHorizontalDirection(playerRotation);
-        float speed = getMovementSpeed(lastPosition, CRAWLING_SPEED, IN_AIR_SPEED, SWIM_STRENGTH);
+        float speed = getMovementSpeed(lastPosition, crawlingSpeed, inAirSpeed, swimStrength);
 
         applyXZMovement(velocityChange, speed, 1.0F);
 
-        if (Input.isKeyPressed(KeySettings.JUMP)) handleJump(lastPosition, velocityChange, JUMP_STRENGTH, SWIM_STRENGTH);
+        if (Input.isKeyPressed(KeySettings.JUMP)) handleJump(lastPosition, velocityChange, jumpStrength, swimStrength);
 
         normalizeXZToMaxComponent(velocityChange);
         toWorldDirection(velocityChange, playerDirection);
@@ -34,7 +35,7 @@ public final class CrawlingState extends MovementState {
     @Override
     void handleInput(int key, int action) {
         if (key == KeySettings.JUMP.keybind() && action == GLFW_PRESS) {
-            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new FlyingState();
+            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(FlyingState.class);
             lastJumpTime = System.nanoTime();
         }
     }
@@ -44,14 +45,6 @@ public final class CrawlingState extends MovementState {
         return 4;
     }
 
-    @Override
-    public int ticksBetweenFootsteps() {
-        return -1;
-    }
-
-
-    private static final float JUMP_STRENGTH = 10.0F;
-    private static final float SWIM_STRENGTH = 0.0033F;
-    private static final float CRAWLING_SPEED = 0.75F;
-    private static final float IN_AIR_SPEED = 0.075F;
+    @SuppressWarnings("unused")
+    private float jumpStrength, swimStrength, crawlingSpeed, inAirSpeed;
 }

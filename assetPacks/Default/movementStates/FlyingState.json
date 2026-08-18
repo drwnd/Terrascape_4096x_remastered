@@ -6,5 +6,11 @@
     "x": 7,
     "y": 28,
     "z": 7
-  }
+  },
+  "ticksBetweenFootsteps": -1,
+  "verticalFlySpeed": 0.5,
+  "horizontalFlySpeed": 1.0,
+  "sneakSpeedModifier": 0.5,
+  "sprintSpeedModifier": 2.0,
+  "flyFastSpeedModifier": 5.0
 }

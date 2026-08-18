@@ -1,9 +1,7 @@
 package game.player.movement;
 
 import com.google.gson.Gson;
-import core.assets.Asset;
 import core.assets.AssetManager;
-import core.assets.identifiers.AssetIdentifier;
 import core.rendering_api.Input;
 import core.utils.FileManager;
 import core.utils.MathUtils;
@@ -24,19 +22,24 @@ public abstract class MovementState {
 
     MovementState next = this;
 
+    public static <T extends MovementState> T load(Class<T> tClass) {
+        String json = FileManager.loadJson(AssetManager.getAssetFilepath("movementStates/%s.json".formatted(tClass.getSimpleName())));
+        return new Gson().fromJson(json, tClass);
+    }
+
     /**
-     * Computes the acceleration the Player should have in the next Gametick.
+     * Computes the acceleration the Player should have in the next GameTick.
      * Only gets called when the Player is actively moving.
      *
      * @param playerRotation The rotation of the player (not necessarily the camera)
-     * @param lastPosition   The position of the player in the last Gametick
+     * @param lastPosition   The position of the player in the last GameTick
      * @return The acceleration of the Player.
      */
     abstract Vector3f computeNextGameTickAcceleration(Vector3f playerRotation, Position lastPosition);
 
     /**
      * Changes the current Velocity the Player has.
-     * Gets called every Gametick regardless of the Player being able to move actively.
+     * Gets called every GameTick regardless of the Player being able to move actively.
      * Therefore, no inputs should be queried in this method.
      *
      * @param velocity       The current Velocity of the Player. This is also the output variable.
@@ -57,7 +60,6 @@ public abstract class MovementState {
     }
 
     byte getStandingMaterial(Position position) {
-        Vector3i hitboxSize = getHitboxSize();
         World world = Game.getWorld();
 
         byte centerMaterial = world.getMaterial(position.longX, position.longY, position.longZ, 0);
@@ -82,32 +84,34 @@ public abstract class MovementState {
 
     public abstract byte getIdentifier();
 
-    abstract int ticksBetweenFootsteps();
+    int ticksBetweenFootsteps() {
+        return ticksBetweenFootsteps;
+    }
 
     final int getMaxAutoStepHeight() {
-        return AssetManager.get(identifier).maxAutoStepHeight;
+        return maxAutoStepHeight;
     }
 
     final boolean preventsFallingFromEdge() {
-        return AssetManager.get(identifier).preventsFallingFromEdge;
+        return preventsFallingFromEdge;
     }
 
     public final Vector3i getHitboxSize() {
-        return AssetManager.get(identifier).hitboxSize;
+        return hitboxSize;
     }
 
     public final float getCameraElevation() {
-        return AssetManager.get(identifier).cameraElevation;
+        return cameraElevation;
     }
 
 
     public static MovementState getStateFromIdentifier(byte identifier) {
         return switch (identifier) {
-            case 0 -> new WalkingState();
-            case 1 -> new SwimmingState();
-            case 2 -> new SneakingState();
-            case 3 -> new FlyingState();
-            case 4 -> new CrawlingState();
+            case 0 -> MovementState.load(WalkingState.class);
+            case 1 -> MovementState.load(SwimmingState.class);
+            case 2 -> MovementState.load(SneakingState.class);
+            case 3 -> MovementState.load(FlyingState.class);
+            case 4 -> MovementState.load(CrawlingState.class);
             default -> null;
         };
     }
@@ -166,7 +170,7 @@ public abstract class MovementState {
         if (ToggleSettings.NO_CLIP.value()) return 0;
 
         World world = Game.getWorld();
-        Vector3i hitboxSize = state.getHitboxSize();
+        Vector3i hitboxSize = state.hitboxSize;
 
         long startX = position.longX + MathUtils.floor(position.fractionX - hitboxSize.x * 0.5F);
         long startY = position.longY;
@@ -176,14 +180,14 @@ public abstract class MovementState {
         int height = hitboxSize.y;
         int depth = hitboxSize.z + 1;
 
-        float volumne = 0.0F;
+        float volume = 0.0F;
         for (long x = startX; x < startX + width; x++)
             for (long y = startY; y < startY + height; y++)
                 for (long z = startZ; z < startZ + depth; z++) {
                     if (targetMaterial != world.getMaterial(x, y, z, 0)) continue;
-                    volumne++;
+                    volume++;
                 }
-        return volumne;
+        return volume;
     }
 
     static boolean intersectsLiquid(Position position, MovementState state) {
@@ -192,7 +196,14 @@ public abstract class MovementState {
 
     protected Movement movement;
     protected long lastJumpTime = System.nanoTime() - JUMP_FLYING_INTERVALL;
-    private final StatePropertiesIdentifier identifier = new StatePropertiesIdentifier(getClass().getSimpleName());
+    @SuppressWarnings("unused")
+    private int maxAutoStepHeight, ticksBetweenFootsteps;
+    @SuppressWarnings("unused")
+    private boolean preventsFallingFromEdge;
+    @SuppressWarnings("unused")
+    private float cameraElevation;
+    @SuppressWarnings("unused")
+    private Vector3i hitboxSize;
 
     private static final float GRAVITY_ACCELERATION = 1.28F;
     private static final float WATER_BUOYANCY = 0.0005F;
@@ -202,21 +213,4 @@ public abstract class MovementState {
     static final long JUMP_FLYING_INTERVALL = 300_000_000; // 0.3s
     static final float WALKING_DRAG = 0.6F;
     static final float AIR_DRAG = 0.94F;
-
-    private record StateProperties(int maxAutoStepHeight, boolean preventsFallingFromEdge, float cameraElevation, Vector3i hitboxSize) implements Asset {
-        @Override
-        public void delete() {
-
-        }
-    }
-
-    private record StatePropertiesIdentifier(String className) implements AssetIdentifier<StateProperties> {
-
-        @Override
-        public StateProperties generateAsset() {
-            String filepath = AssetManager.getAssetFilepath("movementStates/%s.json".formatted(className));
-            String json = FileManager.loadJson(filepath);
-            return new Gson().fromJson(json, StateProperties.class);
-        }
-    }
 }

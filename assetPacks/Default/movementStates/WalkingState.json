@@ -6,5 +6,13 @@
     "x": 7,
     "y": 28,
     "z": 7
-  }
+  },
+  "ticksBetweenFootsteps": 8,
+  "ticksBetweenFootstepsWhenSprinting": 5,
+  "jumpStrength": 14.25,
+  "swimStrength": 0.0025,
+  "walkingSpeed": 2.5,
+  "inAirSpeed": 0.2,
+  "sprintSpeedModifier": 1.5,
+  "jumpSpeedGain": 2.0
 }

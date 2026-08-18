@@ -6,5 +6,10 @@
     "x": 7,
     "y": 24,
     "z": 7
-  }
+  },
+  "ticksBetweenFootsteps": -1,
+  "jumpStrength": 11.125,
+  "swimStrength": 0.00096268,
+  "sneakingSpeed": 1.25,
+  "inAirSpeed": 0.15
 }

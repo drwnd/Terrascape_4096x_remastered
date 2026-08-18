@@ -17,21 +17,22 @@ public final class WalkingState extends MovementState {
 
     @Override
     Vector3f computeNextGameTickAcceleration(Vector3f playerRotation, Position lastPosition) {
-        if (Input.isKeyPressed(KeySettings.SNEAK)) next = new SneakingState();
-        if (Input.isKeyPressed(KeySettings.CRAWL)) next = new CrawlingState();
-        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this)) next = new SwimmingState();
+        if (Input.isKeyPressed(KeySettings.SNEAK)) next = MovementState.load(SneakingState.class);
+        if (Input.isKeyPressed(KeySettings.CRAWL)) next = MovementState.load(CrawlingState.class);
+        if (Input.isKeyPressed(KeySettings.SPRINT) && Input.isKeyPressed(KeySettings.MOVE_FORWARD) && intersectsLiquid(lastPosition, this))
+            next = MovementState.load(SneakingState.class);
 
         Vector3f velocityChange = new Vector3f();
         Vector3f playerDirection = MathUtils.getHorizontalDirection(playerRotation);
-        float speed = getMovementSpeed(lastPosition, WALKING_SPEED, IN_AIR_SPEED, SWIM_STRENGTH);
+        float speed = getMovementSpeed(lastPosition, walkingSpeed, inAirSpeed, swimStrength);
 
-        applyXZMovement(velocityChange, speed, SPRINT_SPEED_MODIFIER);
+        applyXZMovement(velocityChange, speed, sprintSpeedModifier);
 
         if (Input.isKeyPressed(KeySettings.JUMP)) {
             playJumpSound(lastPosition);
-            handleJump(lastPosition, velocityChange, JUMP_STRENGTH, SWIM_STRENGTH);
+            handleJump(lastPosition, velocityChange, jumpStrength, swimStrength);
             if (Input.isKeyPressed(KeySettings.MOVE_FORWARD) && Input.isKeyPressed(KeySettings.SPRINT) && movement.isWideGrounded())
-                velocityChange.x += JUMP_SPEED_GAIN;
+                velocityChange.x += jumpSpeedGain;
         }
 
         normalizeXZToMaxComponent(velocityChange);
@@ -43,7 +44,7 @@ public final class WalkingState extends MovementState {
     @Override
     void handleInput(int key, int action) {
         if (key == KeySettings.JUMP.keybind() && action == GLFW_PRESS) {
-            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new FlyingState();
+            if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(FlyingState.class);
             lastJumpTime = System.nanoTime();
         }
     }
@@ -55,7 +56,7 @@ public final class WalkingState extends MovementState {
 
     @Override
     public int ticksBetweenFootsteps() {
-        return Input.isKeyPressed(KeySettings.SPRINT) ? 5 : 8;
+        return Input.isKeyPressed(KeySettings.SPRINT) ? ticksBetweenFootstepsWhenSprinting : super.ticksBetweenFootsteps();
     }
 
     private void playJumpSound(Position position) {
@@ -64,11 +65,8 @@ public final class WalkingState extends MovementState {
         Sound.play3D(Material.getJumpSounds(standingMaterial), FloatSettings.JUMP_AUDIO, position, null);
     }
 
-
-    private static final float JUMP_STRENGTH = 14.25F;
-    private static final float SWIM_STRENGTH = 0.0025F;
-    private static final float WALKING_SPEED = 2.5F;
-    private static final float IN_AIR_SPEED = 0.2F;
-    private static final float SPRINT_SPEED_MODIFIER = 1.5F;
-    private static final float JUMP_SPEED_GAIN = 2.0F;
+    @SuppressWarnings("unused")
+    private float jumpStrength, swimStrength, walkingSpeed, inAirSpeed, sprintSpeedModifier, jumpSpeedGain;
+    @SuppressWarnings("unused")
+    private int ticksBetweenFootstepsWhenSprinting;
 }
