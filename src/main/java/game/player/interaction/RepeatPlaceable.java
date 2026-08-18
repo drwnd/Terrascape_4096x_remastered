@@ -5,6 +5,7 @@ import core.utils.Saver;
 import core.utils.Vector3l;
 
 import game.player.Player;
+import game.player.sound.PlaceBreakSound;
 import game.server.Chunk;
 import game.server.Game;
 import game.server.World;
@@ -128,6 +129,16 @@ public final class RepeatPlaceable implements Placeable {
         int countZ = (int) (maxPosition.z - minPosition.z + placeable.getLengthZ()) / placeable.getLengthZ();
 
         player.getParticleCollector().addBreakPlaceParticleEffect(minPosition.x, minPosition.y, minPosition.z, countX, countY, countZ, placeable);
+    }
+
+    @Override
+    public void playSounds(Vector3l position) {
+        int countX = (int) (maxPosition.x - minPosition.x + placeable.getLengthX()) / placeable.getLengthX();
+        int countY = (int) (maxPosition.y - minPosition.y + placeable.getLengthY()) / placeable.getLengthY();
+        int countZ = (int) (maxPosition.z - minPosition.z + placeable.getLengthZ()) / placeable.getLengthZ();
+
+        PlaceBreakSound.playBreakSounds(minPosition.x, minPosition.y, minPosition.z, countX, countY, countZ, placeable);
+        PlaceBreakSound.playPlaceSounds(minPosition.x, minPosition.y, minPosition.z, countX, countY, countZ, placeable);
     }
 
     @Override

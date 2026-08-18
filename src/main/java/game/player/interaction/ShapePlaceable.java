@@ -166,6 +166,10 @@ public abstract class ShapePlaceable implements Placeable {
         throw new UnsupportedOperationException("Delegated to RepeatPlaceable");
     }
 
+    public void playSounds(Vector3l position) {
+        throw new UnsupportedOperationException("Delegated to RepeatPlaceable");
+    }
+
 
     protected Option rotation() {
         return rotation.value();

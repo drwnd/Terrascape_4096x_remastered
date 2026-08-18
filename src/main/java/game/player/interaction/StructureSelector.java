@@ -54,11 +54,16 @@ public final class StructureSelector implements Placeable {
     }
 
     @Override
+    public void playSounds(Vector3l position) {
+
+    }
+
+    @Override
     public void save(Saver<?> saver) {
         saver.saveByte((byte) 19);
     }
 
-    public static StructureSelector load(Saver<?> saver) {
+    public static StructureSelector load() {
         return new StructureSelector();
     }
 }

@@ -250,7 +250,17 @@ public final class MaterialsData {
     }
 
     public void recomputeTypes() {
-        recomputeTypes(0);
+        synchronized (this) {
+            recomputeTypes(0);
+        }
+    }
+
+    public boolean[] getPresentMaterials() {
+        boolean[] presentMaterials = new boolean[AMOUNT_OF_MATERIALS];
+        synchronized (this) {
+            putPresentMaterials(presentMaterials, 0);
+        }
+        return presentMaterials;
     }
 
     // Miscellaneous functions
@@ -346,6 +356,35 @@ public final class MaterialsData {
         types |= recomputeTypes(startIndex + getOffset(startIndex + 19));
         data[startIndex] = (byte) (types | SPLITTER);
         return types;
+    }
+
+    private void putPresentMaterials(boolean[] presentMaterials, int startIndex) {
+        byte identifier = getIdentifier(startIndex);
+
+        if (identifier == HOMOGENOUS) {
+            presentMaterials[data[startIndex + 1] & 0xFF] = true;
+            return;
+        }
+        if (identifier == DETAIL) {
+            presentMaterials[data[startIndex + 1] & 0xFF] = true;
+            presentMaterials[data[startIndex + 2] & 0xFF] = true;
+            presentMaterials[data[startIndex + 3] & 0xFF] = true;
+            presentMaterials[data[startIndex + 4] & 0xFF] = true;
+            presentMaterials[data[startIndex + 5] & 0xFF] = true;
+            presentMaterials[data[startIndex + 6] & 0xFF] = true;
+            presentMaterials[data[startIndex + 7] & 0xFF] = true;
+            presentMaterials[data[startIndex + 8] & 0xFF] = true;
+            return;
+        }
+//        if (identifier == SPLITTER)
+        putPresentMaterials(presentMaterials, startIndex + SPLITTER_BYTE_SIZE);
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 1));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 4));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 7));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 10));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 13));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 16));
+        putPresentMaterials(presentMaterials, startIndex + getOffset(startIndex + 19));
     }
 
     // Functions to store data into something

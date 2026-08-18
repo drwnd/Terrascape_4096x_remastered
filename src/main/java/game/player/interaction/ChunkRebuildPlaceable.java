@@ -22,7 +22,7 @@ public final class ChunkRebuildPlaceable implements Placeable {
         saver.saveByte((byte) 3);
     }
 
-    public static ChunkRebuildPlaceable load(Saver<?> saver) {
+    public static ChunkRebuildPlaceable load() {
         return new ChunkRebuildPlaceable();
     }
 
@@ -88,6 +88,11 @@ public final class ChunkRebuildPlaceable implements Placeable {
 
     @Override
     public void spawnParticles(Vector3l position) {
+    }
+
+    @Override
+    public void playSounds(Vector3l position) {
+
     }
 
     @Override

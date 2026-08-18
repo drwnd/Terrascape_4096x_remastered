@@ -32,12 +32,6 @@ public final class ParticleCollector {
         }
     }
 
-    public void playParticleEffectSounds() {
-        synchronized (toBufferParticleEffects) {
-            for (ToBufferParticleEffect particleEffect : toBufferParticleEffects) ParticleType.playSound(particleEffect);
-        }
-    }
-
     public void clearToBufferParticleEffects() {
         synchronized (toBufferParticleEffects) {
             toBufferParticleEffects.clear();

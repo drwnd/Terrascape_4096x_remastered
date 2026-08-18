@@ -115,6 +115,7 @@ public final class Server implements CrashCallback {
         Player player = Game.getPlayer();
         if (!ToggleSettings.NO_CLIP.value() && placeable.intersectsAABB(position, player.getMinCoordinate(), player.getMaxCoordinate())) return false;
 
+        placeable.playSounds(position);
         placeable.spawnParticles(position);
 
         MeshCollector meshCollector = player.getMeshCollector();

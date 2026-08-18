@@ -49,7 +49,6 @@ public final class Player {
         Sound.setListenerData(camera.getPosition(), camera.getDirection(), movement.getVelocity());
         particleCollector.unloadParticleEffects();
         particleCollector.uploadParticleEffects();
-        particleCollector.playParticleEffectSounds();
         particleCollector.clearToBufferParticleEffects();
         meshCollector.uploadAllMeshes();
         meshCollector.deleteOldMeshes();

@@ -29,7 +29,7 @@ public interface Placeable {
         Placeable placeable = switch (saver.loadByte()) {
             case 1 -> CubePlaceable.load(saver);
             case 2 -> StructurePlaceable.load(saver);
-            case 3 -> ChunkRebuildPlaceable.load(saver);
+            case 3 -> ChunkRebuildPlaceable.load();
             case 4 -> SpherePlaceable.load(saver);
             case 5 -> CylinderPlaceable.load(saver);
             case 6 -> StairPlaceable.load(saver);
@@ -42,7 +42,7 @@ public interface Placeable {
             case 16 -> InsideArcPlaceable.load(saver);
             case 17 -> OutsideArcPlaceable.load(saver);
             case 18 -> CustomShape.load(saver);
-            case 19 -> StructureSelector.load(saver);
+            case 19 -> StructureSelector.load();
             case 20 -> CapsulePlaceable.load(saver);
             default -> null;
         };
@@ -61,6 +61,8 @@ public interface Placeable {
     void offsetPosition(Vector3l position, int targetedSide);
 
     void spawnParticles(Vector3l position);
+
+    void playSounds(Vector3l position);
 
     void save(Saver<?> saver);
 

@@ -6,6 +6,7 @@ import core.utils.Saver;
 import core.utils.Vector3l;
 
 import game.assets.StructureIdentifier;
+import game.player.sound.PlaceBreakSound;
 import game.server.Chunk;
 import game.server.Game;
 import game.server.World;
@@ -109,6 +110,11 @@ public final class StructurePlaceable implements Placeable {
         byte transform = getTransform();
         Vector3i lengths = new Vector3i(structure.sizeX(), structure.sizeY(), structure.sizeZ());
         Game.getPlayer().getParticleCollector().addPlaceParticleEffect(position.x, position.y, position.z, structure, lengths, transform);
+    }
+
+    @Override
+    public void playSounds(Vector3l position) {
+        PlaceBreakSound.playPlaceSounds(position.x, position.y, position.z, getTransform(), structure);
     }
 
     @Override

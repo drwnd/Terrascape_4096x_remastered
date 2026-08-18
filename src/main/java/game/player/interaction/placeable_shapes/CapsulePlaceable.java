@@ -9,6 +9,7 @@ import game.language.UiMessages;
 import game.player.interaction.PlaceMode;
 import game.player.interaction.ShapePlaceable;
 import game.player.interaction.ShapeSetting;
+import game.player.sound.PlaceBreakSound;
 import game.server.Chunk;
 import game.server.Game;
 import game.server.generation.Structure;
@@ -143,6 +144,16 @@ public final class CapsulePlaceable extends ShapePlaceable {
         updateBitMap(false);
         Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius.value(), radius.value(), radius.value());
         Game.getPlayer().getParticleCollector().addBreakPlaceParticleEffect(minPosition.x, minPosition.y, minPosition.z, 1, 1, 1, this);
+    }
+
+    @Override
+    public void playSounds(Vector3l position) {
+        if (positionsInvalid()) return;
+
+        updateBitMap(false);
+        Vector3l minPosition = Utils.min(startPosition, endPosition).sub(radius.value(), radius.value(), radius.value());
+        PlaceBreakSound.playBreakSounds(minPosition.x, minPosition.y, minPosition.z, 1, 1, 1, this);
+        PlaceBreakSound.playPlaceSounds(minPosition.x, minPosition.y, minPosition.z, 1, 1, 1, this);
     }
 
     @Override
