@@ -1,6 +1,11 @@
 package game.player.movement;
 
+import com.google.gson.Gson;
+import core.assets.Asset;
+import core.assets.AssetManager;
+import core.assets.identifiers.AssetIdentifier;
 import core.rendering_api.Input;
+import core.utils.FileManager;
 import core.utils.MathUtils;
 
 import game.server.Game;
@@ -75,17 +80,25 @@ public abstract class MovementState {
 
     abstract void handleInput(int key, int action);
 
-    abstract int getMaxAutoStepHeight();
+    public abstract byte getIdentifier();
 
     abstract int ticksBetweenFootsteps();
 
-    abstract boolean preventsFallingFromEdge();
+    final int getMaxAutoStepHeight() {
+        return AssetManager.get(identifier).maxAutoStepHeight;
+    }
 
-    public abstract Vector3i getHitboxSize();
+    final boolean preventsFallingFromEdge() {
+        return AssetManager.get(identifier).preventsFallingFromEdge;
+    }
 
-    public abstract float getCameraElevation();
+    public final Vector3i getHitboxSize() {
+        return AssetManager.get(identifier).hitboxSize;
+    }
 
-    public abstract byte getIdentifier();
+    public final float getCameraElevation() {
+        return AssetManager.get(identifier).cameraElevation;
+    }
 
 
     public static MovementState getStateFromIdentifier(byte identifier) {
@@ -179,6 +192,7 @@ public abstract class MovementState {
 
     protected Movement movement;
     protected long lastJumpTime = System.nanoTime() - JUMP_FLYING_INTERVALL;
+    private final StatePropertiesIdentifier identifier = new StatePropertiesIdentifier(getClass().getSimpleName());
 
     private static final float GRAVITY_ACCELERATION = 1.28F;
     private static final float WATER_BUOYANCY = 0.0005F;
@@ -188,4 +202,21 @@ public abstract class MovementState {
     static final long JUMP_FLYING_INTERVALL = 300_000_000; // 0.3s
     static final float WALKING_DRAG = 0.6F;
     static final float AIR_DRAG = 0.94F;
+
+    private record StateProperties(int maxAutoStepHeight, boolean preventsFallingFromEdge, float cameraElevation, Vector3i hitboxSize) implements Asset {
+        @Override
+        public void delete() {
+
+        }
+    }
+
+    private record StatePropertiesIdentifier(String className) implements AssetIdentifier<StateProperties> {
+
+        @Override
+        public StateProperties generateAsset() {
+            String filepath = AssetManager.getAssetFilepath("movementStates/%s.json".formatted(className));
+            String json = FileManager.loadJson(filepath);
+            return new Gson().fromJson(json, StateProperties.class);
+        }
+    }
 }

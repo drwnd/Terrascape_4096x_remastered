@@ -1,0 +1,10 @@
+{
+  "maxAutoStepHeight": 3,
+  "preventsFallingFromEdge": false,
+  "cameraElevation": 5,
+  "hitboxSize": {
+    "x": 7,
+    "y": 7,
+    "z": 7
+  }
+}

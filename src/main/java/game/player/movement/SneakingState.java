@@ -7,7 +7,6 @@ import game.settings.KeySettings;
 import game.utils.Position;
 
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -39,26 +38,6 @@ public final class SneakingState extends MovementState {
             if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new FlyingState();
             lastJumpTime = System.nanoTime();
         }
-    }
-
-    @Override
-    public Vector3i getHitboxSize() {
-        return new Vector3i(7, 24, 7);
-    }
-
-    @Override
-    int getMaxAutoStepHeight() {
-        return 5;
-    }
-
-    @Override
-    boolean preventsFallingFromEdge() {
-        return true;
-    }
-
-    @Override
-    public float getCameraElevation() {
-        return 22;
     }
 
     @Override

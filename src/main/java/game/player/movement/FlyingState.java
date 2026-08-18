@@ -8,7 +8,6 @@ import game.settings.ToggleSettings;
 import game.utils.Position;
 
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -46,26 +45,6 @@ public final class FlyingState extends MovementState {
             if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = new WalkingState();
             lastJumpTime = System.nanoTime();
         }
-    }
-
-    @Override
-    public Vector3i getHitboxSize() {
-        return new Vector3i(7, 28, 7);
-    }
-
-    @Override
-    int getMaxAutoStepHeight() {
-        return 0;
-    }
-
-    @Override
-    boolean preventsFallingFromEdge() {
-        return false;
-    }
-
-    @Override
-    public float getCameraElevation() {
-        return 26;
     }
 
     @Override
