@@ -8,24 +8,20 @@ import static game.server.generation.WorldGeneration.SEED;
 
 public final class CorrodedMesa implements Biome {
     @Override
-    public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
+    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalY = data.totalY;
 
         int pillarHeight = data.specialHeight;
         int floorMaterialDepth = 48 + data.floorMaterialDepthMod;
 
         if (pillarHeight != 0 && totalY >= data.height - floorMaterialDepth) {
-            if (totalY > data.height + pillarHeight) return false;
+            if (totalY > data.height + pillarHeight) return;
             data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (totalY >> 4 & 15)));
-            return true;
+            return;
         }
 
-        if (data.isAboveSurface(totalY)) return false;
-
-        if (data.isBelowFloorMaterialLevel(totalY, floorMaterialDepth + 80)) return false;   // Stone placed by caller
         if (data.isBelowFloorMaterialLevel(totalY, floorMaterialDepth)) data.store(inChunkX, inChunkY, inChunkZ, RED_SANDSTONE);
         else data.store(inChunkX, inChunkY, inChunkZ, RED_SAND);
-        return true;
     }
 
     @Override

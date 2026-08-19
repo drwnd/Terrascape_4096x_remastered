@@ -14,7 +14,7 @@ import static game.utils.Constants.*;
 
 public interface Biome {
 
-    boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
+    void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
 
     default int getFloorMaterialDepth(GenerationData data) {
         return 48 + data.floorMaterialDepthMod;
@@ -41,28 +41,13 @@ public interface Biome {
         return new Tree(x, y, z, AssetManager.get(trees).getRandom((int) x, (int) y, (int) z), transform);
     }
 
-    static boolean placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {
-        long totalY = data.totalY;
-
-        if (data.isAboveSurface(totalY)) return false;
-
-        int floorMaterialDepth = 48 + data.floorMaterialDepthMod;
-
-        if (data.isBelowFloorMaterialLevel(totalY, floorMaterialDepth)) return false;   // Stone placed by caller
+    static void placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {
         data.store(inChunkX, inChunkY, inChunkZ, material);
-        return true;
     }
 
-    static boolean placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte topMaterial) {
+    static void placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte topMaterial) {
         long totalY = data.totalY;
-
-        if (data.isAboveSurface(totalY)) return false;
-
-        int floorMaterialDepth = 48 + data.floorMaterialDepthMod;
-
-        if (data.isBelowFloorMaterialLevel(totalY, floorMaterialDepth)) return false;   // Stone placed by caller
         if (data.isInsideSurfaceMaterialLevel(totalY, 8)) data.store(inChunkX, inChunkY, inChunkZ, topMaterial);
         else data.store(inChunkX, inChunkY, inChunkZ, DIRT);
-        return true;
     }
 }

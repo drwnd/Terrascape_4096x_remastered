@@ -88,10 +88,6 @@ public final class GenerationData {
         return totalY >> LOD >= height - surfaceMaterialDepth >> LOD;
     }
 
-    public boolean isAboveSurface(long totalY) {
-        return totalY >> LOD > height >> LOD;
-    }
-
     public boolean hasTrees() {
         return treeMap != null;
     }
@@ -108,9 +104,9 @@ public final class GenerationData {
         Arrays.fill(uncompressedMaterials, startIndex, startIndex + count, material);
     }
 
-    public void fillAboveWithAir(int inChunkX, int inChunkY, int inChunkZ) {
+    public void fillAboveWith(int inChunkX, int inChunkY, int inChunkZ, byte material) {
         int xzIndex = MaterialsData.Z_ORDER_3D_TABLE_X[inChunkX] | MaterialsData.T_ORDER_3D_TABLE_Z[inChunkZ];
-        for (; inChunkY < CHUNK_SIZE; inChunkY++) uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = AIR;
+        for (; inChunkY < CHUNK_SIZE; inChunkY++) uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = material;
     }
 
     public boolean storeTree(Tree tree, boolean clearBeforeGenerating) {

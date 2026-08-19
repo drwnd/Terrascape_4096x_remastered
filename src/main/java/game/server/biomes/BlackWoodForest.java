@@ -8,8 +8,8 @@ import static game.utils.Constants.*;
 
 public final class BlackWoodForest implements Biome {
     @Override
-    public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        return Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, PODZOL);
+    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
+        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, PODZOL);
     }
 
     @Override

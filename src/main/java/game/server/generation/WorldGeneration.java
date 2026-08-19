@@ -157,24 +157,16 @@ public final class WorldGeneration {
     private static void generateBiome(int inChunkX, int inChunkZ, GenerationData data) {
         Biome biome = data.biome;
         int height = data.height;
-        int start = Math.clamp(height - data.floorMaterialDepth - (data.chunkY << CHUNK_SIZE_BITS + data.LOD) >> data.LOD, 0, CHUNK_SIZE);
+        long chunkStartY = data.chunkY << CHUNK_SIZE_BITS + data.LOD;
+        int start = Math.clamp(height - data.floorMaterialDepth - chunkStartY >> data.LOD, 0, CHUNK_SIZE);
+        int end = Math.clamp((height - chunkStartY >> data.LOD) + 1, 0, CHUNK_SIZE);
 
-        for (int inChunkY = start; inChunkY < CHUNK_SIZE; inChunkY++) {
-            data.computeTotalY(inChunkY);
-            long totalY = data.totalY;
-
-            // Attempting to place biome specific materials and features
-            if (biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data)) continue;
-            // Placing stone beneath surface materials
-            if (totalY <= height) continue;
-            // Reached surface, everything above is just air
-            if (totalY >= WATER_LEVEL) {
-                data.fillAboveWithAir(inChunkX, inChunkY, inChunkZ);
-                break;
-            }
-            // Filling Oceans with water
-            else data.store(inChunkX, inChunkY, inChunkZ, WATER);
+        data.computeTotalY(start);
+        for (int inChunkY = start; inChunkY < end; inChunkY++) {
+            data.totalY += 1L << data.LOD;
+            biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
         }
+        data.fillAboveWith(inChunkX, end, inChunkZ, chunkStartY < WATER_LEVEL ? WATER : AIR);
     }
 
     private static void generateUndergroundRiver(int inChunkX, int inChunkZ, GenerationData data) {

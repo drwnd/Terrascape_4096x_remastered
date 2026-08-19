@@ -8,8 +8,8 @@ import static game.utils.Constants.SNOW;
 
 public final class SnowyPlains implements Biome {
     @Override
-    public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        return Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, SNOW);
+    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
+        Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, SNOW);
     }
 
     @Override

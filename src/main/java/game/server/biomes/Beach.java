@@ -7,7 +7,7 @@ import static game.utils.Constants.SAND;
 public final class Beach implements Biome {
 
     @Override
-    public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        return Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, SAND);
+    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
+        Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, SAND);
     }
 }
