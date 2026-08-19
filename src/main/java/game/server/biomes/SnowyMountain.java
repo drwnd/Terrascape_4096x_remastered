@@ -7,7 +7,7 @@ import game.server.generation.GenerationData;
 import static game.server.generation.WorldGeneration.WATER_LEVEL;
 import static game.utils.Constants.SNOW;
 
-public final class SnowyMountain extends Biome {
+public final class SnowyMountain implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;

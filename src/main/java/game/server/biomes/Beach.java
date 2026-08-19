@@ -4,7 +4,7 @@ import game.server.generation.GenerationData;
 
 import static game.utils.Constants.SAND;
 
-public final class Beach extends Biome {
+public final class Beach implements Biome {
 
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {

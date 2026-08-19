@@ -5,7 +5,7 @@ import game.server.generation.GenerationData;
 import static game.utils.Constants.RED_SAND;
 import static game.utils.Constants.RED_SANDSTONE;
 
-public final class Mesa extends Biome {
+public final class Mesa implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalY = data.totalY;

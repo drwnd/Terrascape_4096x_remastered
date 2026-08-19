@@ -6,7 +6,7 @@ import game.server.generation.GenerationData;
 
 import static game.server.generation.WorldGeneration.WATER_LEVEL;
 
-public final class DryMountain extends Biome {
+public final class DryMountain implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;

@@ -6,7 +6,7 @@ import game.server.generation.Tree;
 
 import static game.utils.Constants.DIRT;
 
-public final class RedwoodForest extends Biome {
+public final class RedwoodForest implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;
@@ -25,7 +25,7 @@ public final class RedwoodForest extends Biome {
 
     @Override
     public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.REDWOOD_TREES);
+        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.REDWOOD_TREES);
     }
 
     @Override

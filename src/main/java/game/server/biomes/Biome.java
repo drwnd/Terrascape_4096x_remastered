@@ -12,36 +12,36 @@ import game.server.generation.WorldGeneration;
 
 import static game.utils.Constants.*;
 
-public abstract class Biome {
+public interface Biome {
 
-    public abstract boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
+    boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
 
-    public int getFloorMaterialDepth(GenerationData data) {
+    default int getFloorMaterialDepth(GenerationData data) {
         return 48 + data.floorMaterialDepthMod;
     }
 
-    public int getSpecialHeight(long totalX, long totalZ) {
+    default int getSpecialHeight(long totalX, long totalZ) {
         return 0;
     }
 
-    public int getRequiredTreeZeroBits() {
+    default int getRequiredTreeZeroBits() {
         return 0;
     }
 
-    public Tree getGeneratingTree(long totalX, long height, long totalZ) {
+    default Tree getGeneratingTree(long totalX, long height, long totalZ) {
         return null;
     }
 
-    public final String getName() {
+    default String getName() {
         return getClass().getSimpleName();
     }
 
-    protected static Tree getRandomTree(long x, long y, long z, StructureCollectionIdentifier trees) {
+    static Tree getRandomTree(long x, long y, long z, StructureCollectionIdentifier trees) {
         byte transform = (byte) (MathUtils.hash((int) x >>> CHUNK_SIZE_BITS, (int) z >>> CHUNK_SIZE_BITS, (int) WorldGeneration.SEED ^ 0xEB0A8449) & Structure.ALL_TRANSFORMS);
         return new Tree(x, y, z, AssetManager.get(trees).getRandom((int) x, (int) y, (int) z), transform);
     }
 
-    protected static boolean placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {
+    static boolean placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {
         long totalY = data.totalY;
 
         if (data.isAboveSurface(totalY)) return false;
@@ -53,7 +53,7 @@ public abstract class Biome {
         return true;
     }
 
-    protected static boolean placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte topMaterial) {
+    static boolean placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte topMaterial) {
         long totalY = data.totalY;
 
         if (data.isAboveSurface(totalY)) return false;

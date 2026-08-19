@@ -5,7 +5,7 @@ import game.server.generation.GenerationData;
 import static game.utils.Constants.SAND;
 import static game.utils.Constants.SANDSTONE;
 
-public final class Desert extends Biome {
+public final class Desert implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalY = data.totalY;

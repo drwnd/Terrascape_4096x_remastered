@@ -6,7 +6,7 @@ import game.server.generation.Tree;
 
 import static game.utils.Constants.*;
 
-public final class BlackWoodForest extends Biome {
+public final class BlackWoodForest implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         return Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, PODZOL);
@@ -14,7 +14,7 @@ public final class BlackWoodForest extends Biome {
 
     @Override
     public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.BLACK_WOOD_TREES);
+        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.BLACK_WOOD_TREES);
     }
 
     @Override

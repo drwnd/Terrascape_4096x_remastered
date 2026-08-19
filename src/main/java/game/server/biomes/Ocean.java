@@ -5,7 +5,7 @@ import game.server.generation.GenerationData;
 import static game.server.generation.WorldGeneration.WATER_LEVEL;
 import static game.utils.Constants.SAND;
 
-public final class Ocean extends Biome {
+public final class Ocean implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;

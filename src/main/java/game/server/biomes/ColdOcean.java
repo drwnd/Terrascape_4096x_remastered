@@ -8,7 +8,7 @@ import game.server.generation.GenerationData;
 import static game.server.generation.WorldGeneration.*;
 import static game.utils.Constants.SAND;
 
-public final class ColdOcean extends Biome {
+public final class ColdOcean implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;

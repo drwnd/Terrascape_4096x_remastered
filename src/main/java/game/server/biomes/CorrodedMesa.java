@@ -6,7 +6,7 @@ import core.utils.OpenSimplex2S;
 import static game.utils.Constants.*;
 import static game.server.generation.WorldGeneration.SEED;
 
-public final class CorrodedMesa extends Biome {
+public final class CorrodedMesa implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalY = data.totalY;

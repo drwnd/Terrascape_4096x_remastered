@@ -7,7 +7,7 @@ import game.server.generation.GenerationData;
 import static game.server.generation.WorldGeneration.WATER_LEVEL;
 import static game.utils.Constants.*;
 
-public final class Mountain extends Biome {
+public final class Mountain implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalY = data.totalY;

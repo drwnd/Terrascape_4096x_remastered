@@ -6,7 +6,7 @@ import game.server.generation.Tree;
 
 import static game.utils.Constants.GRASS;
 
-public final class SpruceForest extends Biome {
+public final class SpruceForest implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         return Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, GRASS);
@@ -14,7 +14,7 @@ public final class SpruceForest extends Biome {
 
     @Override
     public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.SPRUCE_TREES);
+        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.SPRUCE_TREES);
     }
 
     @Override

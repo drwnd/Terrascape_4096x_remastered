@@ -4,7 +4,7 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.Tree;
 
-public final class Wasteland extends Biome {
+public final class Wasteland implements Biome {
     @Override
     public boolean placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;
@@ -22,7 +22,7 @@ public final class Wasteland extends Biome {
 
     @Override
     public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.BLACK_WOOD_TREES);
+        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.BLACK_WOOD_TREES);
     }
 
     @Override
