@@ -8,7 +8,7 @@ public final class Wasteland implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;
-        long totalY = data.totalY;
+        long totalY = data.computeTotalY(inChunkY);
         long totalZ = data.totalZ;
         data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingDirtType(totalX, totalY, totalZ));
     }

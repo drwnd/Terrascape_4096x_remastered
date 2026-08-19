@@ -161,11 +161,7 @@ public final class WorldGeneration {
         int start = Math.clamp(height - data.floorMaterialDepth - chunkStartY >> data.LOD, 0, CHUNK_SIZE);
         int end = Math.clamp((height - chunkStartY >> data.LOD) + 1, 0, CHUNK_SIZE);
 
-        data.computeTotalY(start);
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            data.totalY += 1L << data.LOD;
-            biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
-        }
+        for (int inChunkY = start; inChunkY < end; inChunkY++) biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
         data.fillAboveWith(inChunkX, end, inChunkZ, chunkStartY < WATER_LEVEL ? WATER : AIR);
     }
 
@@ -174,8 +170,8 @@ public final class WorldGeneration {
         int end = Math.clamp(data.undergroundRiverDepth + WATER_LEVEL - (data.chunkY << CHUNK_SIZE_BITS + data.LOD) >> data.LOD, 0, CHUNK_SIZE);
 
         for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, data.totalY < 0 ? WATER : AIR);
+            long totalY = data.computeTotalY(inChunkY);
+            data.store(inChunkX, inChunkY, inChunkZ, totalY < WATER_LEVEL ? WATER : AIR);
         }
     }
 

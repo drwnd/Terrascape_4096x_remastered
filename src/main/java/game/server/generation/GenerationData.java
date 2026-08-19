@@ -20,7 +20,7 @@ public final class GenerationData {
     public double feature;
     public int height, specialHeight, floorMaterialDepth, floorMaterialDepthMod, undergroundRiverDepth;
     public byte steepness;
-    public long totalX, totalY, totalZ;
+    public long totalX, totalZ;
 
     public long chunkX, chunkY, chunkZ;
     public final int LOD;
@@ -76,8 +76,8 @@ public final class GenerationData {
         floorMaterialDepth = biome.getFloorMaterialDepth(this);
     }
 
-    public void computeTotalY(int inChunkY) {
-        totalY = (chunkY << CHUNK_SIZE_BITS | inChunkY) << LOD;
+    public long computeTotalY(int inChunkY) {
+        return (chunkY << CHUNK_SIZE_BITS | inChunkY) << LOD;
     }
 
     public boolean isBelowFloorMaterialLevel(long totalY, int floorMaterialDepth) {

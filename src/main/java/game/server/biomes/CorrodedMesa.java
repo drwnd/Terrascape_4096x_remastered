@@ -9,7 +9,7 @@ import static game.server.generation.WorldGeneration.SEED;
 public final class CorrodedMesa implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        long totalY = data.totalY;
+        long totalY = data.computeTotalY(inChunkY);
 
         int pillarHeight = data.specialHeight;
         int floorMaterialDepth = 48 + data.floorMaterialDepthMod;

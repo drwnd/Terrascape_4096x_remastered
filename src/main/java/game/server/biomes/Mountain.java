@@ -10,7 +10,7 @@ import static game.utils.Constants.*;
 public final class Mountain implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        long totalY = data.totalY;
+        long totalY = data.computeTotalY(inChunkY);
         int snowHeight = MathUtils.floor(data.feature * 512 + SNOW_LEVEL);
         int grassHeight = MathUtils.floor(data.feature * 512) + WATER_LEVEL;
 

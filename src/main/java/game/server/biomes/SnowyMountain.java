@@ -11,7 +11,7 @@ public final class SnowyMountain implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         long totalX = data.totalX;
-        long totalY = data.totalY;
+        long totalY = data.computeTotalY(inChunkY);
         long totalZ = data.totalZ;
 
         int iceHeight = MathUtils.floor(data.feature * 512 + ICE_LEVEL);
