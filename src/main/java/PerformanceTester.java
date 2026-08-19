@@ -9,53 +9,54 @@ import game.settings.IntSettings;
 
 public final class PerformanceTester {
 
-    private static final int CHUNK_COUNT = 128;
+    private static final int CHUNK_COUNT_XZ = 128;
+    private static final int CHUNK_COUNT_Y = 32;
 
     public static void main(String[] args) {
-        IntSettings.RENDER_DISTANCE.setValue(CHUNK_COUNT / 2 - 3);
-        IntSettings.LOD_COUNT.setValue(Integer.numberOfTrailingZeros(CHUNK_COUNT) + 1);
+        IntSettings.RENDER_DISTANCE.setValue(CHUNK_COUNT_XZ / 2 - 3);
+        IntSettings.LOD_COUNT.setValue(Integer.numberOfTrailingZeros(CHUNK_COUNT_XZ) + 1);
         Game.setTemporaryWorld(new World(0x9EF6E7FAF3299DDDL));
         long totalStart = System.nanoTime();
 
-        for (int lod = 0; CHUNK_COUNT >> lod != 0; lod++) {
-            int chunkCount = CHUNK_COUNT >> lod;
+        int chunkCountY = CHUNK_COUNT_Y;
+        int chunkCountXZ = CHUNK_COUNT_XZ;
 
-            long generationStart = System.nanoTime();
-            for (int chunkX = 0; chunkX < chunkCount; chunkX++)
-                for (int chunkZ = 0; chunkZ < chunkCount; chunkZ++) generateColumn(chunkX, chunkZ, chunkCount / 2, lod);
-            long generationTime = System.nanoTime() - generationStart;
+        long generationStart = System.nanoTime();
+        for (int chunkX = 28; chunkX < chunkCountXZ + 28; chunkX++)
+            for (int chunkZ = 116; chunkZ < chunkCountXZ + 116; chunkZ++) generateColumn(chunkX, chunkZ, chunkCountY / 2);
+        long generationTime = System.nanoTime() - generationStart;
 
-            System.out.printf("Generated lod %d in %dms %n", lod, generationTime / 1_000_000);
+        System.out.printf("Generated lod %d in %dms %n", 0, generationTime / 1_000_000);
 
-            long meshingStart = System.nanoTime();
-            for (int chunkX = 1; chunkX < chunkCount - 1; chunkX++)
-                for (int chunkZ = 1; chunkZ < chunkCount - 1; chunkZ++) meshColumn(chunkX, chunkZ, chunkCount / 2, lod);
-            long meshingTime = System.nanoTime() - meshingStart;
+        long meshingStart = System.nanoTime();
+        for (int chunkX = 29; chunkX < chunkCountXZ + 27; chunkX++)
+            for (int chunkZ = 117; chunkZ < chunkCountXZ + 115; chunkZ++) meshColumn(chunkX, chunkZ, chunkCountY / 2);
+        long meshingTime = System.nanoTime() - meshingStart;
 
-            System.out.printf("Meshed lod %d in %dms %n", lod, meshingTime / 1_000_000);
-        }
+        System.out.printf("Meshed lod %d in %dms %n", 0, meshingTime / 1_000_000);
+
 
         long totalTime = System.nanoTime() - totalStart;
         System.out.printf("Total time %ds%n", totalTime / 1_000_000_000);
     }
 
-    private static void generateColumn(int chunkX, int chunkZ, int chunkCount, int lod) {
-        GenerationData generationData = new GenerationData(chunkX, chunkZ, lod);
+    private static void generateColumn(int chunkX, int chunkZ, int chunkCount) {
+        GenerationData generationData = new GenerationData(chunkX, chunkZ, 0);
         World world = Game.getWorld();
 
         for (int chunkY = -chunkCount; chunkY < chunkCount; chunkY++) {
-            Chunk chunk = new Chunk(chunkX, chunkY, chunkZ, lod);
+            Chunk chunk = new Chunk(chunkX, chunkY, chunkZ, 0);
             WorldGeneration.generate(chunk, generationData);
             world.storeChunk(chunk);
         }
     }
 
-    private static void meshColumn(int chunkX, int chunkZ, int chunkCount, int lod) {
+    private static void meshColumn(int chunkX, int chunkZ, int chunkCount) {
         MeshGenerator meshGenerator = new MeshGenerator();
         World world = Game.getWorld();
 
         for (int chunkY = -chunkCount + 1; chunkY < chunkCount - 1; chunkY++) {
-            Mesh mesh = meshGenerator.generateMesh(world.getChunk(chunkX, chunkY, chunkZ, lod));
+            Mesh mesh = meshGenerator.generateMesh(world.getChunk(chunkX, chunkY, chunkZ, 0));
             if (mesh == null) System.err.printf("Chunk at x:%d, y:%d, z:%d couldn't generate a mesh", chunkX, chunkY, chunkZ);
         }
     }
