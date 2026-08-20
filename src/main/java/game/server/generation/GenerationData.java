@@ -1,9 +1,11 @@
 package game.server.generation;
 
+import core.assets.AssetManager;
 import core.utils.MathUtils;
 import core.utils.OpenSimplex2S;
 
 import game.server.Chunk;
+import game.server.biomes.BiomesCache;
 import game.server.materials_data.MaterialsData;
 import game.server.biomes.Biome;
 
@@ -312,6 +314,7 @@ public final class GenerationData {
 
         int sideLength = (1 << lod) + 2;
         WorldGenStructure[] worldGenStructureMap = new WorldGenStructure[sideLength * sideLength];
+        BiomesCache biomes = AssetManager.get(BiomesCache.IDENTIFIER);
 
         long structureStartX = (chunkX << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
         long structureStartZ = (chunkZ << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
@@ -321,12 +324,12 @@ public final class GenerationData {
                 long totalX = structureStartX + ((long) x << CHUNK_SIZE_BITS);
                 long totalZ = structureStartZ + ((long) z << CHUNK_SIZE_BITS);
 
-                worldGenStructureMap[x * sideLength + z] = structureMapValue(totalX, totalZ);
+                worldGenStructureMap[x * sideLength + z] = structureMapValue(biomes, totalX, totalZ);
             }
         return worldGenStructureMap;
     }
 
-    private static WorldGenStructure structureMapValue(long totalX, long totalZ) {
+    private static WorldGenStructure structureMapValue(BiomesCache biomes, long totalX, long totalZ) {
         MapSample sample = new MapSample(totalX, totalZ, true, true);
 
         double resultingHeight = WorldGeneration.getResultingHeight(sample);
@@ -336,7 +339,7 @@ public final class GenerationData {
         int riverDepth = WorldGeneration.getRiverDepth(sample.river());
         if (steepness > 0.4 || riverDepth >= resultingHeight - 16) return null;
 
-        Biome biome = WorldGeneration.getBiome(sample, MathUtils.floor(resultingHeight), 0);
+        Biome biome = WorldGeneration.getBiome(sample, biomes, MathUtils.floor(resultingHeight), 0);
 
         if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & 1023) >= biome.getStructureChancePromille()) return null;
         return biome.getStructure(totalX, MathUtils.floor(resultingHeight) - 8, totalZ);

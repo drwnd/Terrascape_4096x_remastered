@@ -1,0 +1,7 @@
+{
+  "type": "HomogenousSurface",
+  "structures": "SPRUCE_TREES",
+  "structureChance": 32,
+  "biomeDepth": 48,
+  "surfaceMaterial": 16
+}

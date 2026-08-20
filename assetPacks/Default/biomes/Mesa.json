@@ -1,0 +1,7 @@
+{
+  "type": "LayeredSurface",
+  "surfaceMaterialDepth": 48,
+  "biomeDepth": 128,
+  "topMaterial": 87,
+  "bottomMaterial": 88
+}

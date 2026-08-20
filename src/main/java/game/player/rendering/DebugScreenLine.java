@@ -18,6 +18,7 @@ import core.utils.Vector3l;
 import game.player.interaction.Target;
 import game.server.Chunk;
 import game.server.Game;
+import game.server.biomes.BiomesCache;
 import game.server.generation.MapSample;
 import game.server.generation.WorldGeneration;
 import game.settings.DebugScreenOptions;
@@ -166,7 +167,7 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
             Position position = Game.getPlayer().getPosition();
             MapSample sample = new MapSample(position.longX, position.longZ, true, true);
             int resultingHeight = MathUtils.floor(WorldGeneration.getResultingHeight(sample));
-            return "Biome: %s".formatted(WorldGeneration.getBiome(sample, resultingHeight, 0).getName());
+            return "Biome: %s".formatted(WorldGeneration.getBiome(sample, AssetManager.get(BiomesCache.IDENTIFIER), resultingHeight, 0).getName());
         });
 
         add(lines, DebugScreenOptions.RESULTING_HEIGHT, () -> {

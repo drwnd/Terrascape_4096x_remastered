@@ -1,5 +1,6 @@
 package game.server.generation;
 
+import core.assets.AssetManager;
 import core.utils.MathUtils;
 
 import game.server.Chunk;
@@ -101,16 +102,18 @@ public final class WorldGeneration {
 
     public static Biome[] getBiomes(int[] heightMap, double[] featureMap, ChunkMapSamples samples) {
         Biome[] biomes = new Biome[CHUNK_SIZE * CHUNK_SIZE];
+        BiomesCache cache = AssetManager.get(BiomesCache.IDENTIFIER);
+
         for (int mapX = 0; mapX < CHUNK_SIZE; mapX++)
             for (int mapZ = 0; mapZ < CHUNK_SIZE; mapZ++) {
                 int mapIndex = GenerationData.getMapIndex(mapX, mapZ);
                 int index = mapX << CHUNK_SIZE_BITS | mapZ;
-                biomes[index] = getBiome(samples.getSample(mapIndex), heightMap[mapIndex], featureMap[index]);
+                biomes[index] = getBiome(samples.getSample(mapIndex), cache, heightMap[mapIndex], featureMap[index]);
             }
         return biomes;
     }
 
-    public static Biome getBiome(MapSample sample, int height, double feature) {
+    public static Biome getBiome(MapSample sample, BiomesCache biomes, int height, double feature) {
         double dither = feature * 0.05 - 0.025;
 
         double temperature = sample.temperature() + dither;
@@ -120,35 +123,35 @@ public final class WorldGeneration {
         int beachHeight = WATER_LEVEL + 64 + (int) (feature * 64 - sample.erosion() * 64);
 
         if (height < WATER_LEVEL) {
-            if (temperature > 0.33) return new WarmOcean();
-            else if (temperature - dither < -0.33) return new ColdOcean();
-            return new Ocean();
+            if (temperature > 0.33) return biomes.WARM_OCEAN;
+            else if (temperature - dither < -0.33) return biomes.COLD_OCEAN;
+            return biomes.OCEAN;
         }
-        if (height < beachHeight) return new Beach();
+        if (height < beachHeight) return biomes.BEACH;
         if (continental > MOUNTAIN_THRESHOLD && erosion < 0.51) {
-            if (temperature > 0.33) return new DryMountain();
-            else if (temperature < -0.33) return new SnowyMountain();
-            return new Mountain();
+            if (temperature > 0.33) return biomes.DRY_MOUNTAIN;
+            else if (temperature < -0.33) return biomes.SNOWY_MOUNTAIN;
+            return biomes.MOUNTAIN;
         }
 
         if (temperature > 0.33) {
             if (height > 128 && sample.continental() < MOUNTAIN_THRESHOLD
-                    && sample.temperature() > 0.45 && sample.humidity() < -0.3) return new CorrodedMesa();
-            if (temperature > 0.55 && humidity < 0.15) return new Mesa();
-            if (humidity < 0.15) return new Desert();
-            if (humidity > 0.5 && temperature > 0.5) return new BlackWoodForest();
-            if (humidity > 0.4 && temperature > 0.4) return new DarkOakForest();
-            return new Wasteland();
+                    && sample.temperature() > 0.45 && sample.humidity() < -0.3) return biomes.CORRODED_MESA;
+            if (temperature > 0.55 && humidity < 0.15) return biomes.MESA;
+            if (humidity < 0.15) return biomes.DESERT;
+            if (humidity > 0.5 && temperature > 0.5) return biomes.BLACK_WOOD_FOREST;
+            if (humidity > 0.4 && temperature > 0.4) return biomes.DARK_OAK_FOREST;
+            return biomes.WASTELAND;
         }
         if (humidity > 0.33) {
-            if (temperature > -0.1) return new RedwoodForest();
-            if (temperature > -0.4) return new SpruceForest();
-            return new SnowySpruceForest();
+            if (temperature > -0.1) return biomes.REDWOOD_FOREST;
+            if (temperature > -0.4) return biomes.SPRUCE_FOREST;
+            return biomes.SNOWY_SPRUCE_FOREST;
         }
-        if (humidity < 0.0 && temperature > -0.25) return new Plains();
-        if (humidity > -0.33 && temperature > -0.33) return new OakForest();
-        if (humidity < -0.33 && temperature > -0.5) return new PineForest();
-        return new SnowyPlains();
+        if (humidity < 0.0 && temperature > -0.25) return biomes.PLAINS;
+        if (humidity > -0.33 && temperature > -0.33) return biomes.OAK_FOREST;
+        if (humidity < -0.33 && temperature > -0.5) return biomes.PINE_FOREST;
+        return biomes.SNOWY_PLAINS;
     }
 
 

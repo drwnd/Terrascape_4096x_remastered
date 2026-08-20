@@ -1,0 +1,9 @@
+{
+  "type": "LayeredSurface",
+  "structures": "OAK_TREES",
+  "structureChance": 32,
+  "surfaceMaterialDepth": 8,
+  "biomeDepth": 48,
+  "topMaterial": 6,
+  "bottomMaterial": 7
+}

@@ -1,0 +1,9 @@
+{
+  "type": "LayeredSurface",
+  "structures": "SPRUCE_TREES",
+  "structureChance": 128,
+  "surfaceMaterialDepth": 8,
+  "biomeDepth": 48,
+  "topMaterial": 6,
+  "bottomMaterial": 7
+}
