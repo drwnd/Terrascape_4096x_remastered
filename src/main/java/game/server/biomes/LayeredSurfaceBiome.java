@@ -5,7 +5,7 @@ import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
 public record LayeredSurfaceBiome(StructureCollectionIdentifier structures, int structureChance,
-                                  int surfaceMaterialDepth, int floorDepth, byte topMaterial, byte bottomMaterial) implements Biome {
+                                  int surfaceMaterialDepth, int biomeDepth, byte topMaterial, byte bottomMaterial) implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterialDepth, topMaterial, bottomMaterial);
@@ -13,7 +13,7 @@ public record LayeredSurfaceBiome(StructureCollectionIdentifier structures, int 
 
     @Override
     public int getBiomeDepth(GenerationData data) {
-        return floorDepth + data.biomeDepthMod;
+        return biomeDepth + data.biomeDepthMod;
     }
 
     @Override
