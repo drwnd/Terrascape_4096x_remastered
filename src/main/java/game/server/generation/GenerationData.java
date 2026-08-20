@@ -81,7 +81,7 @@ public final class GenerationData {
     }
 
     public boolean isInsideSurfaceMaterialLevel(long totalY, int surfaceMaterialDepth) {
-        return totalY >> LOD >= height - surfaceMaterialDepth >> LOD;
+        return totalY >> LOD >= height - surfaceMaterialDepth - floorMaterialDepthMod >> LOD;
     }
 
     public boolean hasTrees() {

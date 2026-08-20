@@ -50,7 +50,7 @@ public interface Biome {
 
     static void placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, int surfaceMaterialDepth, byte topMaterial, byte bottomMaterial) {
         long totalY = data.computeTotalY(inChunkY);
-        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth + data.floorMaterialDepthMod);
+        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth);
         data.store(inChunkX, inChunkY, inChunkZ, insideSurfaceMaterialLevel ? topMaterial : bottomMaterial);
     }
 }
