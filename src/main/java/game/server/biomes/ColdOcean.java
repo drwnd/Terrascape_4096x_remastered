@@ -15,15 +15,22 @@ public final class ColdOcean implements Biome {
         long totalY = data.computeTotalY(inChunkY);
         long totalZ = data.totalZ;
 
-        int iceHeight = Math.min(data.specialHeight, WATER_LEVEL - data.height);
-        if (totalY > WATER_LEVEL - iceHeight && totalY <= WATER_LEVEL + (iceHeight >> 3)) {
-            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(totalX, totalY, totalZ));
-            return;
-        }
-
         int sandHeight = (int) (data.feature * 64.0) + WATER_LEVEL - 80;
         if (totalY > sandHeight) data.store(inChunkX, inChunkY, inChunkZ, SAND);
         else data.store(inChunkX, inChunkY, inChunkZ, data.getColdOceanFloorMaterial(totalX, totalY, totalZ));
+    }
+
+    @Override
+    public void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
+        int iceHeight = Math.min(data.specialHeight, WATER_LEVEL - data.height);
+        if (iceHeight == 0) return;
+        int start = data.clampEndHeightToInChunkY(WATER_LEVEL - iceHeight);
+        int end = data.clampEndHeightToInChunkY(WATER_LEVEL + (iceHeight >> 3));
+
+        for (int inChunkY = start; inChunkY < end; inChunkY++) {
+            long totalY = data.computeTotalY(inChunkY);
+            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, totalY, data.totalZ));
+        }
     }
 
     @Override

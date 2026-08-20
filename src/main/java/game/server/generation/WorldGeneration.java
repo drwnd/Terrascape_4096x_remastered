@@ -52,26 +52,38 @@ public final class WorldGeneration {
         chunk.setGenerationStatus(Status.DONE);
     }
 
-    public static int getResultingHeight(MapSample sample) {
+    public static double getResultingHeight(MapSample sample) {
         double continentalModifier = getContinentalModifier(sample);
         double erosionModifier = getErosionModifier(continentalModifier, sample);
         double riverModifier = getRiverModifier(erosionModifier, continentalModifier, sample);
 
-        return MathUtils.floor((sample.height() + continentalModifier + erosionModifier + riverModifier) * 2) + WATER_LEVEL - 15;
+        return (sample.height() + continentalModifier + erosionModifier + riverModifier) * 2 + WATER_LEVEL - 15;
     }
 
-    public static int getResultingHeight(long totalX, long totalZ) {
+    public static double getResultingHeight(long totalX, long totalZ) {
         return getResultingHeight(new MapSample(totalX, totalZ, false, true));
     }
 
-    public static int[] getResultingHeightMap(ChunkMapSamples samples) {
+    public static int[] getResultingHeightMap(ChunkMapSamples samples, float[] steepnessMap, int lod) {
         int[] resultingHeightMap = new int[CHUNK_SIZE_PADDED * CHUNK_SIZE_PADDED];
+        double[] exactHeightMap = new double[CHUNK_SIZE_PADDED * CHUNK_SIZE_PADDED];
         for (int mapX = 0; mapX < CHUNK_SIZE_PADDED; mapX++)
             for (int mapZ = 0; mapZ < CHUNK_SIZE_PADDED; mapZ++) {
 
                 int mapIndex = GenerationData.getMapIndex(mapX, mapZ);
-                int resultingHeight = getResultingHeight(samples.getSample(mapIndex));
-                resultingHeightMap[mapIndex] = resultingHeight;
+                double resultingHeight = getResultingHeight(samples.getSample(mapIndex));
+                exactHeightMap[mapIndex] = resultingHeight;
+                resultingHeightMap[mapIndex] = MathUtils.floor(resultingHeight);
+            }
+
+        float lodNormalizer = 1.0F / (1 << lod);
+        for (int mapX = 0; mapX < CHUNK_SIZE; mapX++)
+            for (int mapZ = 0; mapZ < CHUNK_SIZE; mapZ++) {
+                double height = exactHeightMap[GenerationData.getMapIndex(mapX + 1, mapZ + 1)];
+
+                double steepnessX = Math.abs(height - exactHeightMap[GenerationData.getMapIndex(mapX + 1, mapZ)]);
+                double steepnessZ = Math.abs(height - exactHeightMap[GenerationData.getMapIndex(mapX, mapZ + 1)]);
+                steepnessMap[mapX << CHUNK_SIZE_BITS | mapZ] = (float) Math.max(steepnessX, steepnessZ) * lodNormalizer;
             }
         return resultingHeightMap;
     }
@@ -157,12 +169,12 @@ public final class WorldGeneration {
     private static void generateBiome(int inChunkX, int inChunkZ, GenerationData data) {
         Biome biome = data.biome;
         int height = data.height;
-        long chunkStartY = data.chunkY << CHUNK_SIZE_BITS + data.LOD;
-        int start = Math.clamp(height - data.floorMaterialDepth - chunkStartY >> data.LOD, 0, CHUNK_SIZE);
-        int end = Math.clamp((height - chunkStartY >> data.LOD) + 1, 0, CHUNK_SIZE);
+        int start = data.clampStartHeightToInChunkY(height - data.floorMaterialDepth);
+        int end = data.clampEndHeightToInChunkY(height);
 
         for (int inChunkY = start; inChunkY < end; inChunkY++) biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
-        data.fillAboveWith(inChunkX, end, inChunkZ, chunkStartY < WATER_LEVEL ? WATER : AIR);
+        data.fillAboveWith(inChunkX, end, inChunkZ, data.chunkY << CHUNK_SIZE_BITS + data.LOD < WATER_LEVEL ? WATER : AIR);
+        biome.placeSpecialFeatures(inChunkX, inChunkZ, data);
     }
 
     private static void generateUndergroundRiver(int inChunkX, int inChunkZ, GenerationData data) {

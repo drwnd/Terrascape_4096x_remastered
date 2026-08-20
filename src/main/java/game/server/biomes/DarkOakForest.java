@@ -4,12 +4,13 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.Tree;
 
+import static game.utils.Constants.DIRT;
 import static game.utils.Constants.PODZOL;
 
 public final class DarkOakForest implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, PODZOL);
+        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, 8, PODZOL, DIRT);
     }
 
     @Override

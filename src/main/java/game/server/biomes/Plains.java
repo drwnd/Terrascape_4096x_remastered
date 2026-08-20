@@ -4,12 +4,12 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.Tree;
 
-import static game.utils.Constants.GRASS;
+import static game.utils.Constants.*;
 
 public final class Plains implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, GRASS);
+        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, 8 , GRASS, DIRT);
     }
 
     @Override

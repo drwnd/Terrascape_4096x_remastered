@@ -19,7 +19,7 @@ public final class GenerationData {
     public Biome biome;
     public double feature;
     public int height, specialHeight, floorMaterialDepth, floorMaterialDepthMod, undergroundRiverDepth;
-    public byte steepness;
+    public float steepness;
     public long totalX, totalZ;
 
     public long chunkX, chunkY, chunkZ;
@@ -37,10 +37,10 @@ public final class GenerationData {
 
         containsUndergroundRiver = getMinRiver(samples) < UNDERGROUND_RIVER_THRESHOLD;
 
-        resultingHeightMap = WorldGeneration.getResultingHeightMap(samples);
+        resultingHeightMap = WorldGeneration.getResultingHeightMap(samples, steepnessMap, lod);
         biomeMap = WorldGeneration.getBiomes(resultingHeightMap, featureMap, samples);
         undergroundRiverDepthMap = containsUndergroundRiver ? WorldGeneration.getUndergroundRiverDepthMap(samples) : null;
-        steepnessMap = steepnessMap(resultingHeightMap, lod);
+        for (int index = 0; index < steepnessMap.length; index++) steepnessMap[index] += (float) featureMap[index] * 1.5F - 0.75F;
         specialHeightMap = specialHeightMap(chunkX, chunkZ, lod, biomeMap);
 
         containsUndergroundRiver = isUndergroundRiverDominant(undergroundRiverDepthMap, resultingHeightMap);
@@ -72,16 +72,12 @@ public final class GenerationData {
         biome = biomeMap[index];
         specialHeight = specialHeightMap[index];
         height = resultingHeightMap[mapIndex];
-        floorMaterialDepthMod = (int) (feature * 4.0F) - (steepness << 2);
+        floorMaterialDepthMod = (int) (feature * 4.0F - Math.max(0, steepness - 1) * 26);
         floorMaterialDepth = biome.getFloorMaterialDepth(this);
     }
 
     public long computeTotalY(int inChunkY) {
         return (chunkY << CHUNK_SIZE_BITS | inChunkY) << LOD;
-    }
-
-    public boolean isBelowFloorMaterialLevel(long totalY, int floorMaterialDepth) {
-        return totalY >> LOD < height - floorMaterialDepth >> LOD;
     }
 
     public boolean isInsideSurfaceMaterialLevel(long totalY, int surfaceMaterialDepth) {
@@ -94,6 +90,14 @@ public final class GenerationData {
 
     public static int getMapIndex(int mapX, int mapZ) {
         return mapX * CHUNK_SIZE_PADDED + mapZ;
+    }
+
+    public int clampStartHeightToInChunkY(int height) {
+        return Math.clamp(height - (chunkY << CHUNK_SIZE_BITS + LOD) >> LOD, 0, CHUNK_SIZE);
+    }
+
+    public int clampEndHeightToInChunkY(int height) {
+        return Math.clamp((height - (chunkY << CHUNK_SIZE_BITS + LOD) >> LOD) + 1, 0, CHUNK_SIZE);
     }
 
     public void store(int inChunkX, int inChunkY, int inChunkZ, byte material) {
@@ -289,20 +293,6 @@ public final class GenerationData {
         return featureMap;
     }
 
-    private static byte[] steepnessMap(int[] heightMapPadded, int lod) {
-        byte[] steepnessMap = new byte[CHUNK_SIZE * CHUNK_SIZE];
-
-        for (int mapX = 0; mapX < CHUNK_SIZE; mapX++)
-            for (int mapZ = 0; mapZ < CHUNK_SIZE; mapZ++) {
-                int height = heightMapPadded[getMapIndex(mapX + 1, mapZ + 1)];
-                int steepnessX = Math.abs(height - heightMapPadded[getMapIndex(mapX, mapZ + 1)]);
-                int steepnessZ = Math.abs(height - heightMapPadded[getMapIndex(mapX + 1, mapZ)]);
-                steepnessMap[mapX << CHUNK_SIZE_BITS | mapZ] = (byte) Math.max(steepnessX >> lod, steepnessZ >> lod);
-            }
-
-        return steepnessMap;
-    }
-
     private static int[] specialHeightMap(long chunkX, long chunkZ, int lod, Biome[] biomeMap) {
         int[] specialHeightMap = new int[CHUNK_SIZE * CHUNK_SIZE];
         long chunkStartX = chunkX << CHUNK_SIZE_BITS + lod;
@@ -339,17 +329,17 @@ public final class GenerationData {
     private static Tree treeMapValue(long totalX, long totalZ) {
         MapSample sample = new MapSample(totalX, totalZ, true, true);
 
-        int resultingHeight = WorldGeneration.getResultingHeight(sample);
-        int heightPlusX = WorldGeneration.getResultingHeight(totalX + 1, totalZ);
-        int heightPlusZ = WorldGeneration.getResultingHeight(totalX, totalZ + 1);
-        int steepness = Math.max(Math.abs(resultingHeight - heightPlusX), Math.abs(resultingHeight - heightPlusZ));
+        double resultingHeight = WorldGeneration.getResultingHeight(sample);
+        double heightPlusX = WorldGeneration.getResultingHeight(totalX + 1, totalZ);
+        double heightPlusZ = WorldGeneration.getResultingHeight(totalX, totalZ + 1);
+        double steepness = Math.max(Math.abs(resultingHeight - heightPlusX), Math.abs(resultingHeight - heightPlusZ));
         int riverDepth = WorldGeneration.getRiverDepth(sample.river());
-        if (steepness != 0 || riverDepth >= resultingHeight - 16) return null;
+        if (steepness > 0.4 || riverDepth >= resultingHeight - 16) return null;
 
-        Biome biome = WorldGeneration.getBiome(sample, resultingHeight, 0);
+        Biome biome = WorldGeneration.getBiome(sample, MathUtils.floor(resultingHeight), 0);
 
         if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & biome.getRequiredTreeZeroBits()) != 0) return null;
-        return biome.getGeneratingTree(totalX, resultingHeight, totalZ);
+        return biome.getGeneratingTree(totalX, MathUtils.floor(resultingHeight) - 8, totalZ);
     }
 
     private static int getMinHeight(int[] resultingHeightMap) {
@@ -406,7 +396,7 @@ public final class GenerationData {
     private final int[] undergroundRiverDepthMap;
     private final int[] resultingHeightMap;
     private final int[] specialHeightMap;
-    private final byte[] steepnessMap;
+    private final float[] steepnessMap = new float[CHUNK_SIZE * CHUNK_SIZE];
     private final byte[] cachedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE >> 6];
 
     private final byte[] uncompressedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];

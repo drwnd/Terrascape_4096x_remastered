@@ -16,6 +16,9 @@ public interface Biome {
 
     void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
 
+    default void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
+    }
+
     default int getFloorMaterialDepth(GenerationData data) {
         return 48 + data.floorMaterialDepthMod;
     }
@@ -45,9 +48,9 @@ public interface Biome {
         data.store(inChunkX, inChunkY, inChunkZ, material);
     }
 
-    static void placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte topMaterial) {
+    static void placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, int surfaceMaterialDepth, byte topMaterial, byte bottomMaterial) {
         long totalY = data.computeTotalY(inChunkY);
-        if (data.isInsideSurfaceMaterialLevel(totalY, 8)) data.store(inChunkX, inChunkY, inChunkZ, topMaterial);
-        else data.store(inChunkX, inChunkY, inChunkZ, DIRT);
+        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth + data.floorMaterialDepthMod);
+        data.store(inChunkX, inChunkY, inChunkZ, insideSurfaceMaterialLevel ? topMaterial : bottomMaterial);
     }
 }

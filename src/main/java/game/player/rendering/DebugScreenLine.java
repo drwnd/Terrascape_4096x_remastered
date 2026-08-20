@@ -165,14 +165,13 @@ public record DebugScreenLine(OptionSetting visibility, OptionSetting color, Str
         add(lines, DebugScreenOptions.BIOME, () -> {
             Position position = Game.getPlayer().getPosition();
             MapSample sample = new MapSample(position.longX, position.longZ, true, true);
-            int resultingHeight = WorldGeneration.getResultingHeight(sample);
+            int resultingHeight = MathUtils.floor(WorldGeneration.getResultingHeight(sample));
             return "Biome: %s".formatted(WorldGeneration.getBiome(sample, resultingHeight, 0).getName());
         });
 
         add(lines, DebugScreenOptions.RESULTING_HEIGHT, () -> {
             Position position = Game.getPlayer().getPosition();
-            MapSample sample = new MapSample(position.longX, position.longZ, true, true);
-            int resultingHeight = WorldGeneration.getResultingHeight(sample);
+            int resultingHeight = MathUtils.floor(WorldGeneration.getResultingHeight(position.longX, position.longZ));
             return "Resulting Height: %s".formatted(resultingHeight);
         });
 

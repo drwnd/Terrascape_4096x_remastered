@@ -153,6 +153,10 @@ public enum Materials implements Translatable {
     WHITE_CRYSTAL,
     BLACK_CRYSTAL;
 
+    public byte id() {
+        return (byte) ordinal();
+    }
+
     public String getAlbedoFileName() {
         return Material.getAlbedoFileName((byte) ordinal());
     }

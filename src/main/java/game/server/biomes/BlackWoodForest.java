@@ -9,7 +9,7 @@ import static game.utils.Constants.*;
 public final class BlackWoodForest implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, PODZOL);
+        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, 8, PODZOL, DIRT);
     }
 
     @Override

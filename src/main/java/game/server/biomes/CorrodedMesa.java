@@ -9,19 +9,20 @@ import static game.server.generation.WorldGeneration.SEED;
 public final class CorrodedMesa implements Biome {
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        long totalY = data.computeTotalY(inChunkY);
+        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, 48, RED_SAND, RED_SANDSTONE);
+    }
 
+    @Override
+    public void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
         int pillarHeight = data.specialHeight;
-        int floorMaterialDepth = 48 + data.floorMaterialDepthMod;
+        if (pillarHeight == 0) return;
+        int start = data.clampStartHeightToInChunkY(data.height - data.floorMaterialDepth);
+        int end = data.clampEndHeightToInChunkY(data.height + pillarHeight);
 
-        if (pillarHeight != 0 && totalY >= data.height - floorMaterialDepth) {
-            if (totalY > data.height + pillarHeight) return;
+        for (int inChunkY = start; inChunkY < end; inChunkY++) {
+            long totalY = data.computeTotalY(inChunkY);
             data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (totalY >> 4 & 15)));
-            return;
         }
-
-        if (data.isBelowFloorMaterialLevel(totalY, floorMaterialDepth)) data.store(inChunkX, inChunkY, inChunkZ, RED_SANDSTONE);
-        else data.store(inChunkX, inChunkY, inChunkZ, RED_SAND);
     }
 
     @Override
