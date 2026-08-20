@@ -4,8 +4,13 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
-public record HomogenousSurfaceBiome(StructureCollectionIdentifier structures, int structureChance,
-                                     int floorDepth, byte surfaceMaterial) implements Biome {
+public record HomogenousSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance,
+                                     int biomeDepth, byte surfaceMaterial) implements Biome {
+
+    public static HomogenousSurfaceBiome withName(String name, HomogenousSurfaceBiome biome) {
+        return new HomogenousSurfaceBiome(name, biome.structures, biome.structureChance, biome.biomeDepth, biome.surfaceMaterial);
+    }
+
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
         Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterial);
@@ -13,7 +18,7 @@ public record HomogenousSurfaceBiome(StructureCollectionIdentifier structures, i
 
     @Override
     public int getBiomeDepth(GenerationData data) {
-        return floorDepth + data.biomeDepthMod;
+        return biomeDepth + data.biomeDepthMod;
     }
 
     @Override
@@ -25,5 +30,10 @@ public record HomogenousSurfaceBiome(StructureCollectionIdentifier structures, i
     public WorldGenStructure getStructure(long totalX, long height, long totalZ) {
         if (structures == null) return null;
         return Biome.getRandomStructure(totalX, height, totalZ, structures);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

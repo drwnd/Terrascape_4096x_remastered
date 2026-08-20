@@ -2,10 +2,12 @@ package game.server.biomes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import core.assets.Asset;
 import core.assets.AssetManager;
 import core.assets.identifiers.AssetIdentifier;
 import core.utils.FileManager;
+import core.utils.RuntimeTypeAdapterFactory;
 
 public final class BiomesCache implements Asset {
 
@@ -18,7 +20,7 @@ public final class BiomesCache implements Asset {
             BLACK_WOOD_FOREST, DARK_OAK_FOREST, OAK_FOREST, PINE_FOREST, SNOWY_SPRUCE_FOREST, SPRUCE_FOREST, REDWOOD_FOREST = new RedwoodForest(),
             MESA, DESERT;
 
-    public BiomesCache() {
+    private BiomesCache() {
         RuntimeTypeAdapterFactory<Biome> factory = RuntimeTypeAdapterFactory.of(Biome.class);
         factory.registerSubtype(HomogenousSurfaceBiome.class, "HomogenousSurface");
         factory.registerSubtype(LayeredSurfaceBiome.class, "LayeredSurface");
@@ -45,6 +47,9 @@ public final class BiomesCache implements Asset {
     private static Biome load(Gson gson, String name) {
         String filepath = AssetManager.getAssetFilepath("biomes/%s.json".formatted(name));
         String json = FileManager.loadJson(filepath);
-        return gson.fromJson(json, Biome.class);
+        Biome biome = gson.fromJson(json, Biome.class);
+        if (biome instanceof LayeredSurfaceBiome layeredSurfaceBiome) biome = LayeredSurfaceBiome.withName(name, layeredSurfaceBiome);
+        if (biome instanceof HomogenousSurfaceBiome homogenousSurfaceBiome) biome = HomogenousSurfaceBiome.withName(name, homogenousSurfaceBiome);
+        return biome;
     }
 }
