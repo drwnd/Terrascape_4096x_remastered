@@ -1,6 +1,6 @@
 package game.server.generation;
 
-public record Tree(long centerX, long baseY, long centerZ, Structure structure, byte transform) {
+public record WorldGenStructure(long centerX, long baseY, long centerZ, Structure structure, byte transform) {
 
     public long getMinX() {
         return centerX - (sizeX() >> 1);

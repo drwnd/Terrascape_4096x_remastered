@@ -2,7 +2,7 @@ package game.server.biomes;
 
 import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
-import game.server.generation.Tree;
+import game.server.generation.WorldGenStructure;
 
 import static game.utils.Constants.SNOW;
 
@@ -13,12 +13,12 @@ public final class SnowyPlains implements Biome {
     }
 
     @Override
-    public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.SPRUCE_TREES);
+    public WorldGenStructure getStructure(long totalX, long height, long totalZ) {
+        return Biome.getRandomStructure(totalX, height, totalZ, StructureCollectionIdentifier.SPRUCE_TREES);
     }
 
     @Override
-    public int getRequiredTreeZeroBits() {
-        return 0b01001010010010000;
+    public int getStructureChancePromille() {
+        return 32;
     }
 }

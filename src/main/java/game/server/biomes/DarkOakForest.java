@@ -2,7 +2,7 @@ package game.server.biomes;
 
 import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
-import game.server.generation.Tree;
+import game.server.generation.WorldGenStructure;
 
 import static game.utils.Constants.DIRT;
 import static game.utils.Constants.PODZOL;
@@ -14,12 +14,12 @@ public final class DarkOakForest implements Biome {
     }
 
     @Override
-    public Tree getGeneratingTree(long totalX, long height, long totalZ) {
-        return Biome.getRandomTree(totalX, height, totalZ, StructureCollectionIdentifier.DARK_OAK_TREES);
+    public WorldGenStructure getStructure(long totalX, long height, long totalZ) {
+        return Biome.getRandomStructure(totalX, height, totalZ, StructureCollectionIdentifier.DARK_OAK_TREES);
     }
 
     @Override
-    public int getRequiredTreeZeroBits() {
-        return 0b010010010000;
+    public int getStructureChancePromille() {
+        return 128;
     }
 }

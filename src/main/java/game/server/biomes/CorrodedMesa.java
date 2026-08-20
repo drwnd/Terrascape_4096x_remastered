@@ -16,7 +16,7 @@ public final class CorrodedMesa implements Biome {
     public void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
         int pillarHeight = data.specialHeight;
         if (pillarHeight == 0) return;
-        int start = data.clampStartHeightToInChunkY(data.height - data.floorMaterialDepth);
+        int start = data.clampStartHeightToInChunkY(data.height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(data.height + pillarHeight);
 
         for (int inChunkY = start; inChunkY < end; inChunkY++) {
@@ -34,8 +34,8 @@ public final class CorrodedMesa implements Biome {
     }
 
     @Override
-    public int getFloorMaterialDepth(GenerationData data) {
-        return 128 + data.floorMaterialDepthMod;
+    public int getBiomeDepth(GenerationData data) {
+        return 128 + data.biomeDepthMod;
     }
 
     private static byte getGeneratingTerracottaType(int terracottaIndex) {

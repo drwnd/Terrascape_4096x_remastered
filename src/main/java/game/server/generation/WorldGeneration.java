@@ -46,7 +46,7 @@ public final class WorldGeneration {
             chunkContainsVoxels = true;
         }
 
-        chunkContainsVoxels |= generateTrees(data, !chunkContainsVoxels);
+        chunkContainsVoxels |= generateStructures(data, !chunkContainsVoxels);
 
         chunk.setMaterials(chunkContainsVoxels ? data.getCompressedMaterials() : new MaterialsData(CHUNK_SIZE_BITS, AIR));
         chunk.setGenerationStatus(Status.DONE);
@@ -169,7 +169,7 @@ public final class WorldGeneration {
     private static void generateBiome(int inChunkX, int inChunkZ, GenerationData data) {
         Biome biome = data.biome;
         int height = data.height;
-        int start = data.clampStartHeightToInChunkY(height - data.floorMaterialDepth);
+        int start = data.clampStartHeightToInChunkY(height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(height);
 
         for (int inChunkY = start; inChunkY < end; inChunkY++) biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
@@ -187,19 +187,19 @@ public final class WorldGeneration {
         }
     }
 
-    private static boolean generateTrees(GenerationData data, boolean clearBeforeGenerating) {
-        if (!data.hasTrees()) return false;
-        boolean hasGeneratedTree = false;
+    private static boolean generateStructures(GenerationData data, boolean clearBeforeGenerating) {
+        if (!data.hasStructures()) return false;
+        boolean hasGeneratedStructure = false;
 
         int sideLength = (1 << data.LOD) + 2;
         for (int x = 0; x < sideLength; x++)
             for (int z = 0; z < sideLength; z++) {
-                Tree tree = data.treeMapValue(x * sideLength + z);
-                if (tree == null) continue;
+                WorldGenStructure worldGenStructure = data.structureMapValue(x * sideLength + z);
+                if (worldGenStructure == null) continue;
 
-                hasGeneratedTree |= data.storeTree(tree, clearBeforeGenerating && !hasGeneratedTree);
+                hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
             }
-        return hasGeneratedTree;
+        return hasGeneratedStructure;
     }
 
     private static double getContinentalModifier(MapSample sample) {

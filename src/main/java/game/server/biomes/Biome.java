@@ -7,7 +7,7 @@ import core.utils.MathUtils;
 import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.Structure;
-import game.server.generation.Tree;
+import game.server.generation.WorldGenStructure;
 import game.server.generation.WorldGeneration;
 
 import static game.utils.Constants.*;
@@ -19,19 +19,19 @@ public interface Biome {
     default void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
     }
 
-    default int getFloorMaterialDepth(GenerationData data) {
-        return 48 + data.floorMaterialDepthMod;
+    default int getBiomeDepth(GenerationData data) {
+        return 48 + data.biomeDepthMod;
     }
 
     default int getSpecialHeight(long totalX, long totalZ) {
         return 0;
     }
 
-    default int getRequiredTreeZeroBits() {
+    default int getStructureChancePromille() {
         return 0;
     }
 
-    default Tree getGeneratingTree(long totalX, long height, long totalZ) {
+    default WorldGenStructure getStructure(long totalX, long height, long totalZ) {
         return null;
     }
 
@@ -39,9 +39,10 @@ public interface Biome {
         return getClass().getSimpleName();
     }
 
-    static Tree getRandomTree(long x, long y, long z, StructureCollectionIdentifier trees) {
+
+    static WorldGenStructure getRandomStructure(long x, long y, long z, StructureCollectionIdentifier structures) {
         byte transform = (byte) (MathUtils.hash((int) x >>> CHUNK_SIZE_BITS, (int) z >>> CHUNK_SIZE_BITS, (int) WorldGeneration.SEED ^ 0xEB0A8449) & Structure.ALL_TRANSFORMS);
-        return new Tree(x, y, z, AssetManager.get(trees).getRandom((int) x, (int) y, (int) z), transform);
+        return new WorldGenStructure(x, y, z, AssetManager.get(structures).getRandom((int) x, (int) y, (int) z), transform);
     }
 
     static void placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {

@@ -11,7 +11,7 @@ public final class Desert implements Biome {
     }
 
     @Override
-    public int getFloorMaterialDepth(GenerationData data) {
-        return 128 + data.floorMaterialDepthMod;
+    public int getBiomeDepth(GenerationData data) {
+        return 128 + data.biomeDepthMod;
     }
 }

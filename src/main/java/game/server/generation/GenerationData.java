@@ -18,7 +18,7 @@ public final class GenerationData {
 
     public Biome biome;
     public double feature;
-    public int height, specialHeight, floorMaterialDepth, floorMaterialDepthMod, undergroundRiverDepth;
+    public int height, specialHeight, biomeDepth, biomeDepthMod, undergroundRiverDepth;
     public float steepness;
     public long totalX, totalZ;
 
@@ -32,7 +32,7 @@ public final class GenerationData {
         chunkZ &= MAX_CHUNKS_MASK >> lod;
 
         featureMap = featureMap(chunkX, chunkZ, lod);
-        treeMap = treeMap(chunkX, chunkZ, lod);
+        worldGenStructureMap = structureMap(chunkX, chunkZ, lod);
         ChunkMapSamples samples = new ChunkMapSamples(chunkX, chunkZ, lod);
 
         containsUndergroundRiver = getMinRiver(samples) < UNDERGROUND_RIVER_THRESHOLD;
@@ -72,8 +72,8 @@ public final class GenerationData {
         biome = biomeMap[index];
         specialHeight = specialHeightMap[index];
         height = resultingHeightMap[mapIndex];
-        floorMaterialDepthMod = (int) (feature * 4.0F - Math.max(0, steepness - 1) * 26);
-        floorMaterialDepth = biome.getFloorMaterialDepth(this);
+        biomeDepthMod = (int) (feature * 4.0F - Math.max(0, steepness - 1) * 26);
+        biomeDepth = biome.getBiomeDepth(this);
     }
 
     public long computeTotalY(int inChunkY) {
@@ -81,11 +81,11 @@ public final class GenerationData {
     }
 
     public boolean isInsideSurfaceMaterialLevel(long totalY, int surfaceMaterialDepth) {
-        return totalY >> LOD >= height - surfaceMaterialDepth - floorMaterialDepthMod >> LOD;
+        return totalY >> LOD >= height - surfaceMaterialDepth - biomeDepthMod >> LOD;
     }
 
-    public boolean hasTrees() {
-        return treeMap != null;
+    public boolean hasStructures() {
+        return worldGenStructureMap != null;
     }
 
     public static int getMapIndex(int mapX, int mapZ) {
@@ -113,25 +113,25 @@ public final class GenerationData {
         for (; inChunkY < CHUNK_SIZE; inChunkY++) uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = material;
     }
 
-    public boolean storeTree(Tree tree, boolean clearBeforeGenerating) {
+    public boolean storeStructure(WorldGenStructure worldGenStructure, boolean clearBeforeGenerating) {
         long chunkStartX = chunkX << CHUNK_SIZE_BITS + LOD;
         long chunkStartY = chunkY << CHUNK_SIZE_BITS + LOD;
         long chunkStartZ = chunkZ << CHUNK_SIZE_BITS + LOD;
 
         long chunkMaxY = chunkY + 1 << CHUNK_SIZE_BITS + LOD;
-        if (chunkStartY > tree.getMaxY() || chunkMaxY < tree.getMinY()) return false;
+        if (chunkStartY > worldGenStructure.getMaxY() || chunkMaxY < worldGenStructure.getMinY()) return false;
 
-        int inChunkX = (int) Math.max(chunkStartX, tree.getMinX()) >> LOD & CHUNK_SIZE_MASK;
-        int inChunkY = (int) Math.max(chunkStartY, tree.getMinY()) >> LOD & CHUNK_SIZE_MASK;
-        int inChunkZ = (int) Math.max(chunkStartZ, tree.getMinZ()) >> LOD & CHUNK_SIZE_MASK;
+        int inChunkX = (int) Math.max(chunkStartX, worldGenStructure.getMinX()) >> LOD & CHUNK_SIZE_MASK;
+        int inChunkY = (int) Math.max(chunkStartY, worldGenStructure.getMinY()) >> LOD & CHUNK_SIZE_MASK;
+        int inChunkZ = (int) Math.max(chunkStartZ, worldGenStructure.getMinZ()) >> LOD & CHUNK_SIZE_MASK;
 
-        int startX = (int) (chunkStartX + (inChunkX << LOD) - tree.getMinX());
-        int startY = (int) (chunkStartY + (inChunkY << LOD) - tree.getMinY());
-        int startZ = (int) (chunkStartZ + (inChunkZ << LOD) - tree.getMinZ());
+        int startX = (int) (chunkStartX + (inChunkX << LOD) - worldGenStructure.getMinX());
+        int startY = (int) (chunkStartY + (inChunkY << LOD) - worldGenStructure.getMinY());
+        int startZ = (int) (chunkStartZ + (inChunkZ << LOD) - worldGenStructure.getMinZ());
 
-        int lengthX = MathUtils.min(tree.sizeX() - startX, CHUNK_SIZE - inChunkX << LOD, tree.sizeX());
-        int lengthY = MathUtils.min(tree.sizeY() - startY, CHUNK_SIZE - inChunkY << LOD, tree.sizeY());
-        int lengthZ = MathUtils.min(tree.sizeZ() - startZ, CHUNK_SIZE - inChunkZ << LOD, tree.sizeZ());
+        int lengthX = MathUtils.min(worldGenStructure.sizeX() - startX, CHUNK_SIZE - inChunkX << LOD, worldGenStructure.sizeX());
+        int lengthY = MathUtils.min(worldGenStructure.sizeY() - startY, CHUNK_SIZE - inChunkY << LOD, worldGenStructure.sizeY());
+        int lengthZ = MathUtils.min(worldGenStructure.sizeZ() - startZ, CHUNK_SIZE - inChunkZ << LOD, worldGenStructure.sizeZ());
         if (lengthX <= 0 || lengthY <= 0 || lengthZ <= 0) return false;
 
         Vector3i targetStart = new Vector3i(inChunkX, inChunkY, inChunkZ);
@@ -139,7 +139,7 @@ public final class GenerationData {
         Vector3i size = new Vector3i(lengthX, lengthY, lengthZ);
 
         if (clearBeforeGenerating) fillUncompressedMaterialsWithAir();
-        MaterialsData.fillStructureMaterialsInto(uncompressedMaterials, tree.structure(), tree.transform(), LOD, targetStart, sourceStart, size, false);
+        MaterialsData.fillStructureMaterialsInto(uncompressedMaterials, worldGenStructure.structure(), worldGenStructure.transform(), LOD, targetStart, sourceStart, size, false);
         return true;
     }
 
@@ -151,8 +151,8 @@ public final class GenerationData {
         return MaterialsData.getCompressedMaterials(CHUNK_SIZE_BITS, uncompressedMaterials);
     }
 
-    public Tree treeMapValue(int index) {
-        return treeMap[index];
+    public WorldGenStructure structureMapValue(int index) {
+        return worldGenStructureMap[index];
     }
 
     public boolean chunkContainsGround() {
@@ -307,26 +307,26 @@ public final class GenerationData {
         return specialHeightMap;
     }
 
-    private static Tree[] treeMap(long chunkX, long chunkZ, int lod) {
-        if (lod > MAX_TREE_LOD) return null;
+    private static WorldGenStructure[] structureMap(long chunkX, long chunkZ, int lod) {
+        if (lod > MAX_STRUCTURE_LOD) return null;
 
         int sideLength = (1 << lod) + 2;
-        Tree[] treeMap = new Tree[sideLength * sideLength];
+        WorldGenStructure[] worldGenStructureMap = new WorldGenStructure[sideLength * sideLength];
 
-        long treeStartX = (chunkX << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
-        long treeStartZ = (chunkZ << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
+        long structureStartX = (chunkX << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
+        long structureStartZ = (chunkZ << CHUNK_SIZE_BITS + lod) - CHUNK_SIZE / 2;
 
         for (int x = 0; x < sideLength; x++)
             for (int z = 0; z < sideLength; z++) {
-                long totalX = treeStartX + ((long) x << CHUNK_SIZE_BITS);
-                long totalZ = treeStartZ + ((long) z << CHUNK_SIZE_BITS);
+                long totalX = structureStartX + ((long) x << CHUNK_SIZE_BITS);
+                long totalZ = structureStartZ + ((long) z << CHUNK_SIZE_BITS);
 
-                treeMap[x * sideLength + z] = treeMapValue(totalX, totalZ);
+                worldGenStructureMap[x * sideLength + z] = structureMapValue(totalX, totalZ);
             }
-        return treeMap;
+        return worldGenStructureMap;
     }
 
-    private static Tree treeMapValue(long totalX, long totalZ) {
+    private static WorldGenStructure structureMapValue(long totalX, long totalZ) {
         MapSample sample = new MapSample(totalX, totalZ, true, true);
 
         double resultingHeight = WorldGeneration.getResultingHeight(sample);
@@ -338,8 +338,8 @@ public final class GenerationData {
 
         Biome biome = WorldGeneration.getBiome(sample, MathUtils.floor(resultingHeight), 0);
 
-        if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & biome.getRequiredTreeZeroBits()) != 0) return null;
-        return biome.getGeneratingTree(totalX, MathUtils.floor(resultingHeight) - 8, totalZ);
+        if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & 1023) >= biome.getStructureChancePromille()) return null;
+        return biome.getStructure(totalX, MathUtils.floor(resultingHeight) - 8, totalZ);
     }
 
     private static int getMinHeight(int[] resultingHeightMap) {
@@ -389,7 +389,7 @@ public final class GenerationData {
 
     private final int minHeight, maxHeight, maxSpecialHeight, maxRiverDepth;
     private boolean containsUndergroundRiver;
-    private final Tree[] treeMap;
+    private final WorldGenStructure[] worldGenStructureMap;
     private final double[] featureMap;
     private final Biome[] biomeMap;
 
