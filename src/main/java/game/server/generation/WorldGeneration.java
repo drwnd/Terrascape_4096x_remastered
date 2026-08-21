@@ -120,35 +120,35 @@ public final class WorldGeneration {
         int beachHeight = WATER_LEVEL + 64 + (int) (feature * 64 - sample.erosion() * 64);
 
         if (height < WATER_LEVEL) {
-            if (temperature > 0.33) return new WarmOcean();
-            else if (temperature - dither < -0.33) return new ColdOcean();
-            return new Ocean();
+            if (temperature > 0.33) return BiomesCache.WARM_OCEAN;
+            else if (temperature - dither < -0.33) return BiomesCache.COLD_OCEAN;
+            return BiomesCache.OCEAN;
         }
-        if (height < beachHeight) return new Beach();
+        if (height < beachHeight) return BiomesCache.BEACH;
         if (continental > MOUNTAIN_THRESHOLD && erosion < 0.51) {
-            if (temperature > 0.33) return new DryMountain();
-            else if (temperature < -0.33) return new SnowyMountain();
-            return new Mountain();
+            if (temperature > 0.33) return BiomesCache.DRY_MOUNTAIN;
+            else if (temperature < -0.33) return BiomesCache.SNOWY_MOUNTAIN;
+            return BiomesCache.MOUNTAIN;
         }
 
         if (temperature > 0.33) {
             if (height > 128 && sample.continental() < MOUNTAIN_THRESHOLD
-                    && sample.temperature() > 0.45 && sample.humidity() < -0.3) return new CorrodedMesa();
-            if (temperature > 0.55 && humidity < 0.15) return new Mesa();
-            if (humidity < 0.15) return new Desert();
-            if (humidity > 0.5 && temperature > 0.5) return new BlackWoodForest();
-            if (humidity > 0.4 && temperature > 0.4) return new DarkOakForest();
-            return new Wasteland();
+                    && sample.temperature() > 0.45 && sample.humidity() < -0.3) return BiomesCache.CORRODED_MESA;
+            if (temperature > 0.55 && humidity < 0.15) return BiomesCache.MESA;
+            if (humidity < 0.15) return BiomesCache.DESERT;
+            if (humidity > 0.5 && temperature > 0.5) return BiomesCache.BLACK_WOOD_FOREST;
+            if (humidity > 0.4 && temperature > 0.4) return BiomesCache.DARK_OAK_FOREST;
+            return BiomesCache.WASTELAND;
         }
         if (humidity > 0.33) {
-            if (temperature > -0.1) return new RedwoodForest();
-            if (temperature > -0.4) return new SpruceForest();
-            return new SnowySpruceForest();
+            if (temperature > -0.1) return BiomesCache.REDWOOD_FOREST;
+            if (temperature > -0.4) return BiomesCache.SPRUCE_FOREST;
+            return BiomesCache.SNOWY_SPRUCE_FOREST;
         }
-        if (humidity < 0.0 && temperature > -0.25) return new Plains();
-        if (humidity > -0.33 && temperature > -0.33) return new OakForest();
-        if (humidity < -0.33 && temperature > -0.5) return new PineForest();
-        return new SnowyPlains();
+        if (humidity < 0.0 && temperature > -0.25) return BiomesCache.PLAINS;
+        if (humidity > -0.33 && temperature > -0.33) return BiomesCache.OAK_FOREST;
+        if (humidity < -0.33 && temperature > -0.5) return BiomesCache.PINE_FOREST;
+        return BiomesCache.SNOWY_PLAINS;
     }
 
 
