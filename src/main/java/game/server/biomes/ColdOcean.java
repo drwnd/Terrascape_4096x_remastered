@@ -6,7 +6,6 @@ import core.utils.OpenSimplex2S;
 import game.server.generation.GenerationData;
 
 import static game.server.generation.WorldGeneration.*;
-import static game.utils.Constants.SAND;
 
 public final class ColdOcean implements Biome {
     @Override
@@ -14,10 +13,7 @@ public final class ColdOcean implements Biome {
         long totalX = data.totalX;
         long totalY = data.computeTotalY(inChunkY);
         long totalZ = data.totalZ;
-
-        int sandHeight = (int) (data.feature * 64.0) + WATER_LEVEL - 80;
-        if (totalY > sandHeight) data.store(inChunkX, inChunkY, inChunkZ, SAND);
-        else data.store(inChunkX, inChunkY, inChunkZ, data.getColdOceanFloorMaterial(totalX, totalY, totalZ));
+        data.store(inChunkX, inChunkY, inChunkZ, data.getColdOceanFloorMaterial(totalX, totalY, totalZ));
     }
 
     @Override

@@ -118,8 +118,10 @@ public final class WorldGeneration {
         double continental = sample.continental() - Math.abs(dither);
         double erosion = sample.erosion() + dither;
         int beachHeight = WATER_LEVEL + 64 + (int) (feature * 64 - sample.erosion() * 64);
+        int sandHeight = (int) (feature * 64.0) + WATER_LEVEL - 80;
 
         if (height < WATER_LEVEL) {
+            if (height > sandHeight) return BiomesCache.BEACH;
             if (temperature > 0.33) return BiomesCache.WARM_OCEAN;
             else if (temperature - dither < -0.33) return BiomesCache.COLD_OCEAN;
             return BiomesCache.OCEAN;
