@@ -4,21 +4,19 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
-public class LayeredSurfaceBiome implements Biome {
+public class NoisySurfaceBiome implements Biome {
 
-    public LayeredSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int surfaceMaterialDepth, int biomeDepth, byte topMaterial, byte bottomMaterial) {
+    public NoisySurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int biomeDepth, MaterialFunction materialFunction) {
         this.name = name;
         this.structures = structures;
         this.structureChance = structureChance;
-        this.surfaceMaterialDepth = surfaceMaterialDepth;
         this.biomeDepth = biomeDepth;
-        this.topMaterial = topMaterial;
-        this.bottomMaterial = bottomMaterial;
+        this.materialFunction = materialFunction;
     }
 
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterialDepth, topMaterial, bottomMaterial);
+        data.store(inChunkX, inChunkY, inChunkZ, materialFunction.getGeneratingMaterial(data, data.totalX, data.computeTotalY(inChunkY), data.totalZ));
     }
 
     @Override
@@ -33,7 +31,6 @@ public class LayeredSurfaceBiome implements Biome {
 
     @Override
     public WorldGenStructure getStructure(long totalX, long height, long totalZ) {
-        if (structures == null) return null;
         return Biome.getRandomStructure(totalX, height, totalZ, structures);
     }
 
@@ -44,6 +41,10 @@ public class LayeredSurfaceBiome implements Biome {
 
     private final String name;
     private final StructureCollectionIdentifier structures;
-    private final int structureChance, surfaceMaterialDepth, biomeDepth;
-    private final byte topMaterial, bottomMaterial;
+    private final int structureChance, biomeDepth;
+    private final MaterialFunction materialFunction;
+
+    public interface MaterialFunction {
+        byte getGeneratingMaterial(GenerationData data, long x, long y, long z);
+    }
 }

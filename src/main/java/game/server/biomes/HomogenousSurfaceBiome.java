@@ -4,8 +4,15 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
-public record HomogenousSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance,
-                                     int biomeDepth, byte surfaceMaterial) implements Biome {
+public class HomogenousSurfaceBiome implements Biome {
+
+    public HomogenousSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int biomeDepth, byte surfaceMaterial) {
+        this.name = name;
+        this.structures = structures;
+        this.structureChance = structureChance;
+        this.biomeDepth = biomeDepth;
+        this.surfaceMaterial = surfaceMaterial;
+    }
 
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
@@ -32,4 +39,9 @@ public record HomogenousSurfaceBiome(String name, StructureCollectionIdentifier 
     public String getName() {
         return name;
     }
+
+    private final String name;
+    private final StructureCollectionIdentifier structures;
+    private final int structureChance, biomeDepth;
+    private final byte surfaceMaterial;
 }

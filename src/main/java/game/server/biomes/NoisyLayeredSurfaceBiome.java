@@ -4,21 +4,27 @@ import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
-public class LayeredSurfaceBiome implements Biome {
+public class NoisyLayeredSurfaceBiome implements Biome {
 
-    public LayeredSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int surfaceMaterialDepth, int biomeDepth, byte topMaterial, byte bottomMaterial) {
+    public NoisyLayeredSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int surfaceMaterialDepth, int biomeDepth, byte bottomMaterial, NoisySurfaceBiome.MaterialFunction materialFunction) {
         this.name = name;
         this.structures = structures;
         this.structureChance = structureChance;
-        this.surfaceMaterialDepth = surfaceMaterialDepth;
         this.biomeDepth = biomeDepth;
-        this.topMaterial = topMaterial;
+        this.surfaceMaterialDepth = surfaceMaterialDepth;
         this.bottomMaterial = bottomMaterial;
+        this.materialFunction = materialFunction;
     }
 
     @Override
     public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterialDepth, topMaterial, bottomMaterial);
+        long totalX = data.totalX;
+        long totalY = data.computeTotalY(inChunkY);
+        long totalZ = data.totalZ;
+
+        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth);
+        byte material = insideSurfaceMaterialLevel ? materialFunction.getGeneratingMaterial(data, totalX, totalY, totalZ) : bottomMaterial;
+        data.store(inChunkX, inChunkY, inChunkZ, material);
     }
 
     @Override
@@ -33,7 +39,6 @@ public class LayeredSurfaceBiome implements Biome {
 
     @Override
     public WorldGenStructure getStructure(long totalX, long height, long totalZ) {
-        if (structures == null) return null;
         return Biome.getRandomStructure(totalX, height, totalZ, structures);
     }
 
@@ -44,6 +49,7 @@ public class LayeredSurfaceBiome implements Biome {
 
     private final String name;
     private final StructureCollectionIdentifier structures;
-    private final int structureChance, surfaceMaterialDepth, biomeDepth;
-    private final byte topMaterial, bottomMaterial;
+    private final int structureChance, biomeDepth, surfaceMaterialDepth;
+    private final byte bottomMaterial;
+    private final NoisySurfaceBiome.MaterialFunction materialFunction;
 }

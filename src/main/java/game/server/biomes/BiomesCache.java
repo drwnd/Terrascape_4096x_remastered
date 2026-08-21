@@ -1,21 +1,23 @@
 package game.server.biomes;
 
+import game.server.generation.GenerationData;
+
 import static game.utils.Constants.*;
 import static game.assets.StructureCollectionIdentifier.*;
 
 public final class BiomesCache {
 
     public static final Biome
-            BEACH = new Beach(),
-            WASTELAND = new Wasteland(),
+            BEACH = new HomogenousSurfaceBiome("Beach", null, 0, 48, SAND),
+            WASTELAND = new NoisySurfaceBiome("Wasteland", BLACK_WOOD_TREES, 8, 48, GenerationData::getGeneratingDirtType),
             CORRODED_MESA = new CorrodedMesa(),
-            OCEAN = new Ocean(),
-            WARM_OCEAN = new WarmOcean(),
+            OCEAN = new NoisySurfaceBiome("Ocean", null, 0, 48, GenerationData::getOceanFloorMaterial),
+            WARM_OCEAN = new NoisySurfaceBiome("Warm Ocean", null, 0, 48, GenerationData::getWarmOceanFloorMaterial),
             COLD_OCEAN = new ColdOcean(),
             MOUNTAIN = new Mountain(),
             DRY_MOUNTAIN = new DryMountain(),
             SNOWY_MOUNTAIN = new SnowyMountain(),
-            REDWOOD_FOREST = new RedwoodForest(),
+            REDWOOD_FOREST = new NoisyLayeredSurfaceBiome("Redwood Forest", REDWOOD_TREES, 128, 8, 48, DIRT, GenerationData::getGeneratingGrassType),
             PLAINS = new LayeredSurfaceBiome("Plains", OAK_TREES, 32, 8, 48, GRASS, DIRT),
             SNOWY_PLAINS = new HomogenousSurfaceBiome("Snowy Plains", SPRUCE_TREES, 32, 48, SNOW),
             BLACK_WOOD_FOREST = new LayeredSurfaceBiome("Black Wood Forest", BLACK_WOOD_TREES, 128, 8, 48, PODZOL, DIRT),
