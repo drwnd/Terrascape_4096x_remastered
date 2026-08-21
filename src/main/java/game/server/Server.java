@@ -123,7 +123,6 @@ public final class Server implements CrashCallback {
         for (Chunk chunk : placeable.getAffectedChunks()) {
             if (chunk == null) continue;
             meshCollector.setMeshed(false, chunk.INDEX, chunk.LOD);
-            chunk.setModified();
         }
         synchronized (generator) {
             generatorRestartScheduled = true;
