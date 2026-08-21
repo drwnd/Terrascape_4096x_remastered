@@ -1,15 +1,15 @@
 package game.server.biomes;
 
 import game.server.generation.GenerationData;
+
 import core.utils.OpenSimplex2S;
 
 import static game.utils.Constants.*;
 import static game.server.generation.WorldGeneration.SEED;
 
-public final class CorrodedMesa implements Biome {
-    @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, 48, RED_SAND, RED_SANDSTONE);
+public final class CorrodedMesa extends LayeredSurfaceBiome {
+    public CorrodedMesa() {
+        super("Corroded Mesa", null, 0, 48, 128, RED_SAND, RED_SANDSTONE);
     }
 
     @Override
@@ -19,10 +19,8 @@ public final class CorrodedMesa implements Biome {
         int start = data.clampStartHeightToInChunkY(data.height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(data.height + pillarHeight);
 
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            long totalY = data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (totalY >> 4 & 15)));
-        }
+        for (int inChunkY = start; inChunkY < end; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (data.computeTotalY(inChunkY) >> 4 & 15)));
     }
 
     @Override
@@ -31,11 +29,6 @@ public final class CorrodedMesa implements Biome {
         noise += OpenSimplex2S.noise2(SEED ^ 0x3B632CA2452D2CCDL, totalX * MESA_PILLAR_FREQUENCY * 10, totalZ * MESA_PILLAR_FREQUENCY * 10) * 0.075;
         if (Math.abs(noise) > MESA_PILLAR_THRESHOLD) return MESA_PILLAR_HEIGHT;
         return 0;
-    }
-
-    @Override
-    public int getBiomeDepth(GenerationData data) {
-        return 128 + data.biomeDepthMod;
     }
 
     private static byte getGeneratingTerracottaType(int terracottaIndex) {

@@ -14,7 +14,7 @@ import static game.utils.Constants.*;
 
 public interface Biome {
 
-    void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data);
+    void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data);
 
     default void placeSpecialFeatures(int inChunkX, int inChunkZ, GenerationData data) {
     }
@@ -43,15 +43,5 @@ public interface Biome {
     static WorldGenStructure getRandomStructure(long x, long y, long z, StructureCollectionIdentifier structures) {
         byte transform = (byte) (MathUtils.hash((int) x >>> CHUNK_SIZE_BITS, (int) z >>> CHUNK_SIZE_BITS, (int) WorldGeneration.SEED ^ 0xEB0A8449) & Structure.ALL_TRANSFORMS);
         return new WorldGenStructure(x, y, z, AssetManager.get(structures).getRandom((int) x, (int) y, (int) z), transform);
-    }
-
-    static void placeHomogenousSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, byte material) {
-        data.store(inChunkX, inChunkY, inChunkZ, material);
-    }
-
-    static void placeLayeredSurfaceMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data, int surfaceMaterialDepth, byte topMaterial, byte bottomMaterial) {
-        long totalY = data.computeTotalY(inChunkY);
-        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth);
-        data.store(inChunkX, inChunkY, inChunkZ, insideSurfaceMaterialLevel ? topMaterial : bottomMaterial);
     }
 }

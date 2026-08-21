@@ -72,7 +72,7 @@ public final class GenerationData {
         biome = biomeMap[index];
         specialHeight = specialHeightMap[index];
         height = resultingHeightMap[mapIndex];
-        biomeDepthMod = (int) (feature * 4.0F - Math.max(0, steepness - 1) * 26);
+        biomeDepthMod = (int) (-Math.max(0, steepness - 1 + feature * 0.5 - 0.25) * 26);
         biomeDepth = biome.getBiomeDepth(this);
     }
 
@@ -102,6 +102,12 @@ public final class GenerationData {
 
     public void store(int inChunkX, int inChunkY, int inChunkZ, byte material) {
         uncompressedMaterials[MaterialsData.getUncompressedIndex(inChunkX, inChunkY, inChunkZ)] = material;
+    }
+
+    public void storeColumn(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, byte material) {
+        int xzIndex = MaterialsData.Z_ORDER_3D_TABLE_X[inChunkX] | MaterialsData.T_ORDER_3D_TABLE_Z[inChunkZ];
+        for (int inChunkY = inChunkStartY; inChunkY < inChunkEndY; inChunkY++)
+            uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = material;
     }
 
     public void storeConsecutive(int startIndex, int count, byte material) {

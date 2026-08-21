@@ -6,18 +6,10 @@ import core.utils.OpenSimplex2S;
 import game.server.generation.GenerationData;
 
 import static game.server.generation.WorldGeneration.*;
-import static game.utils.Constants.SAND;
 
-public final class ColdOcean implements Biome {
-    @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        long totalX = data.totalX;
-        long totalY = data.computeTotalY(inChunkY);
-        long totalZ = data.totalZ;
-
-        int sandHeight = (int) (data.feature * 64.0) + WATER_LEVEL - 80;
-        if (totalY > sandHeight) data.store(inChunkX, inChunkY, inChunkZ, SAND);
-        else data.store(inChunkX, inChunkY, inChunkZ, data.getColdOceanFloorMaterial(totalX, totalY, totalZ));
+public final class ColdOcean extends NoisySurfaceBiome {
+    public ColdOcean() {
+        super("Cold Ocean", null, 0, 48, GenerationData::getColdOceanFloorMaterial);
     }
 
     @Override
@@ -27,10 +19,8 @@ public final class ColdOcean implements Biome {
         int start = data.clampEndHeightToInChunkY(WATER_LEVEL - iceHeight);
         int end = data.clampEndHeightToInChunkY(WATER_LEVEL + (iceHeight >> 3));
 
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            long totalY = data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, totalY, data.totalZ));
-        }
+        for (int inChunkY = start; inChunkY < end; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, data.computeTotalY(inChunkY), data.totalZ));
     }
 
     @Override
