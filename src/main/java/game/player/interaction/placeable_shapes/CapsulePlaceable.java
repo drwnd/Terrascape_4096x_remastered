@@ -234,7 +234,6 @@ public final class CapsulePlaceable extends ShapePlaceable {
         Vector3l min = new Vector3l(chunk.X << bits, chunk.Y << bits, chunk.Z << bits);
         Vector3l max = new Vector3l(chunk.X + 1 << bits, chunk.Y + 1 << bits, chunk.Z + 1 << bits);
         if (fastMissesAABB(min.x, min.y, min.z, max.x, max.y, max.z)) return;
-        affectedChunks.add(chunk);
 
         byte[] uncompressedMaterials = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
         chunk.getMaterials().fillUncompressedMaterialsInto(uncompressedMaterials);
@@ -249,6 +248,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
         if (hasUpdated) {
             chunk.getMaterials().compressIntoData(uncompressedMaterials);
             chunk.setModified();
+            affectedChunks.add(chunk);
         }
     }
 
