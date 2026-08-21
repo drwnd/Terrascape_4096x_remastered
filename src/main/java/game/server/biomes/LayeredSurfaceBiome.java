@@ -17,8 +17,10 @@ public class LayeredSurfaceBiome implements Biome {
     }
 
     @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeLayeredSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterialDepth, topMaterial, bottomMaterial);
+    public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
+        int surfaceMaterialStart = data.clampStartHeightToInChunkY(data.height - surfaceMaterialDepth - data.biomeDepthMod);
+        data.storeColumn(inChunkX, inChunkZ, inChunkStartY, surfaceMaterialStart, bottomMaterial);
+        data.storeColumn(inChunkX, inChunkZ, surfaceMaterialStart, inChunkEndY, topMaterial);
     }
 
     @Override

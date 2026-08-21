@@ -174,7 +174,7 @@ public final class WorldGeneration {
         int start = data.clampStartHeightToInChunkY(height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(height);
 
-        for (int inChunkY = start; inChunkY < end; inChunkY++) biome.placeMaterial(inChunkX, inChunkY, inChunkZ, data);
+        biome.placeMaterials(inChunkX, inChunkZ, start, end, data);
         data.fillAboveWith(inChunkX, end, inChunkZ, data.chunkY << CHUNK_SIZE_BITS + data.LOD < WATER_LEVEL ? WATER : AIR);
         biome.placeSpecialFeatures(inChunkX, inChunkZ, data);
     }

@@ -19,10 +19,8 @@ public final class CorrodedMesa extends LayeredSurfaceBiome {
         int start = data.clampStartHeightToInChunkY(data.height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(data.height + pillarHeight);
 
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            long totalY = data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (totalY >> 4 & 15)));
-        }
+        for (int inChunkY = start; inChunkY < end; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (data.computeTotalY(inChunkY) >> 4 & 15)));
     }
 
     @Override

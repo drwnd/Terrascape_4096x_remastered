@@ -15,8 +15,9 @@ public class NoisySurfaceBiome implements Biome {
     }
 
     @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        data.store(inChunkX, inChunkY, inChunkZ, materialFunction.getGeneratingMaterial(data, data.totalX, data.computeTotalY(inChunkY), data.totalZ));
+    public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
+        for (int inChunkY = inChunkStartY; inChunkY < inChunkEndY; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, materialFunction.getGeneratingMaterial(data, data.totalX, data.computeTotalY(inChunkY), data.totalZ));
     }
 
     @Override

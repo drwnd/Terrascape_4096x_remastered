@@ -19,10 +19,8 @@ public final class ColdOcean extends NoisySurfaceBiome {
         int start = data.clampEndHeightToInChunkY(WATER_LEVEL - iceHeight);
         int end = data.clampEndHeightToInChunkY(WATER_LEVEL + (iceHeight >> 3));
 
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            long totalY = data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, totalY, data.totalZ));
-        }
+        for (int inChunkY = start; inChunkY < end; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, data.computeTotalY(inChunkY), data.totalZ));
     }
 
     @Override

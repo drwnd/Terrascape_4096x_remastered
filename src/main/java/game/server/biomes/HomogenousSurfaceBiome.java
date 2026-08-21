@@ -15,8 +15,8 @@ public class HomogenousSurfaceBiome implements Biome {
     }
 
     @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        Biome.placeHomogenousSurfaceMaterial(inChunkX, inChunkY, inChunkZ, data, surfaceMaterial);
+    public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
+        data.storeColumn(inChunkX, inChunkZ, inChunkStartY, inChunkEndY, surfaceMaterial);
     }
 
     @Override

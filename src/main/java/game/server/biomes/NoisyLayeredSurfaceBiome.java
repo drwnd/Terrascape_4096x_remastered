@@ -17,14 +17,11 @@ public class NoisyLayeredSurfaceBiome implements Biome {
     }
 
     @Override
-    public void placeMaterial(int inChunkX, int inChunkY, int inChunkZ, GenerationData data) {
-        long totalX = data.totalX;
-        long totalY = data.computeTotalY(inChunkY);
-        long totalZ = data.totalZ;
-
-        boolean insideSurfaceMaterialLevel = data.isInsideSurfaceMaterialLevel(totalY, surfaceMaterialDepth);
-        byte material = insideSurfaceMaterialLevel ? materialFunction.getGeneratingMaterial(data, totalX, totalY, totalZ) : bottomMaterial;
-        data.store(inChunkX, inChunkY, inChunkZ, material);
+    public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
+        int surfaceMaterialStart = data.clampStartHeightToInChunkY(data.height - surfaceMaterialDepth - data.biomeDepthMod);
+        data.storeColumn(inChunkX, inChunkZ, inChunkStartY, surfaceMaterialStart, bottomMaterial);
+        for (int inChunkY = surfaceMaterialStart; inChunkY < inChunkEndY; inChunkY++)
+            data.store(inChunkX, inChunkY, inChunkZ, materialFunction.getGeneratingMaterial(data, data.totalX, data.computeTotalY(inChunkY), data.totalZ));
     }
 
     @Override
