@@ -72,7 +72,7 @@ public final class GenerationData {
         biome = biomeMap[index];
         specialHeight = specialHeightMap[index];
         height = resultingHeightMap[mapIndex];
-        biomeDepthMod = (int) (-Math.max(0, steepness - 1) * 26);
+        biomeDepthMod = (int) (-Math.max(0, steepness - 1 + feature * 0.5 - 0.25) * 26);
         biomeDepth = biome.getBiomeDepth(this);
     }
 
