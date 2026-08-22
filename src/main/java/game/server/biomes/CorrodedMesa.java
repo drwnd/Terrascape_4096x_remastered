@@ -4,6 +4,7 @@ import game.server.generation.GenerationData;
 
 import core.utils.OpenSimplex2S;
 
+import static game.assets.StructureCollectionIdentifier.CACTUS;
 import static game.utils.Constants.*;
 import static game.server.generation.WorldGeneration.SEED;
 
@@ -11,7 +12,7 @@ public final class CorrodedMesa extends LayeredSurfaceBiome {
     public CorrodedMesa() {
         super("Corroded Mesa",
                 null, 0,
-                null, 0,
+                CACTUS, 16,
                 48, 128, RED_SAND, RED_SANDSTONE);
     }
 

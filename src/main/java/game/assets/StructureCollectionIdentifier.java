@@ -13,7 +13,8 @@ public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCo
     DARK_OAK_TREES("DarkOakTree"),
     PINE_TREES("PineTree"),
     REDWOOD_TREES("RedwoodTree"),
-    BLACK_WOOD_TREES("BlackWoodTree");
+    BLACK_WOOD_TREES("BlackWoodTree"),
+    CACTUS("Cactus");
 
     StructureCollectionIdentifier(String structureBaseName) {
         this.structureBaseName = structureBaseName.toLowerCase();

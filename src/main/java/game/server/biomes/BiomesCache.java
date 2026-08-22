@@ -67,10 +67,10 @@ public final class BiomesCache {
                     8, 48, GRASS, DIRT),
             MESA = new LayeredSurfaceBiome("Mesa",
                     null, 0,
-                    null, 0,
+                    CACTUS, 16,
                     48, 128, RED_SAND, RED_SANDSTONE),
             DESERT = new LayeredSurfaceBiome("Desert",
                     null, 0,
-                    null, 0,
+                    CACTUS, 16,
                     48, 128, SAND, SANDSTONE);
 }
