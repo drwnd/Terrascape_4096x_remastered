@@ -115,7 +115,7 @@ public final class CapsulePlaceable extends ShapePlaceable {
         if (positionsInvalid()) return new Structure(0, AIR);
 
         int size = getPreferredSizePowOf2();
-        long[] bitMap = new long[size * size * size / 64];
+        long[] bitMap = new long[Math.max(size * size * size >> 6, 1)];
         fillBitMap(bitMap, 0, false);
         return new Structure(Integer.numberOfTrailingZeros(size), material, bitMap);
     }
@@ -296,9 +296,10 @@ public final class CapsulePlaceable extends ShapePlaceable {
         if (fastMissesAABB(totalX, totalY, totalZ, totalX + length, totalY + length, totalZ + length)) return;
 
         if (length <= 8) {
-            for (long x = totalX; x != totalX + 8; x++)
-                for (long y = totalY; y != totalY + 8; y++)
-                    for (long z = totalZ; z != totalZ + 8; z++) {
+            int size = length == 8 ? 8 : 4;
+            for (long x = totalX; x != totalX + size; x++)
+                for (long y = totalY; y != totalY + size; y++)
+                    for (long z = totalZ; z != totalZ + size; z++) {
                         if (isOutside(x, y, z)) continue;
                         int index = MaterialsData.getUncompressedIndex((int) (x - minPosition.x), (int) (y - minPosition.y), (int) (z - minPosition.z));
                         bitMap[index >> 6] |= 1L << index;
