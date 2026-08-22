@@ -190,24 +190,25 @@ public final class WorldGeneration {
     }
 
     private static boolean generateStructures(GenerationData data, boolean clearBeforeGenerating) {
-        if (!data.hasStructures()) return false;
         boolean hasGeneratedStructure = false;
 
         int sideLength = (1 << data.LOD) + 2;
-        for (int index = 0; index < sideLength * sideLength; index++) {
-            WorldGenStructure worldGenStructure = data.structureMapValue(index);
-            if (worldGenStructure == null) continue;
+        if (data.hasStructures())
+            for (int index = 0; index < sideLength * sideLength; index++) {
+                WorldGenStructure worldGenStructure = data.structureMapValue(index);
+                if (worldGenStructure == null) continue;
 
-            hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
-        }
+                hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
+            }
 
         sideLength = 2 << data.LOD;
-        for (int index = 0; index < sideLength * sideLength; index++) {
-            WorldGenStructure structureFeature = data.structureFeatureMapValue(index);
-            if (structureFeature == null) continue;
+        if (data.hasStructureFeatures())
+            for (int index = 0; index < sideLength * sideLength; index++) {
+                WorldGenStructure structureFeature = data.structureFeatureMapValue(index);
+                if (structureFeature == null) continue;
 
-            hasGeneratedStructure |= data.storeStructure(structureFeature, clearBeforeGenerating && !hasGeneratedStructure);
-        }
+                hasGeneratedStructure |= data.storeStructure(structureFeature, clearBeforeGenerating && !hasGeneratedStructure);
+            }
 
         return hasGeneratedStructure;
     }

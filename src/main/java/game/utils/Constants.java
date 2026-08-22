@@ -20,6 +20,7 @@ public final class Constants {
     // Make into settings later
     public static final byte NUMBER_OF_GENERATION_THREADS = 3;
     public static final int MAX_STRUCTURE_LOD = 4;
+    public static final int MAX_STRUCTURE_FEATURE_LOD = 1;
 
     public static final int SHADOW_MAP_SIZE = 2048;
     public static final int SHADOW_RANGE = 1024;

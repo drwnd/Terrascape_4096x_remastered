@@ -90,6 +90,10 @@ public final class GenerationData {
         return worldGenStructureMap != null;
     }
 
+    public boolean hasStructureFeatures() {
+        return structureFeatureMap != null;
+    }
+
     public static int getMapIndex(int mapX, int mapZ) {
         return mapX * CHUNK_SIZE_PADDED + mapZ;
     }
@@ -355,7 +359,7 @@ public final class GenerationData {
     }
 
     private WorldGenStructure[] structureFeatureMap() {
-        if (LOD > MAX_STRUCTURE_LOD) return null;
+        if (LOD > MAX_STRUCTURE_FEATURE_LOD) return null;
 
         int sideLength = (2 << LOD);
         WorldGenStructure[] structureFeatureMap = new WorldGenStructure[sideLength * sideLength];

@@ -19,7 +19,7 @@ public final class BiomesCache {
                     48, SAND),
             WASTELAND = new NoisySurfaceBiome("Wasteland",
                     BLACK_WOOD_TREES, 8,
-                    null, 0,
+                    SHRUB, 16,
                     48, GenerationData::getGeneratingDirtType),
             OCEAN = new NoisySurfaceBiome("Ocean",
                     null, 0,
