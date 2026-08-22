@@ -5,6 +5,7 @@ import core.assets.AssetManager;
 import core.utils.MathUtils;
 
 import game.assets.StructureCollectionIdentifier;
+import game.assets.StructureIdentifier;
 import game.server.generation.GenerationData;
 import game.server.generation.Structure;
 import game.server.generation.WorldGenStructure;
@@ -33,6 +34,10 @@ public interface Biome {
 
     default WorldGenStructure getStructure(long totalX, long height, long totalZ) {
         return null;
+    }
+
+    default WorldGenStructure getStructureFeature(long totalX, long height, long totalZ) {
+        return new WorldGenStructure(totalX, height, totalZ, AssetManager.get(new StructureIdentifier("BluePrint")), (byte) 0);
     }
 
     default String getName() {

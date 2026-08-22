@@ -194,13 +194,21 @@ public final class WorldGeneration {
         boolean hasGeneratedStructure = false;
 
         int sideLength = (1 << data.LOD) + 2;
-        for (int x = 0; x < sideLength; x++)
-            for (int z = 0; z < sideLength; z++) {
-                WorldGenStructure worldGenStructure = data.structureMapValue(x * sideLength + z);
-                if (worldGenStructure == null) continue;
+        for (int index = 0; index < sideLength * sideLength; index++) {
+            WorldGenStructure worldGenStructure = data.structureMapValue(index);
+            if (worldGenStructure == null) continue;
 
-                hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
-            }
+            hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
+        }
+
+        sideLength = 2 << data.LOD;
+        for (int index = 0; index < sideLength * sideLength; index++) {
+            WorldGenStructure structureFeature = data.structureFeatureMapValue(index);
+            if (structureFeature == null) continue;
+
+            hasGeneratedStructure |= data.storeStructure(structureFeature, clearBeforeGenerating && !hasGeneratedStructure);
+        }
+
         return hasGeneratedStructure;
     }
 

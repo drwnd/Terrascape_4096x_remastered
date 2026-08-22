@@ -20,9 +20,9 @@ public final class GenerationData {
     public double feature;
     public int height, specialHeight, biomeDepth, biomeDepthMod, undergroundRiverDepth;
     public float steepness;
-    public long totalX, totalZ;
+    public long totalX, totalZ, chunkY;
 
-    public long chunkX, chunkY, chunkZ;
+    public final long chunkX, chunkZ;
     public final int LOD;
 
     public GenerationData(long chunkX, long chunkZ, int lod) {
@@ -30,9 +30,10 @@ public final class GenerationData {
 
         chunkX &= MAX_CHUNKS_MASK >> lod;
         chunkZ &= MAX_CHUNKS_MASK >> lod;
+        this.chunkX = chunkX;
+        this.chunkZ = chunkZ;
 
         featureMap = featureMap(chunkX, chunkZ, lod);
-        worldGenStructureMap = structureMap(chunkX, chunkZ, lod);
         ChunkMapSamples samples = new ChunkMapSamples(chunkX, chunkZ, lod);
 
         containsUndergroundRiver = getMinRiver(samples) < UNDERGROUND_RIVER_THRESHOLD;
@@ -43,6 +44,9 @@ public final class GenerationData {
         for (int index = 0; index < steepnessMap.length; index++) steepnessMap[index] += (float) featureMap[index] * 1.5F - 0.75F;
         specialHeightMap = specialHeightMap(chunkX, chunkZ, lod, biomeMap);
 
+        worldGenStructureMap = structureMap(chunkX, chunkZ, lod);
+        structureFeatureMap = structureFeatureMap();
+
         containsUndergroundRiver = isUndergroundRiverDominant(undergroundRiverDepthMap, resultingHeightMap);
 
         maxRiverDepth = containsUndergroundRiver ? getMax(undergroundRiverDepthMap) : Integer.MIN_VALUE;
@@ -52,9 +56,7 @@ public final class GenerationData {
     }
 
     public void setChunk(Chunk chunk) {
-        chunkX = chunk.X;
         chunkY = chunk.Y;
-        chunkZ = chunk.Z;
 
         Arrays.fill(cachedMaterials, AIR);
     }
@@ -159,6 +161,10 @@ public final class GenerationData {
 
     public WorldGenStructure structureMapValue(int index) {
         return worldGenStructureMap[index];
+    }
+
+    public WorldGenStructure structureFeatureMapValue(int index) {
+        return structureFeatureMap[index];
     }
 
     public boolean chunkContainsGround() {
@@ -348,6 +354,36 @@ public final class GenerationData {
         return biome.getStructure(totalX, MathUtils.floor(resultingHeight) - 8, totalZ);
     }
 
+    private WorldGenStructure[] structureFeatureMap() {
+        if (LOD > MAX_STRUCTURE_LOD) return null;
+
+        int sideLength = (2 << LOD);
+        WorldGenStructure[] structureFeatureMap = new WorldGenStructure[sideLength * sideLength];
+
+        int inChunkDistance = CHUNK_SIZE / 2 >> LOD;
+        int inChunkStart = CHUNK_SIZE / 4 >> LOD;
+        if (inChunkDistance == 0) return null;
+
+        for (int x = 0; x < sideLength; x++)
+            for (int z = 0; z < sideLength; z++) {
+                int inChunkX = inChunkStart + x * inChunkDistance;
+                int inChunkZ = inChunkStart + z * inChunkDistance;
+                structureFeatureMap[x * sideLength + z] = structureFeatureMapValue(inChunkX, inChunkZ);
+            }
+
+        return structureFeatureMap;
+    }
+
+    private WorldGenStructure structureFeatureMapValue(int inChunkX, int inChunkZ) {
+        int index = inChunkX << CHUNK_SIZE_BITS | inChunkZ;
+        Biome biome = biomeMap[index];
+
+        long totalX = chunkX << CHUNK_SIZE_BITS + LOD | ((long) inChunkX << LOD);
+        long totalZ = chunkZ << CHUNK_SIZE_BITS + LOD | ((long) inChunkZ << LOD);
+
+        return biome.getStructureFeature(totalX, resultingHeightMap[getMapIndex(inChunkX + 1, inChunkZ + 1)], totalZ);
+    }
+
     private static int getMinHeight(int[] resultingHeightMap) {
         int min = Integer.MAX_VALUE;
         for (int height : resultingHeightMap) min = Math.min(min, height);
@@ -395,7 +431,7 @@ public final class GenerationData {
 
     private final int minHeight, maxHeight, maxSpecialHeight, maxRiverDepth;
     private boolean containsUndergroundRiver;
-    private final WorldGenStructure[] worldGenStructureMap;
+    private final WorldGenStructure[] worldGenStructureMap, structureFeatureMap;
     private final double[] featureMap;
     private final Biome[] biomeMap;
 
