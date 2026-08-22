@@ -6,10 +6,15 @@ import game.server.generation.WorldGenStructure;
 
 public class NoisySurfaceBiome implements Biome {
 
-    public NoisySurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int biomeDepth, MaterialFunction materialFunction) {
+    public NoisySurfaceBiome(String name,
+                             StructureCollectionIdentifier structures, int structureChance,
+                             StructureCollectionIdentifier structureFeatures, int structureFeatureChance,
+                             int biomeDepth, MaterialFunction materialFunction) {
         this.name = name;
         this.structures = structures;
         this.structureChance = structureChance;
+        this.structureFeatures = structureFeatures;
+        this.structureFeatureChance = structureFeatureChance;
         this.biomeDepth = biomeDepth;
         this.materialFunction = materialFunction;
     }
@@ -36,13 +41,24 @@ public class NoisySurfaceBiome implements Biome {
     }
 
     @Override
+    public int getStructureFeatureChancePromille() {
+        return structureFeatureChance;
+    }
+
+    @Override
+    public WorldGenStructure getStructureFeature(long totalX, long height, long totalZ) {
+        if (structureFeatures == null) return null;
+        return Biome.getRandomStructure(totalX, height, totalZ, structureFeatures);
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
     private final String name;
-    private final StructureCollectionIdentifier structures;
-    private final int structureChance, biomeDepth;
+    private final StructureCollectionIdentifier structures, structureFeatures;
+    private final int structureChance, structureFeatureChance, biomeDepth;
     private final MaterialFunction materialFunction;
 
     public interface MaterialFunction {

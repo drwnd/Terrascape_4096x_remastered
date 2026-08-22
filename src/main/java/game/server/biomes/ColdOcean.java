@@ -9,7 +9,10 @@ import static game.server.generation.WorldGeneration.*;
 
 public final class ColdOcean extends NoisySurfaceBiome {
     public ColdOcean() {
-        super("Cold Ocean", null, 0, 48, GenerationData::getColdOceanFloorMaterial);
+        super("Cold Ocean",
+                null, 0,
+                null, 0,
+                48, GenerationData::getColdOceanFloorMaterial);
     }
 
     @Override

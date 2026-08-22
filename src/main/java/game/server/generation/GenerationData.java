@@ -381,6 +381,7 @@ public final class GenerationData {
         long totalX = chunkX << CHUNK_SIZE_BITS + LOD | ((long) inChunkX << LOD);
         long totalZ = chunkZ << CHUNK_SIZE_BITS + LOD | ((long) inChunkZ << LOD);
 
+        if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & 1023) >= biome.getStructureFeatureChancePromille()) return null;
         return biome.getStructureFeature(totalX, resultingHeightMap[getMapIndex(inChunkX + 1, inChunkZ + 1)], totalZ);
     }
 

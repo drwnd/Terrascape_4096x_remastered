@@ -6,11 +6,16 @@ import game.server.generation.WorldGenStructure;
 
 public class LayeredSurfaceBiome implements Biome {
 
-    public LayeredSurfaceBiome(String name, StructureCollectionIdentifier structures, int structureChance, int surfaceMaterialDepth, int biomeDepth, byte topMaterial, byte bottomMaterial) {
+    public LayeredSurfaceBiome(String name,
+                               StructureCollectionIdentifier structures, int structureChance,
+                               StructureCollectionIdentifier structureFeatures, int structureFeatureChance,
+                               int surfaceMaterialDepth, int biomeDepth, byte topMaterial, byte bottomMaterial) {
         this.name = name;
         this.structures = structures;
         this.structureChance = structureChance;
         this.surfaceMaterialDepth = surfaceMaterialDepth;
+        this.structureFeatures = structureFeatures;
+        this.structureFeatureChance = structureFeatureChance;
         this.biomeDepth = biomeDepth;
         this.topMaterial = topMaterial;
         this.bottomMaterial = bottomMaterial;
@@ -40,12 +45,23 @@ public class LayeredSurfaceBiome implements Biome {
     }
 
     @Override
+    public int getStructureFeatureChancePromille() {
+        return structureFeatureChance;
+    }
+
+    @Override
+    public WorldGenStructure getStructureFeature(long totalX, long height, long totalZ) {
+        if (structureFeatures == null) return null;
+        return Biome.getRandomStructure(totalX, height, totalZ, structureFeatures);
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
     private final String name;
-    private final StructureCollectionIdentifier structures;
-    private final int structureChance, surfaceMaterialDepth, biomeDepth;
+    private final StructureCollectionIdentifier structures, structureFeatures;
+    private final int structureChance, structureFeatureChance, surfaceMaterialDepth, biomeDepth;
     private final byte topMaterial, bottomMaterial;
 }

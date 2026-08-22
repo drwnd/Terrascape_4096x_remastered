@@ -9,7 +9,10 @@ import static game.server.generation.WorldGeneration.SEED;
 
 public final class CorrodedMesa extends LayeredSurfaceBiome {
     public CorrodedMesa() {
-        super("Corroded Mesa", null, 0, 48, 128, RED_SAND, RED_SANDSTONE);
+        super("Corroded Mesa",
+                null, 0,
+                null, 0,
+                48, 128, RED_SAND, RED_SANDSTONE);
     }
 
     @Override
