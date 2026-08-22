@@ -30,24 +30,29 @@ final class ByteArrayCompressor {
 
     }
 
-    public static void compressMaterials(ByteArrayList data, Object uncompressedMaterialsObject, int sizeBits) {
-        if (uncompressedMaterialsObject == null) return;
-
+    static void compressMaterials(ByteArrayList data, byte[] uncompressedMaterials, int sizeBits) {
+        if (uncompressedMaterials == null) return;
         int length = 1 << sizeBits * 3;
-        unsafe.putInt(uncompressedMaterialsObject, 12, length / 8);
-        unsafe.putInt(uncompressedMaterialsObject, 8, longArrayClassPointer);
+        unsafe.putInt(uncompressedMaterials, 12, length / 8);
+        unsafe.putInt(uncompressedMaterials, 8, longArrayClassPointer);
 
         try {
-            long[] longMaterials = (long[]) uncompressedMaterialsObject;
+            long[] longMaterials = (long[]) getObject(uncompressedMaterials);
             compressMaterials(data, longMaterials, sizeBits, 0, 0, 0, 0);
-        } catch (ClassCastException exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             data.add((byte) (HOMOGENOUS | CONTAINS_SELF_OCCLUDING));
             data.add((byte) 0);
         }
 
-        unsafe.putInt(uncompressedMaterialsObject, 12, length);
-        unsafe.putInt(uncompressedMaterialsObject, 8, byteArrayClassPointer);
+        unsafe.putInt(uncompressedMaterials, 12, length);
+        unsafe.putInt(uncompressedMaterials, 8, byteArrayClassPointer);
+    }
+
+    public static Object getObject(Object object) {
+        Object[] array = new Object[]{object};
+        long baseOffset = unsafe.arrayBaseOffset(Object[].class);
+        return unsafe.getObject(array, baseOffset);
     }
 
     private static int compressMaterials(ByteArrayList data, long[] uncompressedMaterials, int sizeBits, int startIndex, int inChunkX, int inChunkY, int inChunkZ) {
