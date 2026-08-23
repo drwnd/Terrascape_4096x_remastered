@@ -349,7 +349,7 @@ public final class GenerationData {
         double heightPlusZ = WorldGeneration.getResultingHeight(totalX, totalZ + 1);
         double steepness = Math.max(Math.abs(resultingHeight - heightPlusX), Math.abs(resultingHeight - heightPlusZ));
         int riverDepth = WorldGeneration.getRiverDepth(sample.river());
-        if (steepness > 0.4 || riverDepth >= resultingHeight - 16) return null;
+        if (steepness > 0.4 || riverDepth >= resultingHeight - 16 && resultingHeight > WATER_LEVEL) return null;
 
         Biome biome = WorldGeneration.getBiome(sample, MathUtils.floor(resultingHeight), 0);
 
@@ -385,10 +385,11 @@ public final class GenerationData {
         long totalZ = chunkZ << CHUNK_SIZE_BITS + LOD | ((long) inChunkZ << LOD);
 
         int riverDepth = WorldGeneration.getRiverDepth(MapSample.riverMapValue(totalX, totalZ));
+        int resultingHeight = resultingHeightMap[getMapIndex(inChunkX, inChunkZ)];
 
-        if (steepnessMap[index] > 1 || riverDepth >= resultingHeightMap[getMapIndex(inChunkX, inChunkZ)] - 16) return null;
+        if (steepnessMap[index] > 1 || riverDepth >= resultingHeight - 16 && resultingHeight > WATER_LEVEL) return null;
         if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & 1023) >= biome.getStructureFeatureChancePromille()) return null;
-        return biome.getStructureFeature(totalX, resultingHeightMap[getMapIndex(inChunkX + 1, inChunkZ + 1)], totalZ);
+        return biome.getStructureFeature(totalX, resultingHeight, totalZ);
     }
 
     private static int getMinHeight(int[] resultingHeightMap) {

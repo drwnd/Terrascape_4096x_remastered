@@ -16,7 +16,7 @@ public final class BiomesCache {
             SNOWY_MOUNTAIN = new SnowyMountain(),
             BEACH = new HomogenousSurfaceBiome("Beach",
                     null, 0,
-                    null, 0,
+                    SHRUB, 64,
                     48, SAND),
             WASTELAND = new NoisySurfaceBiome("Wasteland",
                     BLACK_WOOD_TREES, 8,

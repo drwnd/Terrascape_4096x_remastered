@@ -6,6 +6,7 @@ import core.utils.OpenSimplex2S;
 import game.server.generation.GenerationData;
 
 import static game.server.generation.WorldGeneration.*;
+import static game.utils.Constants.*;
 
 public final class ColdOcean extends NoisySurfaceBiome {
     public ColdOcean() {
@@ -21,9 +22,10 @@ public final class ColdOcean extends NoisySurfaceBiome {
         if (iceHeight == 0) return;
         int start = data.clampEndHeightToInChunkY(WATER_LEVEL - iceHeight);
         int end = data.clampEndHeightToInChunkY(WATER_LEVEL + (iceHeight >> 3));
+        byte iceMaterial = end == start + 1 ? ICE : HEAVY_ICE;
 
         for (int inChunkY = start; inChunkY < end; inChunkY++)
-            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, data.computeTotalY(inChunkY), data.totalZ));
+            data.store(inChunkX, inChunkY, inChunkZ, iceMaterial);
     }
 
     @Override
