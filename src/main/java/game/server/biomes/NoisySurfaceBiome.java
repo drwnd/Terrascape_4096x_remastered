@@ -1,14 +1,15 @@
 package game.server.biomes;
 
-import game.assets.StructureCollectionIdentifier;
+import core.assets.identifiers.AssetIdentifier;
+import game.assets.StructureCollection;
 import game.server.generation.GenerationData;
 import game.server.generation.WorldGenStructure;
 
 public class NoisySurfaceBiome implements Biome {
 
     public NoisySurfaceBiome(String name,
-                             StructureCollectionIdentifier structures, int structureChance,
-                             StructureCollectionIdentifier structureFeatures, int structureFeatureChance,
+                             AssetIdentifier<StructureCollection> structures, int structureChance,
+                             AssetIdentifier<StructureCollection> structureFeatures, int structureFeatureChance,
                              int biomeDepth, MaterialFunction materialFunction) {
         this.name = name;
         this.structures = structures;
@@ -57,7 +58,7 @@ public class NoisySurfaceBiome implements Biome {
     }
 
     private final String name;
-    private final StructureCollectionIdentifier structures, structureFeatures;
+    private final AssetIdentifier<StructureCollection> structures, structureFeatures;
     private final int structureChance, structureFeatureChance, biomeDepth;
     private final MaterialFunction materialFunction;
 
