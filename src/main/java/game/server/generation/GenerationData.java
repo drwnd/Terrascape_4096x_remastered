@@ -41,7 +41,6 @@ public final class GenerationData {
         resultingHeightMap = WorldGeneration.getResultingHeightMap(samples, steepnessMap, lod);
         biomeMap = WorldGeneration.getBiomes(resultingHeightMap, featureMap, samples);
         undergroundRiverDepthMap = containsUndergroundRiver ? WorldGeneration.getUndergroundRiverDepthMap(samples) : null;
-        for (int index = 0; index < steepnessMap.length; index++) steepnessMap[index] += (float) featureMap[index] * 1.5F - 0.75F;
         specialHeightMap = specialHeightMap(chunkX, chunkZ, lod, biomeMap);
 
         worldGenStructureMap = structureMap(chunkX, chunkZ, lod);
@@ -74,7 +73,7 @@ public final class GenerationData {
         biome = biomeMap[index];
         specialHeight = specialHeightMap[index];
         height = resultingHeightMap[mapIndex];
-        biomeDepthMod = (int) (-Math.max(0, steepness - 1 + feature * 0.5 - 0.25) * 26);
+        biomeDepthMod = (int) (-Math.max(0, steepness - 2 + feature * 2) * 26);
         biomeDepth = biome.getBiomeDepth(this);
     }
 
