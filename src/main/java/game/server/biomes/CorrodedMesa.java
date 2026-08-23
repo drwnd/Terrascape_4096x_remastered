@@ -1,10 +1,12 @@
 package game.server.biomes;
 
+import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 
 import core.utils.OpenSimplex2S;
 
 import static game.assets.StructureCollectionIdentifier.CACTUS;
+import static game.assets.StructureCollectionIdentifier.SHRUB;
 import static game.utils.Constants.*;
 import static game.server.generation.WorldGeneration.SEED;
 
@@ -12,7 +14,7 @@ public final class CorrodedMesa extends LayeredSurfaceBiome {
     public CorrodedMesa() {
         super("Corroded Mesa",
                 null, 0,
-                CACTUS, 16,
+                StructureCollectionIdentifier.merge(new StructureCollectionIdentifier[]{CACTUS, SHRUB}, new float[]{0.5F, 0.5F}), 16,
                 48, 128, RED_SAND, RED_SANDSTONE);
     }
 

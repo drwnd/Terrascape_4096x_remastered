@@ -1,5 +1,6 @@
 package game.server.biomes;
 
+import game.assets.StructureCollectionIdentifier;
 import game.server.generation.GenerationData;
 
 import static game.utils.Constants.*;
@@ -67,10 +68,10 @@ public final class BiomesCache {
                     8, 48, GRASS, DIRT),
             MESA = new LayeredSurfaceBiome("Mesa",
                     null, 0,
-                    CACTUS, 16,
+                    StructureCollectionIdentifier.merge(new StructureCollectionIdentifier[]{CACTUS, SHRUB}, new float[]{0.5F, 0.5F}), 64,
                     48, 128, RED_SAND, RED_SANDSTONE),
             DESERT = new LayeredSurfaceBiome("Desert",
                     null, 0,
-                    CACTUS, 16,
+                    StructureCollectionIdentifier.merge(new StructureCollectionIdentifier[]{CACTUS, SHRUB}, new float[]{0.5F, 0.5F}), 64,
                     48, 128, SAND, SANDSTONE);
 }

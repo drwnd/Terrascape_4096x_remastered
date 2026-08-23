@@ -51,6 +51,8 @@ public interface Biome {
 
     static WorldGenStructure getRandomStructure(long x, long y, long z, AssetIdentifier<StructureCollection> structures) {
         byte transform = (byte) (MathUtils.hash((int) x >>> CHUNK_SIZE_BITS, (int) z >>> CHUNK_SIZE_BITS, (int) WorldGeneration.SEED ^ 0xEB0A8449) & Structure.ALL_TRANSFORMS);
-        return new WorldGenStructure(x, y, z, AssetManager.get(structures).getRandom((int) x, (int) y, (int) z), transform);
+        Structure structure = AssetManager.get(structures).getRandom((int) x, (int) y, (int) z);
+        if (structure == null) return null;
+        return new WorldGenStructure(x, y, z, structure, transform);
     }
 }
