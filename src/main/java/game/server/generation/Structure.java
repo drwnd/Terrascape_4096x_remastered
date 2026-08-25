@@ -62,14 +62,20 @@ public record Structure(int sizeX, int sizeY, int sizeZ, int centerX, int center
     }
 
     public int sizeX(byte transform) {
-        return (transform & Structure.ROTATE_90) == 0 ? sizeX : sizeZ;
-    }
-
-    public int sizeY(byte transform) {
-        return sizeY;
+        return (transform & ROTATE_90) == 0 ? sizeX : sizeZ;
     }
 
     public int sizeZ(byte transform) {
-        return (transform & Structure.ROTATE_90) == 0 ? sizeZ : sizeX;
+        return (transform & ROTATE_90) == 0 ? sizeZ : sizeX;
+    }
+
+    public int centerX(byte transform) {
+        int centerX = (transform & ROTATE_90) == 0 ? this.centerX : centerZ;
+        return (transform & MIRROR_X) == 0 ? centerX : sizeX(transform) - centerX;
+    }
+
+    public int centerZ(byte transform) {
+        int centerZ = (transform & ROTATE_90) == 0 ? this.centerZ : sizeZ(transform) - centerX;
+        return (transform & MIRROR_Z) == 0 ? centerZ : sizeZ(transform) - centerZ;
     }
 }
