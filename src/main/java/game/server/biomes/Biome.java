@@ -2,9 +2,10 @@ package game.server.biomes;
 
 import core.assets.AssetManager;
 
+import core.assets.identifiers.AssetIdentifier;
 import core.utils.MathUtils;
 
-import game.assets.StructureCollectionIdentifier;
+import game.assets.StructureCollection;
 import game.server.generation.GenerationData;
 import game.server.generation.Structure;
 import game.server.generation.WorldGenStructure;
@@ -31,7 +32,15 @@ public interface Biome {
         return 0;
     }
 
+    default int getStructureFeatureChancePromille() {
+        return 0;
+    }
+
     default WorldGenStructure getStructure(long totalX, long height, long totalZ) {
+        return null;
+    }
+
+    default WorldGenStructure getStructureFeature(long totalX, long height, long totalZ) {
         return null;
     }
 
@@ -40,8 +49,10 @@ public interface Biome {
     }
 
 
-    static WorldGenStructure getRandomStructure(long x, long y, long z, StructureCollectionIdentifier structures) {
+    static WorldGenStructure getRandomStructure(long x, long y, long z, AssetIdentifier<StructureCollection> structures) {
         byte transform = (byte) (MathUtils.hash((int) x >>> CHUNK_SIZE_BITS, (int) z >>> CHUNK_SIZE_BITS, (int) WorldGeneration.SEED ^ 0xEB0A8449) & Structure.ALL_TRANSFORMS);
-        return new WorldGenStructure(x, y, z, AssetManager.get(structures).getRandom((int) x, (int) y, (int) z), transform);
+        Structure structure = AssetManager.get(structures).getRandom((int) x, (int) y, (int) z);
+        if (structure == null) return null;
+        return new WorldGenStructure(x, y, z, structure, transform);
     }
 }

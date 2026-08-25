@@ -79,7 +79,7 @@ public final class WorldGeneration {
         float lodNormalizer = 1.0F / (1 << lod);
         for (int mapX = 0; mapX < CHUNK_SIZE; mapX++)
             for (int mapZ = 0; mapZ < CHUNK_SIZE; mapZ++) {
-                double height = exactHeightMap[GenerationData.getMapIndex(mapX + 1, mapZ + 1)];
+                double height = exactHeightMap[GenerationData.getMapIndex(mapX, mapZ)];
 
                 double steepnessX = Math.abs(height - exactHeightMap[GenerationData.getMapIndex(mapX + 1, mapZ)]);
                 double steepnessZ = Math.abs(height - exactHeightMap[GenerationData.getMapIndex(mapX, mapZ + 1)]);
@@ -190,17 +190,26 @@ public final class WorldGeneration {
     }
 
     private static boolean generateStructures(GenerationData data, boolean clearBeforeGenerating) {
-        if (!data.hasStructures()) return false;
         boolean hasGeneratedStructure = false;
 
         int sideLength = (1 << data.LOD) + 2;
-        for (int x = 0; x < sideLength; x++)
-            for (int z = 0; z < sideLength; z++) {
-                WorldGenStructure worldGenStructure = data.structureMapValue(x * sideLength + z);
+        if (data.hasStructures())
+            for (int index = 0; index < sideLength * sideLength; index++) {
+                WorldGenStructure worldGenStructure = data.structureMapValue(index);
                 if (worldGenStructure == null) continue;
 
                 hasGeneratedStructure |= data.storeStructure(worldGenStructure, clearBeforeGenerating && !hasGeneratedStructure);
             }
+
+        sideLength = 2 << data.LOD;
+        if (data.hasStructureFeatures())
+            for (int index = 0; index < sideLength * sideLength; index++) {
+                WorldGenStructure structureFeature = data.structureFeatureMapValue(index);
+                if (structureFeature == null) continue;
+
+                hasGeneratedStructure |= data.storeStructure(structureFeature, clearBeforeGenerating && !hasGeneratedStructure);
+            }
+
         return hasGeneratedStructure;
     }
 
