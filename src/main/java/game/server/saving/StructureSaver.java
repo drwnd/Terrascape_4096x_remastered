@@ -19,6 +19,9 @@ public final class StructureSaver extends Saver<Structure> {
         saveInt(structure.sizeX());
         saveInt(structure.sizeY());
         saveInt(structure.sizeZ());
+        saveInt(structure.centerX());
+        saveInt(structure.centerY());
+        saveInt(structure.centerZ());
         saveInt(structure.materials().getTotalSizeBits());
         saveByteArray(structure.materials().getBytes());
     }
@@ -28,22 +31,29 @@ public final class StructureSaver extends Saver<Structure> {
         int sizeX = loadInt();
         int sizeY = loadInt();
         int sizeZ = loadInt();
+        int centerX = loadInt();
+        int centerY = loadInt();
+        int centerZ = loadInt();
         int totalSizeBits = loadInt();
         byte[] data = loadByteArray();
 
         MaterialsData materialsData = new MaterialsData(totalSizeBits, data);
         materialsData.recomputeTypes();
-        return new Structure(sizeX, sizeY, sizeZ, materialsData);
+        return new Structure(sizeX, sizeY, sizeZ, centerX, centerY, centerZ, materialsData);
     }
 
     @Override
     protected Structure loadOldVersion(int versionNumber) {
-        if (versionNumber == 0) {
-            Structure structure = load();
-            byte[] uncompressedMaterials = new byte[1 << structure.materials().getTotalSizeBits() * 3];
-            structure.materials().fillUncompressedMaterialsInto(uncompressedMaterials);
-            MaterialsData materialsData = MaterialsData.getCompressedMaterials(structure.materials().getTotalSizeBits(), uncompressedMaterials);
-            return new Structure(structure.sizeX(), structure.sizeY(), structure.sizeZ(), materialsData);
+        if (versionNumber == 1) {
+            int sizeX = loadInt();
+            int sizeY = loadInt();
+            int sizeZ = loadInt();
+            int totalSizeBits = loadInt();
+            byte[] data = loadByteArray();
+
+            MaterialsData materialsData = new MaterialsData(totalSizeBits, data);
+            materialsData.recomputeTypes();
+            return new Structure(sizeX, sizeY, sizeZ, sizeX >> 1, 0, sizeZ >> 1, materialsData);
         }
         return super.loadOldVersion(versionNumber);
     }
@@ -55,6 +65,6 @@ public final class StructureSaver extends Saver<Structure> {
 
     @Override
     protected int getVersionNumber() {
-        return 1;
+        return 2;
     }
 }

@@ -31,7 +31,7 @@ public final class ChunkRebuildPlaceable implements Placeable {
         if (lod == 0) {
             Chunk toPlaceChunk = new Chunk(position.x >>> CHUNK_SIZE_BITS, position.y >>> CHUNK_SIZE_BITS, position.z >>> CHUNK_SIZE_BITS, 0);
             WorldGeneration.generate(toPlaceChunk);
-            this.toPlaceChunk = new Structure(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE, toPlaceChunk.getMaterials());
+            this.toPlaceChunk = new Structure(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE, 0, 0, 0, toPlaceChunk.getMaterials());
         }
         long chunkX = position.x >>> CHUNK_SIZE_BITS + lod;
         long chunkY = position.y >>> CHUNK_SIZE_BITS + lod;

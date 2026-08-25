@@ -124,7 +124,8 @@ public abstract class ShapePlaceable implements Placeable {
         int preferredSize = getPreferredSizePowOf2();
         int preferredSizeBits = Integer.numberOfTrailingZeros(preferredSize);
 
-        return new Structure(getLengthX(), getLengthY(), getLengthZ(), preferredSizeBits, material, bitMap);
+        int lengthX = getLengthX(), lengthY = getLengthY(), lengthZ = getLengthZ();
+        return new Structure(lengthX, lengthY, lengthZ, 0, 0, 0, preferredSizeBits, material, bitMap);
     }
 
     @Override

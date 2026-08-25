@@ -5,7 +5,7 @@ import game.server.materials_data.MaterialsData;
 
 import static game.utils.Constants.*;
 
-public record Structure(int sizeX, int sizeY, int sizeZ, MaterialsData materials) implements Asset {
+public record Structure(int sizeX, int sizeY, int sizeZ, int centerX, int centerY, int centerZ, MaterialsData materials) implements Asset {
     public static final byte MIRROR_X = 1;
     public static final byte MIRROR_Z = 2;
     public static final byte ROTATE_90 = 4;
@@ -25,8 +25,12 @@ public record Structure(int sizeX, int sizeY, int sizeZ, MaterialsData materials
                 MaterialsData.getCompressedMaterials(sizeBits, bitMap, material));
     }
 
-    public Structure(int sizeX, int sizeY, int sizeZ, int sizeBits, byte material, long[] bitMap) {
-        this(sizeX, sizeY, sizeZ, MaterialsData.getCompressedMaterials(sizeBits, bitMap, material));
+    public Structure(int sizeX, int sizeY, int sizeZ, int centerX, int centerY, int centerZ, int sizeBits, byte material, long[] bitMap) {
+        this(sizeX, sizeY, sizeZ, centerX, centerY, centerZ, MaterialsData.getCompressedMaterials(sizeBits, bitMap, material));
+    }
+
+    public Structure(int sizeX, int sizeY, int sizeZ, MaterialsData materials) {
+        this(sizeX, sizeY, sizeZ, sizeX >> 1, 0, sizeZ >> 1, materials);
     }
 
     public byte getMaterial(int structureX, int structureY, int structureZ) {
