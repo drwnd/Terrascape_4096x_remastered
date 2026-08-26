@@ -12,8 +12,7 @@ public final class SnowyMountain implements Biome {
     public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
         int iceHeight = data.clampStartHeightToInChunkY(MathUtils.floor(data.feature * 512 + ICE_LEVEL));
         data.storeColumn(inChunkX, inChunkZ, inChunkStartY, Math.min(inChunkEndY, iceHeight), SNOW);
-        for (int inChunkY = Math.max(inChunkStartY, iceHeight); inChunkY < inChunkEndY; inChunkY++)
-            data.store(inChunkX, inChunkY, inChunkZ, data.getGeneratingIceType(data.totalX, data.computeTotalY(inChunkY), data.totalZ));
+        data.storeColumn(inChunkX, inChunkZ, Math.max(inChunkStartY, iceHeight), inChunkEndY, GenerationData::getGeneratingIceType);
     }
 
     @Override

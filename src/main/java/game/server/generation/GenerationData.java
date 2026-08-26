@@ -115,6 +115,14 @@ public final class GenerationData {
             uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = material;
     }
 
+    public void storeColumn(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, MaterialFunction materialFunction) {
+        int xzIndex = MaterialsData.Z_ORDER_3D_TABLE_X[inChunkX] | MaterialsData.T_ORDER_3D_TABLE_Z[inChunkZ];
+        for (int inChunkY = inChunkStartY; inChunkY < inChunkEndY; inChunkY++) {
+            byte material = materialFunction.getGeneratingMaterial(this, totalX, computeTotalY(inChunkY), totalZ);
+            uncompressedMaterials[xzIndex | MaterialsData.Z_ORDER_3D_TABLE_Y[inChunkY]] = material;
+        }
+    }
+
     public void storeConsecutive(int startIndex, int count, byte material) {
         Arrays.fill(uncompressedMaterials, startIndex, startIndex + count, material);
     }
@@ -349,7 +357,7 @@ public final class GenerationData {
         double heightPlusZ = WorldGeneration.getResultingHeight(totalX, totalZ + 1);
         double steepness = Math.max(Math.abs(resultingHeight - heightPlusX), Math.abs(resultingHeight - heightPlusZ));
         int riverDepth = WorldGeneration.getRiverDepth(sample.river());
-        if (steepness > 0.4 || riverDepth >= resultingHeight - 16 && resultingHeight > WATER_LEVEL) return null;
+        if (steepness > 0.4 || riverDepth >= Math.abs(resultingHeight) - 16) return null;
 
         Biome biome = WorldGeneration.getBiome(sample, MathUtils.floor(resultingHeight), 0);
 
@@ -387,7 +395,7 @@ public final class GenerationData {
         int riverDepth = WorldGeneration.getRiverDepth(MapSample.riverMapValue(totalX, totalZ));
         int resultingHeight = resultingHeightMap[getMapIndex(inChunkX, inChunkZ)];
 
-        if (steepnessMap[index] > 1 || riverDepth >= resultingHeight - 16 && resultingHeight > WATER_LEVEL) return null;
+        if (steepnessMap[index] > 1 || riverDepth >= Math.abs(resultingHeight) - 16) return null;
         if ((MathUtils.hash((int) totalX, (int) totalZ, (int) (SEED ^ 0x264F6E393FE89AAFL)) & 1023) >= biome.getStructureFeatureChancePromille()) return null;
         return biome.getStructureFeature(totalX, resultingHeight, totalZ);
     }
@@ -471,4 +479,8 @@ public final class GenerationData {
 
     private static final double ICE_TYPE_FREQUENCY = 1 / 200.0;
     private static final double HEAVY_ICE_THRESHOLD = 0.6;
+
+    public interface MaterialFunction {
+        byte getGeneratingMaterial(GenerationData data, long x, long y, long z);
+    }
 }

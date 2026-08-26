@@ -121,9 +121,9 @@ public final class WorldGeneration {
         int sandHeight = (int) (feature * 64.0) + WATER_LEVEL - 80;
 
         if (height < WATER_LEVEL) {
+            if (sample.temperature() < -0.33) return BiomesCache.COLD_OCEAN;
             if (height > sandHeight) return BiomesCache.BEACH;
             if (temperature > 0.33) return BiomesCache.WARM_OCEAN;
-            else if (temperature - dither < -0.33) return BiomesCache.COLD_OCEAN;
             return BiomesCache.OCEAN;
         }
         if (height < beachHeight) return BiomesCache.BEACH;
@@ -180,13 +180,11 @@ public final class WorldGeneration {
     }
 
     private static void generateUndergroundRiver(int inChunkX, int inChunkZ, GenerationData data) {
-        int start = Math.clamp(-data.undergroundRiverDepth + WATER_LEVEL - (data.chunkY << CHUNK_SIZE_BITS + data.LOD) >> data.LOD, 0, CHUNK_SIZE);
-        int end = Math.clamp(data.undergroundRiverDepth + WATER_LEVEL - (data.chunkY << CHUNK_SIZE_BITS + data.LOD) >> data.LOD, 0, CHUNK_SIZE);
-
-        for (int inChunkY = start; inChunkY < end; inChunkY++) {
-            long totalY = data.computeTotalY(inChunkY);
-            data.store(inChunkX, inChunkY, inChunkZ, totalY < WATER_LEVEL ? WATER : AIR);
-        }
+        long chunkStartY = data.chunkY << CHUNK_SIZE_BITS + data.LOD;
+        if (data.height < WATER_LEVEL && chunkStartY >= WATER_LEVEL) return;
+        int start = data.clampStartHeightToInChunkY(WATER_LEVEL - data.undergroundRiverDepth);
+        int end = data.clampEndHeightToInChunkY(WATER_LEVEL + data.undergroundRiverDepth);
+        data.storeColumn(inChunkX, inChunkZ, start, end, chunkStartY < WATER_LEVEL ? WATER : AIR);
     }
 
     private static boolean generateStructures(GenerationData data, boolean clearBeforeGenerating) {

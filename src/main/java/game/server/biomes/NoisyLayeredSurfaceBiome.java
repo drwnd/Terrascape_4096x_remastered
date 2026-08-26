@@ -10,7 +10,7 @@ public class NoisyLayeredSurfaceBiome implements Biome {
     public NoisyLayeredSurfaceBiome(String name,
                                     AssetIdentifier<StructureCollection> structures, int structureChance,
                                     AssetIdentifier<StructureCollection> structureFeatures, int structureFeatureChance,
-                                    int surfaceMaterialDepth, int biomeDepth, byte bottomMaterial, NoisySurfaceBiome.MaterialFunction materialFunction) {
+                                    int surfaceMaterialDepth, int biomeDepth, byte bottomMaterial,  GenerationData.MaterialFunction materialFunction) {
         this.name = name;
         this.structures = structures;
         this.structureChance = structureChance;
@@ -26,8 +26,7 @@ public class NoisyLayeredSurfaceBiome implements Biome {
     public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
         int surfaceMaterialStart = data.clampStartHeightToInChunkY(data.height - surfaceMaterialDepth - data.biomeDepthMod);
         data.storeColumn(inChunkX, inChunkZ, inChunkStartY, surfaceMaterialStart, bottomMaterial);
-        for (int inChunkY = surfaceMaterialStart; inChunkY < inChunkEndY; inChunkY++)
-            data.store(inChunkX, inChunkY, inChunkZ, materialFunction.getGeneratingMaterial(data, data.totalX, data.computeTotalY(inChunkY), data.totalZ));
+        data.storeColumn(inChunkX, inChunkZ, surfaceMaterialStart, inChunkEndY, materialFunction);
     }
 
     @Override
@@ -65,5 +64,5 @@ public class NoisyLayeredSurfaceBiome implements Biome {
     private final AssetIdentifier<StructureCollection> structures, structureFeatures;
     private final int structureChance, structureFeatureChance, surfaceMaterialDepth, biomeDepth;
     private final byte bottomMaterial;
-    private final NoisySurfaceBiome.MaterialFunction materialFunction;
+    private final  GenerationData.MaterialFunction materialFunction;
 }

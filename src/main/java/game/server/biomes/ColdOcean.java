@@ -8,12 +8,13 @@ import game.server.generation.GenerationData;
 import static game.server.generation.WorldGeneration.*;
 import static game.utils.Constants.*;
 
-public final class ColdOcean extends NoisySurfaceBiome {
-    public ColdOcean() {
-        super("Cold Ocean",
-                null, 0,
-                null, 0,
-                48, GenerationData::getColdOceanFloorMaterial);
+public final class ColdOcean implements Biome {
+
+    @Override
+    public void placeMaterials(int inChunkX, int inChunkZ, int inChunkStartY, int inChunkEndY, GenerationData data) {
+        int sandHeight = (int) (data.feature * 64.0) + WATER_LEVEL - 80;
+        if (data.height > sandHeight) data.storeColumn(inChunkX, inChunkZ, inChunkStartY, inChunkEndY, SAND);
+        else data.storeColumn(inChunkX, inChunkZ, inChunkStartY, inChunkEndY, GenerationData::getColdOceanFloorMaterial);
     }
 
     @Override
@@ -22,10 +23,7 @@ public final class ColdOcean extends NoisySurfaceBiome {
         if (iceHeight == 0) return;
         int start = data.clampEndHeightToInChunkY(WATER_LEVEL - iceHeight);
         int end = data.clampEndHeightToInChunkY(WATER_LEVEL + (iceHeight >> 3));
-        byte iceMaterial = end == start + 1 ? ICE : HEAVY_ICE;
-
-        for (int inChunkY = start; inChunkY < end; inChunkY++)
-            data.store(inChunkX, inChunkY, inChunkZ, iceMaterial);
+        data.storeColumn(inChunkX, inChunkZ, start, end, iceHeight == 1 ? ICE : HEAVY_ICE);
     }
 
     @Override

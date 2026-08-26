@@ -24,9 +24,7 @@ public final class CorrodedMesa extends LayeredSurfaceBiome {
         if (pillarHeight == 0) return;
         int start = data.clampStartHeightToInChunkY(data.height - data.biomeDepth);
         int end = data.clampEndHeightToInChunkY(data.height + pillarHeight);
-
-        for (int inChunkY = start; inChunkY < end; inChunkY++)
-            data.store(inChunkX, inChunkY, inChunkZ, getGeneratingTerracottaType((int) (data.computeTotalY(inChunkY) >> 4 & 15)));
+        data.storeColumn(inChunkX, inChunkZ, start, end, CorrodedMesa::getGeneratingTerracottaType);
     }
 
     @Override
@@ -37,7 +35,8 @@ public final class CorrodedMesa extends LayeredSurfaceBiome {
         return 0;
     }
 
-    private static byte getGeneratingTerracottaType(int terracottaIndex) {
+    private static byte getGeneratingTerracottaType(GenerationData data, long totalX, long totalY, long totalZ) {
+        int terracottaIndex = (int) (totalY >> 4 & 15);
         return switch (terracottaIndex) {
             case 3, 6, 10, 11, 15 -> RED_TERRACOTTA;
             case 2, 8, 12 -> YELLOW_TERRACOTTA;
