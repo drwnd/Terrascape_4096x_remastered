@@ -10,7 +10,7 @@ import core.sound.Sound;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class MaterialSounds implements SoundCollectionIdentifier {
+public final class MaterialSounds implements SoundCollectionIdentifier {
 
     public static String print(MaterialSounds sound) {
         if (sound == null) return "null";
@@ -20,10 +20,10 @@ public class MaterialSounds implements SoundCollectionIdentifier {
     @Override
     public SoundCollection generateAsset() {
         if (folderPath == null || fileNamePrefix == null) return new SoundCollection(new SingleSoundIdentifier[0]);
-        ArrayList<String> filePaths = AssetManager.getAssetFilePathsInFolderMatching(folderPath, fileNamePrefix);
+        ArrayList<Path> filePaths = AssetManager.getAssetFilePathsInFolderMatching(folderPath, fileNamePrefix);
 
         ArrayList<SoundIdentifier> identifiers = new ArrayList<>();
-        for (String filepath : filePaths) identifiers.add(new SingleSoundIdentifier(Path.of(filepath), gainMultiplier, pitchMultiplier));
+        for (Path filepath : filePaths) identifiers.add(new SingleSoundIdentifier(filepath, gainMultiplier, pitchMultiplier));
 
         return new SoundCollection(identifiers.toArray(new SoundIdentifier[0]));
     }

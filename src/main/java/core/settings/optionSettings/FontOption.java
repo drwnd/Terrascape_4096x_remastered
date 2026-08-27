@@ -25,7 +25,7 @@ public final class FontOption implements Option, AssetIdentifier<Texture> {
 
 
     public void load() {
-        String[] lines = FileManager.readAllLines(new File(fontFile.getPath() + "/settings"));
+        String[] lines = FileManager.readAllLines(fontFile.toPath().resolve("settings"));
         for (String line : lines) {
             if (line.startsWith("default:")) {
                 Arrays.fill(charSizes, Byte.parseByte(line.substring(8)));

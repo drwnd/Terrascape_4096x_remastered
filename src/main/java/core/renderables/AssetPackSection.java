@@ -15,6 +15,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -31,7 +32,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
     }
 
     private static ArrayList<String> getInactivePacks(ArrayList<String> activePacks) {
-        File[] allPacks = FileManager.getChildren(new File("assetPacks"));
+        File[] allPacks = FileManager.getChildren(Path.of("assetPacks"));
         ArrayList<String> inactivePacks = new ArrayList<>(allPacks.length - activePacks.size());
         for (File file : allPacks) {
             if ("Default".equalsIgnoreCase(file.getName())) continue;

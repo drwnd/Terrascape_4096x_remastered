@@ -12,11 +12,11 @@ public final class FileManager {
 
     }
 
-    public static String[] readAllLines(File file) {
+    public static String[] readAllLines(Path filepath) {
         ArrayList<String> lines = new ArrayList<>();
-        file = loadAndCreateFile(file.toPath());
+        File file = loadAndCreateFile(filepath);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             while (true) {
                 String line = reader.readLine();
                 if (line == null) break;
@@ -44,7 +44,8 @@ public final class FileManager {
         return -1;
     }
 
-    public static File[] getChildren(File file) {
+    public static File[] getChildren(Path filepath) {
+        File file = filepath.toFile();
         if (!file.exists()) return new File[0];
         file.mkdirs();
         return file.listFiles();
@@ -60,7 +61,7 @@ public final class FileManager {
         File file = filepath.toFile();
         try {
             if (!file.exists()) {
-                File parent = new File(file.toPath().toAbsolutePath().getParent().toUri());
+                File parent = file.toPath().toAbsolutePath().getParent().toFile();
                 parent.mkdirs();
                 file.createNewFile();
             }

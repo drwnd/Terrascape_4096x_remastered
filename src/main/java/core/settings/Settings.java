@@ -40,7 +40,7 @@ public final class Settings {
     }
 
     public static void writeToFile() {
-        File file = FileManager.loadAndCreateFile(SETTINGS_FILE_LOCATION);
+        File file = FileManager.loadAndCreateFile(Path.of("Settings"));
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file.getPath()));
             for (Setting setting : settings) writer.write("%s:%s%n".formatted(setting.name(), setting.toSaveValue()));
@@ -62,7 +62,7 @@ public final class Settings {
     }
 
     private static SettingsFile loadSettingsFile() {
-        String[] settingsFileContents = FileManager.readAllLines(Path.of("Settings").toFile());
+        String[] settingsFileContents = FileManager.readAllLines(Path.of("Settings"));
         String[][] settings = new String[settingsFileContents.length][0];
         for (int index = 0; index < settingsFileContents.length; index++) settings[index] = settingsFileContents[index].split(":");
         return new SettingsFile(settings);
@@ -88,7 +88,6 @@ public final class Settings {
     }
 
     private static final ArrayList<Setting> settings;
-    private static final Path SETTINGS_FILE_LOCATION = Path.of("Settings");
     private static final AssetIdentifier<SettingsFile> fileIdentifier;
 
     private static class AssetPackSetting implements Setting {

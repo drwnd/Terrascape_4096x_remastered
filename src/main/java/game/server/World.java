@@ -131,7 +131,7 @@ public final class World {
     }
 
     public static void deleteHigherLODs(int maxKeptLod) {
-        File[] lodFiles = FileManager.getChildren(new File(ChunkSaver.getSaveFileLocation()));
+        File[] lodFiles = FileManager.getChildren((ChunkSaver.getSaveFileLocation()));
         for (File file : lodFiles) {
             String fileLod = file.getName();
             if (!MathUtils.isInteger(fileLod, 10) || Integer.parseInt(fileLod) > maxKeptLod) FileManager.delete(file);

@@ -69,7 +69,7 @@ public final class Language implements Option {
     }
 
     private Translation loadTranslation(String translationFileName) {
-        String[] translations = FileManager.readAllLines(new File(languageFile.getPath() + "/" + translationFileName));
+        String[] translations = FileManager.readAllLines(languageFile.toPath().resolve(translationFileName));
         return new Translation(translations);
     }
 

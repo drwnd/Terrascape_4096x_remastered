@@ -35,7 +35,7 @@ public final class WorldOptimizer {
     }
 
     private static int deleteRedundantChunks() {
-        File[] chunkFiles = FileManager.getChildren(new File(ChunkSaver.getSaveFileLocation(0)));
+        File[] chunkFiles = FileManager.getChildren(ChunkSaver.getSaveFileLocation(0));
         if (chunkFiles == null) return 0;
         ChunkSaver saver = new ChunkSaver();
 
