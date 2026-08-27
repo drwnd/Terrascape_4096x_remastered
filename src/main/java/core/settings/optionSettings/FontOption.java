@@ -15,7 +15,7 @@ import java.util.Arrays;
 public final class FontOption implements Option, AssetIdentifier<Texture> {
 
     public FontOption(String fontName) {
-        this(new File("assets/fonts/" + fontName));
+        this(Path.of("assets", "fonts", fontName).toFile());
     }
 
     private FontOption(File fontFile) {

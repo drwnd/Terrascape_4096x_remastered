@@ -61,7 +61,7 @@ public final class ChunkSaver extends Saver<Chunk> {
             long thisLodChunkY = chunk.Y >> 1;
             long thisLodChunkZ = chunk.Z >> 1;
             ChunkID thisLodChunkId = new ChunkID(thisLodChunkX, thisLodChunkY, thisLodChunkZ, lod);
-            File thisLodChunkFile = new File(thisLodFile.getPath() + "/" + thisLodChunkId);
+            File thisLodChunkFile = thisLodFile.toPath().resolve(String.valueOf(thisLodChunkId)).toFile();
             if (thisLodChunkFile.exists()) continue;
 
             Chunk thisLodChunk = new Chunk(thisLodChunkX, thisLodChunkY, thisLodChunkZ, lod);

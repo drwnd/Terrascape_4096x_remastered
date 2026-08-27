@@ -25,7 +25,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
     public AssetPackSection() {
         super();
         ArrayList<String> activePacks = AssetManager.getActiveAssetPackNames();
-        activePacks.removeIf(packName -> !new File("assetPacks/" + packName).exists());
+        activePacks.removeIf(packName -> !Path.of("assetPacks", packName).toFile().exists());
         ArrayList<String> inactivePacks = getInactivePacks(activePacks);
 
         loadButtons(inactivePacks, activePacks);

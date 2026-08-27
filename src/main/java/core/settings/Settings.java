@@ -114,7 +114,7 @@ public final class Settings {
             String[] packsArray = value.split("#");
             ArrayList<String> packsList = new ArrayList<>(packsArray.length);
             packsList.addAll(Arrays.asList(packsArray));
-            packsList.removeIf(packName -> !new File("assetPacks/" + packName).exists());
+            packsList.removeIf(packName -> !Path.of("assetPacks", packName).toFile().exists());
             AssetManager.setActiveAssetPackNames(packsList);
             return true;
         }

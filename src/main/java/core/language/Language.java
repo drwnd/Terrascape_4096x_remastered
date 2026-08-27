@@ -8,6 +8,7 @@ import core.settings.optionSettings.Option;
 import core.utils.FileManager;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public final class Language implements Option {
@@ -17,7 +18,7 @@ public final class Language implements Option {
     }
 
     public Language(String languageName) {
-        this(new File("assets/languages/" + languageName));
+        this(Path.of("assets", "languages", languageName).toFile());
     }
 
     private Language(File languageFile) {
