@@ -6,7 +6,7 @@ import core.utils.MathUtils;
 
 import game.server.generation.Structure;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static game.utils.Constants.CHUNK_SIZE_BITS;
@@ -27,11 +27,11 @@ public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCo
 
     @Override
     public StructureCollection generateAsset() {
-        ArrayList<String> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
+        ArrayList<Path> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
         ArrayList<Structure> structuresList = new ArrayList<>();
 
-        for (String structureFilepath : structureFilePaths) {
-            String structureName = new File(structureFilepath).getName().toLowerCase();
+        for (Path structureFilepath : structureFilePaths) {
+            String structureName = structureFilepath.getFileName().toString().toLowerCase();
             if (!structureName.startsWith(structureBaseName)) continue;
             Structure structure = AssetManager.get(new StructureIdentifier(structureName));
             structuresList.add(structure);
@@ -56,15 +56,15 @@ public enum StructureCollectionIdentifier implements AssetIdentifier<StructureCo
 
         @Override
         public StructureCollection generateAsset() {
-            ArrayList<String> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
+            ArrayList<Path> structureFilePaths = AssetManager.getAssetFilePathsInFolder("structures");
             ArrayList<Structure> structuresList = new ArrayList<>();
             Structure[][] structures = new Structure[identifiers().length][0];
 
             for (int identifierIndex = 0, identifiersLength = identifiers.length; identifierIndex < identifiersLength; identifierIndex++) {
                 structuresList.clear();
                 StructureCollectionIdentifier identifier = identifiers[identifierIndex];
-                for (String structureFilepath : structureFilePaths) {
-                    String structureName = new File(structureFilepath).getName().toLowerCase();
+                for (Path structureFilepath : structureFilePaths) {
+                    String structureName = structureFilepath.getFileName().toString().toLowerCase();
                     if (!structureName.startsWith(identifier.structureBaseName)) continue;
                     Structure structure = AssetManager.get(new StructureIdentifier(structureName));
                     structuresList.add(structure);

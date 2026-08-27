@@ -8,6 +8,7 @@ import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ import static org.lwjgl.opengl.GL46.*;
 
 public abstract class Shader implements Asset {
 
-    static final String SHADER_FOLDER_PATH = "shaders/";
+    static final Path SHADER_FOLDER_PATH = Path.of("shaders");
 
 
     public void bind() {

@@ -17,6 +17,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -102,11 +103,11 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
         int structureCount = 0;
         Vector2f sizeToParent = new Vector2f(1.0F, 0.05F);
-        ArrayList<String> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
+        ArrayList<Path> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
         String filterText = filterTextField.getText().toLowerCase();
 
-        for (String filepath : filePaths) {
-            File structureFile = new File(filepath);
+        for (Path filepath : filePaths) {
+            File structureFile = filepath.toFile();
             if (!structureFile.getName().toLowerCase().contains(filterText)) continue;
             String structureName = structureFile.getName();
             Vector2f offsetToParent = new Vector2f(0.0F, 1.0F - ++structureCount * 0.065F + input.structureScroll);

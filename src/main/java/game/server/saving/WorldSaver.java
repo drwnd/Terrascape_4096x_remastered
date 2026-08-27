@@ -4,10 +4,12 @@ import core.utils.Saver;
 import game.server.World;
 import game.server.generation.WorldGeneration;
 
+import java.nio.file.Path;
+
 public final class WorldSaver extends Saver<World> {
 
-    public static String getSaveFileLocation(String worldName) {
-        return "saves/%s/worldData".formatted(worldName);
+    public static Path getSaveFileLocation(String worldName) {
+        return Path.of("saves/%s/worldData".formatted(worldName));
     }
 
     public WorldSaver() {

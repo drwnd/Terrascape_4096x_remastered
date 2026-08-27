@@ -7,6 +7,7 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,7 @@ public final class Settings {
     }
 
     public static void writeToFile() {
-        File file = FileManager.loadAndCreateFile(SETTINGS_FILE_LOCATION);
+        File file = FileManager.loadAndCreateFile(Path.of("Settings"));
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file.getPath()));
             for (Setting setting : settings) writer.write("%s:%s%n".formatted(setting.name(), setting.toSaveValue()));
@@ -61,7 +62,7 @@ public final class Settings {
     }
 
     private static SettingsFile loadSettingsFile() {
-        String[] settingsFileContents = FileManager.readAllLines(new File(SETTINGS_FILE_LOCATION));
+        String[] settingsFileContents = FileManager.readAllLines(Path.of("Settings"));
         String[][] settings = new String[settingsFileContents.length][0];
         for (int index = 0; index < settingsFileContents.length; index++) settings[index] = settingsFileContents[index].split(":");
         return new SettingsFile(settings);
@@ -87,7 +88,6 @@ public final class Settings {
     }
 
     private static final ArrayList<Setting> settings;
-    private static final String SETTINGS_FILE_LOCATION = "Settings";
     private static final AssetIdentifier<SettingsFile> fileIdentifier;
 
     private static class AssetPackSetting implements Setting {
@@ -114,7 +114,7 @@ public final class Settings {
             String[] packsArray = value.split("#");
             ArrayList<String> packsList = new ArrayList<>(packsArray.length);
             packsList.addAll(Arrays.asList(packsArray));
-            packsList.removeIf(packName -> !new File("assetPacks/" + packName).exists());
+            packsList.removeIf(packName -> !Path.of("assetPacks", packName).toFile().exists());
             AssetManager.setActiveAssetPackNames(packsList);
             return true;
         }

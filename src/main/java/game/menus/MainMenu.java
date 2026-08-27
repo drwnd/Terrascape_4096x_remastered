@@ -15,6 +15,7 @@ import org.joml.Vector2i;
 
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -120,7 +121,7 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
     public static File[] getSavedWorlds() {
-        return FileManager.getChildren(new File("saves"));
+        return FileManager.getChildren(Path.of("saves"));
     }
 
     private void createWorldButtons() {

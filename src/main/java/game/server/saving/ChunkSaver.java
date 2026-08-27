@@ -11,21 +11,22 @@ import game.server.generation.WorldGeneration;
 import game.utils.Status;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static game.utils.Constants.*;
 
 public final class ChunkSaver extends Saver<Chunk> {
 
-    public static String getSaveFileLocation(ChunkID id, int lod) {
-        return "saves/%s/chunks/%s/%s".formatted(Game.getWorld().getName(), lod, id);
+    public static Path getSaveFileLocation(ChunkID id, int lod) {
+        return Path.of("saves", Game.getWorld().getName(), "chunks", String.valueOf(lod), String.valueOf(id));
     }
 
-    public static String getSaveFileLocation(int lod) {
-        return "saves/%s/chunks/%s".formatted(Game.getWorld().getName(), lod);
+    public static Path getSaveFileLocation(int lod) {
+        return Path.of("saves", Game.getWorld().getName(), "chunks", String.valueOf(lod));
     }
 
-    public static String getSaveFileLocation() {
-        return "saves/%s/chunks".formatted(Game.getWorld().getName());
+    public static Path getSaveFileLocation() {
+        return Path.of("saves", Game.getWorld().getName(), "chunks");
     }
 
     public static void generateHigherLODs() {
@@ -39,14 +40,14 @@ public final class ChunkSaver extends Saver<Chunk> {
         ChunkSaver saver = new ChunkSaver();
         int lowerLOD = lod - 1;
 
-        File lowerLodFile = new File(getSaveFileLocation(lowerLOD));
-        File thisLodFile = new File(getSaveFileLocation(lod));
+        File lowerLodFile = getSaveFileLocation(lowerLOD).toFile();
+        File thisLodFile = getSaveFileLocation(lod).toFile();
 
         if (!lowerLodFile.exists()) return; // No stored chunks to propagate into higher LODs
         if (thisLodFile.exists()) return;   // LOD is saved from previous play session
 
-        else thisLodFile = FileManager.loadAndCreateDirectory(thisLodFile.getPath());
-        File[] lowerLodChunkFiles = FileManager.getChildren(lowerLodFile);
+        else thisLodFile = FileManager.loadAndCreateDirectory(thisLodFile.toPath());
+        File[] lowerLodChunkFiles = FileManager.getChildren(lowerLodFile.toPath());
 
         if (lowerLodChunkFiles == null) {
             Debug.err("Error occurred when listing lod " + lowerLOD + " chunk files.");
@@ -54,13 +55,13 @@ public final class ChunkSaver extends Saver<Chunk> {
         }
 
         for (File chunkFile : lowerLodChunkFiles) {
-            Chunk chunk = saver.load(chunkFile.getPath());
+            Chunk chunk = saver.load(chunkFile.toPath());
             if (chunk == null) continue;
             long thisLodChunkX = chunk.X >> 1;
             long thisLodChunkY = chunk.Y >> 1;
             long thisLodChunkZ = chunk.Z >> 1;
             ChunkID thisLodChunkId = new ChunkID(thisLodChunkX, thisLodChunkY, thisLodChunkZ, lod);
-            File thisLodChunkFile = new File(thisLodFile.getPath() + "/" + thisLodChunkId);
+            File thisLodChunkFile = thisLodFile.toPath().resolve(String.valueOf(thisLodChunkId)).toFile();
             if (thisLodChunkFile.exists()) continue;
 
             Chunk thisLodChunk = new Chunk(thisLodChunkX, thisLodChunkY, thisLodChunkZ, lod);

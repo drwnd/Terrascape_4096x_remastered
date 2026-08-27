@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.nio.file.Path;
 
 import static org.lwjgl.opengl.GL46.*;
 import static org.lwjgl.openal.AL10.*;
@@ -24,18 +25,17 @@ public final class AssetLoader {
     }
 
     //https://ahbejarano.gitbook.io/lwjglgamedev/chapter-16
-    public static int loadSound(String filename, boolean appendSoundFolderPath) {
-        if (appendSoundFolderPath) filename = AssetManager.getAssetFilepath("sounds/" + filename);
+    public static int loadSound(Path filepath) {
         int buffer = alGenBuffers();
 
         STBVorbisInfo info = STBVorbisInfo.malloc();
-        ShortBuffer pcm = readVorbis(filename, info);
+        ShortBuffer pcm = readVorbis(filepath, info);
         alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
 
         return buffer;
     }
 
-    public static Texture loadTexture2D(String filepath) {
+    public static Texture loadTexture2D(Path filepath) {
         int width, height;
         ByteBuffer buffer;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -43,7 +43,7 @@ public final class AssetLoader {
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
 
-            buffer = STBImage.stbi_load(filepath, w, h, c, 4);
+            buffer = STBImage.stbi_load(filepath.toString(), w, h, c, 4);
             if (buffer == null) {
                 Debug.err("Image File %s ot loaded %s%n", filepath, STBImage.stbi_failure_reason());
                 return new Texture(0);
@@ -159,13 +159,13 @@ public final class AssetLoader {
     }
 
     //https://ahbejarano.gitbook.io/lwjglgamedev/chapter-16
-    private static ShortBuffer readVorbis(String filename, STBVorbisInfo info) throws RuntimeException {
+    private static ShortBuffer readVorbis(Path filepath, STBVorbisInfo info) throws RuntimeException {
         MemoryStack stack = MemoryStack.stackPush();
         IntBuffer error = stack.mallocInt(1);
         // IDE has no idea what it's talking about
         @SuppressWarnings("DataFlowIssue")
-        long decoder = STBVorbis.stb_vorbis_open_filename(filename, error, null);
-        if (decoder == MemoryUtil.NULL) throw new RuntimeException("Failed to open Ogg Vorbis file " + filename + ". Error: " + error.get(0));
+        long decoder = STBVorbis.stb_vorbis_open_filename(filepath.toString(), error, null);
+        if (decoder == MemoryUtil.NULL) throw new RuntimeException("Failed to open Ogg Vorbis file " + filepath + ". Error: " + error.get(0));
 
         STBVorbis.stb_vorbis_get_info(decoder, info);
 

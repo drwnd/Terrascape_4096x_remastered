@@ -9,12 +9,13 @@ import core.utils.FileManager;
 import org.joml.Vector2f;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class FontOption implements Option, AssetIdentifier<Texture> {
 
     public FontOption(String fontName) {
-        this(new File("assets/fonts/" + fontName));
+        this(Path.of("assets", "fonts", fontName).toFile());
     }
 
     private FontOption(File fontFile) {
@@ -24,7 +25,7 @@ public final class FontOption implements Option, AssetIdentifier<Texture> {
 
 
     public void load() {
-        String[] lines = FileManager.readAllLines(new File(fontFile.getPath() + "/settings"));
+        String[] lines = FileManager.readAllLines(fontFile.toPath().resolve("settings"));
         for (String line : lines) {
             if (line.startsWith("default:")) {
                 Arrays.fill(charSizes, Byte.parseByte(line.substring(8)));
@@ -93,8 +94,8 @@ public final class FontOption implements Option, AssetIdentifier<Texture> {
         return AssetLoader.loadTexture2D(filepath());
     }
 
-    private String filepath() {
-        return fontFile.getPath() + "/Atlas.png";
+    private Path filepath() {
+        return fontFile.toPath().resolve("Atlas.png");
     }
 
     private final byte[] charSizes = new byte[256];

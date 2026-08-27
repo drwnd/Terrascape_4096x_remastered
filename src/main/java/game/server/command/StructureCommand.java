@@ -18,7 +18,7 @@ import game.server.materials_data.MaterialsData;
 import game.server.saving.StructureSaver;
 import game.utils.Utils;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import static game.utils.Constants.*;
 
@@ -51,7 +51,7 @@ public final class StructureCommand {
 
     private static CommandResult executeSaveAction(TokenList tokens) {
         String fileName = Utils.sanitizeFileName(tokens.expectNextString().string());
-        String saveFileLocation = StructureSaver.getSaveFileLocation(fileName);
+        Path saveFileLocation = StructureSaver.getSaveFileLocation(fileName);
         boolean forceSave = false, centerDefined = false;
         int centerX = 0, centerY = 0, centerZ = 0;
 
@@ -75,9 +75,9 @@ public final class StructureCommand {
         return saveStructure(tokens, centerDefined, centerX, centerY, centerZ, forceSave, saveFileLocation, fileName);
     }
 
-    private static CommandResult saveStructure(TokenList tokens, boolean centerDefined, int centerX, int centerY, int centerZ, boolean forceSave, String saveFileLocation, String fileName) {
+    private static CommandResult saveStructure(TokenList tokens, boolean centerDefined, int centerX, int centerY, int centerZ, boolean forceSave, Path saveFileLocation, String fileName) {
         tokens.expectFinishedLess();
-        if (!forceSave && new File(saveFileLocation).exists())
+        if (!forceSave && saveFileLocation.toFile().exists())
             return CommandResult.fail("That structure already exists. Choose another name or override with /%s force".formatted(tokens.getCommand()));
 
         Vector3l minPosition = new Vector3l(), maxPosition = new Vector3l();

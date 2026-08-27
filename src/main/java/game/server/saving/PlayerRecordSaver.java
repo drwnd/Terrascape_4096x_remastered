@@ -6,12 +6,13 @@ import game.server.PlayerRecord;
 import game.utils.Position;
 import org.joml.Vector3f;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public final class PlayerRecordSaver extends Saver<PlayerRecord> {
 
-    public static String getSaveFileLocation(String recordName) {
-        return "saves/%s/records/%s".formatted(Game.getWorld().getName(), recordName);
+    public static Path getSaveFileLocation(String recordName) {
+        return Path.of("saves", Game.getWorld().getName(), "records", recordName);
     }
 
     @Override

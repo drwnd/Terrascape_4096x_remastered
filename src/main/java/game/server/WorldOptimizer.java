@@ -35,7 +35,7 @@ public final class WorldOptimizer {
     }
 
     private static int deleteRedundantChunks() {
-        File[] chunkFiles = FileManager.getChildren(new File(ChunkSaver.getSaveFileLocation(0)));
+        File[] chunkFiles = FileManager.getChildren(ChunkSaver.getSaveFileLocation(0));
         if (chunkFiles == null) return 0;
         ChunkSaver saver = new ChunkSaver();
 
@@ -49,7 +49,7 @@ public final class WorldOptimizer {
     }
 
     private static boolean deleteIfRedundant(ChunkSaver saver, File chunkFile) {
-        Chunk savedChunk = saver.load(chunkFile.getPath());
+        Chunk savedChunk = saver.load(chunkFile.toPath());
         if (savedChunk == null) return delete(chunkFile);
         Chunk worldChunk = new Chunk(savedChunk.X, savedChunk.Y, savedChunk.Z, savedChunk.LOD);
 

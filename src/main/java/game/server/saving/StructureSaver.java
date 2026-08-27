@@ -6,12 +6,14 @@ import core.utils.Saver;
 import game.server.materials_data.MaterialsData;
 import game.server.generation.Structure;
 
+import java.nio.file.Path;
+
 import static game.utils.Constants.*;
 
 public final class StructureSaver extends Saver<Structure> {
 
-    public static String getSaveFileLocation(String structureName) {
-        return AssetManager.getAssetFilepath("structures/" + structureName);
+    public static Path getSaveFileLocation(String structureName) {
+        return AssetManager.getAssetFilepath(Path.of("structures", structureName));
     }
 
     @Override

@@ -2,6 +2,7 @@ package core.utils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,11 +12,11 @@ public final class FileManager {
 
     }
 
-    public static String[] readAllLines(File file) {
+    public static String[] readAllLines(Path filepath) {
         ArrayList<String> lines = new ArrayList<>();
-        file = loadAndCreateFile(file.getPath());
+        File file = loadAndCreateFile(filepath);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file.getPath()));
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             while (true) {
                 String line = reader.readLine();
                 if (line == null) break;
@@ -43,23 +44,24 @@ public final class FileManager {
         return -1;
     }
 
-    public static File[] getChildren(File file) {
+    public static File[] getChildren(Path filepath) {
+        File file = filepath.toFile();
         if (!file.exists()) return new File[0];
         file.mkdirs();
         return file.listFiles();
     }
 
-    public static File loadAndCreateDirectory(String filepath) {
-        File file = new File(filepath);
+    public static File loadAndCreateDirectory(Path filepath) {
+        File file = filepath.toFile();
         file.mkdirs();
         return file;
     }
 
-    public static File loadAndCreateFile(String filepath) {
-        File file = new File(filepath);
+    public static File loadAndCreateFile(Path filepath) {
+        File file = filepath.toFile();
         try {
             if (!file.exists()) {
-                File parent = file.getParentFile();
+                File parent = file.toPath().toAbsolutePath().getParent().toFile();
                 parent.mkdirs();
                 file.createNewFile();
             }
@@ -78,11 +80,11 @@ public final class FileManager {
         file.delete();
     }
 
-    public static String loadFileContents(String filepath) {
+    public static String loadFileContents(Path filepath) {
         String result;
 
         try {
-            InputStream in = new FileInputStream(filepath);
+            InputStream in = new FileInputStream(filepath.toFile());
             Scanner scanner = new Scanner(in, StandardCharsets.UTF_8);
             result = scanner.useDelimiter("\\A").next();
 
@@ -93,13 +95,13 @@ public final class FileManager {
         return result;
     }
 
-    public static String loadJson(String filepath) {
-        File file = new File(filepath);
+    public static String loadJson(Path filepath) {
+        File file = filepath.toFile();
         if (!file.exists()) return "{}";
 
         InputStream in;
         try {
-            in = new FileInputStream(filepath);
+            in = new FileInputStream(file);
         } catch (FileNotFoundException _) {
             return "{}";
         }

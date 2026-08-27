@@ -5,6 +5,7 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,27 +43,26 @@ public final class AssetManager {
         }
     }
 
-    public static String getAssetFilepath(String assetName) {
+    public static Path getAssetFilepath(Path assetPath) {
         for (String assetPackName : assetPackNames) {
-            String filepath = "assetPacks/%s/%s".formatted(assetPackName, assetName);
-            if (new File(filepath).exists()) return filepath;
+            Path filepath = Path.of("assetPacks", assetPackName).resolve(assetPath);
+            if (filepath.toFile().exists()) return filepath;
         }
-        return "assetPacks/Default/" + assetName;
+        return Path.of("assetPacks", "Default").resolve(assetPath);
     }
 
-    public static ArrayList<String> getAssetFilePathsInFolder(String folderName) {
-        ArrayList<String> filePaths = new ArrayList<>();
+    public static ArrayList<Path> getAssetFilePathsInFolder(String folderName) {
+        ArrayList<Path> filePaths = new ArrayList<>();
         for (String assetPackName : assetPackNames)
-            addAssetFilePathsInFolder(filePaths, "assetPacks/%s/%s".formatted(assetPackName, folderName));
-        addAssetFilePathsInFolder(filePaths, "assetPacks/Default/" + folderName);
+            addAssetFilePathsInFolder(filePaths, Path.of("assetPacks", assetPackName, folderName));
+        addAssetFilePathsInFolder(filePaths, Path.of("assetPacks", "Default", folderName));
         return filePaths;
     }
 
-    public static ArrayList<String> getAssetFilePathsInFolderMatching(String folderName, String fileNamePrefix) {
-        ArrayList<String> assetFilesInFolder = getAssetFilePathsInFolder(folderName);
+    public static ArrayList<Path> getAssetFilePathsInFolderMatching(String folderName, String fileNamePrefix) {
+        ArrayList<Path> assetFilesInFolder = getAssetFilePathsInFolder(folderName);
         assetFilesInFolder.removeIf(path -> {
-            int beginIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
-            String fileName = path.substring(beginIndex + 1);
+            String fileName = path.getFileName().toString();
             return !fileName.startsWith(fileNamePrefix);
         });
         return assetFilesInFolder;
@@ -82,10 +82,10 @@ public final class AssetManager {
         deleteAll();
     }
 
-    private static void addAssetFilePathsInFolder(ArrayList<String> filePaths, String folderPath) {
-        File[] files = FileManager.getChildren(new File(folderPath));
+    private static void addAssetFilePathsInFolder(ArrayList<Path> filePaths, Path folderPath) {
+        File[] files = FileManager.getChildren(folderPath);
         if (files == null) return;
-        for (File file : files) filePaths.add(file.getPath());
+        for (File file : files) filePaths.add(file.toPath());
     }
 
     private static final ArrayList<Runnable> deleteAllCallbacks = new ArrayList<>();

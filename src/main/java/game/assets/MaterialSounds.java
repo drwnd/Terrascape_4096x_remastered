@@ -7,9 +7,10 @@ import core.assets.identifiers.SoundCollectionIdentifier;
 import core.assets.identifiers.SoundIdentifier;
 import core.sound.Sound;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class MaterialSounds implements SoundCollectionIdentifier {
+public final class MaterialSounds implements SoundCollectionIdentifier {
 
     public static String print(MaterialSounds sound) {
         if (sound == null) return "null";
@@ -19,10 +20,10 @@ public class MaterialSounds implements SoundCollectionIdentifier {
     @Override
     public SoundCollection generateAsset() {
         if (folderPath == null || fileNamePrefix == null) return new SoundCollection(new SingleSoundIdentifier[0]);
-        ArrayList<String> filePaths = AssetManager.getAssetFilePathsInFolderMatching(folderPath, fileNamePrefix);
+        ArrayList<Path> filePaths = AssetManager.getAssetFilePathsInFolderMatching(folderPath, fileNamePrefix);
 
         ArrayList<SoundIdentifier> identifiers = new ArrayList<>();
-        for (String filepath : filePaths) identifiers.add(new SingleSoundIdentifier(filepath, gainMultiplier, pitchMultiplier));
+        for (Path filepath : filePaths) identifiers.add(new SingleSoundIdentifier(filepath, gainMultiplier, pitchMultiplier));
 
         return new SoundCollection(identifiers.toArray(new SoundIdentifier[0]));
     }
@@ -32,10 +33,10 @@ public class MaterialSounds implements SoundCollectionIdentifier {
     @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
     private float gainMultiplier = 1.0F, pitchMultiplier = 1.0F;
 
-    private record SingleSoundIdentifier(String filePath, float gainMultiplier, float pitchMultiplier) implements SoundIdentifier {
+    private record SingleSoundIdentifier(Path filepath, float gainMultiplier, float pitchMultiplier) implements SoundIdentifier {
         @Override
         public Sound generateAsset() {
-            return new Sound(AssetLoader.loadSound(filePath, false), gainMultiplier, pitchMultiplier);
+            return new Sound(AssetLoader.loadSound(filepath), gainMultiplier, pitchMultiplier);
         }
     }
 }

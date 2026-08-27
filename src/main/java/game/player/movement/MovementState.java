@@ -16,6 +16,8 @@ import game.utils.Position;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.nio.file.Path;
+
 import static game.utils.Constants.*;
 
 public abstract class MovementState {
@@ -23,7 +25,7 @@ public abstract class MovementState {
     MovementState next = this;
 
     public static <T extends MovementState> T load(Class<T> tClass) {
-        String json = FileManager.loadJson(AssetManager.getAssetFilepath("movementStates/%s.json".formatted(tClass.getSimpleName())));
+        String json = FileManager.loadJson(AssetManager.getAssetFilepath(Path.of("movementStates", tClass.getSimpleName() + ".json")));
         return new Gson().fromJson(json, tClass);
     }
 
