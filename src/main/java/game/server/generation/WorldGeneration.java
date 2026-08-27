@@ -183,7 +183,7 @@ public final class WorldGeneration {
         long chunkStartY = data.chunkY << CHUNK_SIZE_BITS + data.LOD;
         if (data.height < WATER_LEVEL && chunkStartY >= WATER_LEVEL) return;
         int start = data.clampStartHeightToInChunkY(WATER_LEVEL - data.undergroundRiverDepth);
-        int end = data.clampEndHeightToInChunkY(WATER_LEVEL + data.undergroundRiverDepth);
+        int end = data.clampStartHeightToInChunkY(WATER_LEVEL + data.undergroundRiverDepth);
         data.storeColumn(inChunkX, inChunkZ, start, end, chunkStartY < WATER_LEVEL ? WATER : AIR);
     }
 
