@@ -8,12 +8,13 @@ import game.server.Sender;
 import game.server.Server;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public final class ServerSaver extends Saver<Server> {
 
-    public static String getSaveFileLocation(String worldName) {
-        return "saves/%s/serverData".formatted(worldName);
+    public static Path getSaveFileLocation(String worldName) {
+        return Path.of("saves", worldName, "serverData");
     }
 
     public ServerSaver() {

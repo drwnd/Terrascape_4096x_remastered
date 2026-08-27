@@ -10,10 +10,12 @@ import game.utils.Position;
 
 import org.joml.Vector3f;
 
+import java.nio.file.Path;
+
 public final class PlayerSaver extends Saver<Player> {
 
-    public static String getSaveFileLocation(String worldName) {
-        return "saves/%s/playerData".formatted(worldName);
+    public static Path getSaveFileLocation(String worldName) {
+        return Path.of("saves", worldName, "playerData");
     }
 
     public PlayerSaver() {

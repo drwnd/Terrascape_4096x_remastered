@@ -6,6 +6,7 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 import game.assets.MaterialSounds;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static game.utils.Constants.*;
@@ -58,7 +59,7 @@ public final class Material {
     }
 
     private static void loadMaterial(Materials identifier, Gson gson) {
-        String json = FileManager.loadJson(AssetManager.getAssetFilepath("materials/%s.json".formatted(identifier.name())));
+        String json = FileManager.loadJson(AssetManager.getAssetFilepath(Path.of("materials", identifier.name() + ".json")));
         Material material = gson.fromJson(json, Material.class);
         int materialIndex = identifier.ordinal() & 0xFF;
 

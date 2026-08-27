@@ -7,6 +7,8 @@ import core.assets.TextureArray;
 import core.rendering_api.CoreObjectLoader;
 import core.utils.FileIndexSet;
 
+import java.nio.file.Path;
+
 public interface TextureArrayIdentifier extends AssetIdentifier<TextureArray> {
 
     String folderName();
@@ -23,7 +25,7 @@ public interface TextureArrayIdentifier extends AssetIdentifier<TextureArray> {
 
         for (int index = 0; index < textures.length; index++) {
             String fileName = indexSet.getFileName(index);
-            String filepath = AssetManager.getAssetFilepath("textures/%s/%s".formatted(folderName(), fileName));
+            Path filepath = AssetManager.getAssetFilepath(Path.of("textures", folderName(), fileName));
 
             textures[index] = AssetLoader.loadTexture2D(filepath);
         }

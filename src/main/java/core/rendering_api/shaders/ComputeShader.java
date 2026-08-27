@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL46;
 
 public class ComputeShader extends Shader {
 
-    public ComputeShader(String computeShaderFilePath, ShaderIdentifier identifier) {
-        this(FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH + computeShaderFilePath)), identifier.toString());
+    public ComputeShader(String computeShaderFilepath, ShaderIdentifier identifier) {
+        this(FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH.resolve(computeShaderFilepath))), identifier.toString());
     }
 
     public ComputeShader(String computeShaderCode, String name) {

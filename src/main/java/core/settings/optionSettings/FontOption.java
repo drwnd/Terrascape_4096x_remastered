@@ -9,6 +9,7 @@ import core.utils.FileManager;
 import org.joml.Vector2f;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class FontOption implements Option, AssetIdentifier<Texture> {
@@ -93,8 +94,8 @@ public final class FontOption implements Option, AssetIdentifier<Texture> {
         return AssetLoader.loadTexture2D(filepath());
     }
 
-    private String filepath() {
-        return fontFile.getPath() + "/Atlas.png";
+    private Path filepath() {
+        return fontFile.toPath().resolve("Atlas.png");
     }
 
     private final byte[] charSizes = new byte[256];

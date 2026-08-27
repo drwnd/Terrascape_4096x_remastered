@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public abstract class Saver<T> {
 
@@ -17,7 +18,7 @@ public abstract class Saver<T> {
         data = new ByteArrayList(expectedByteSize + 4);
     }
 
-    public final void save(T object, String filepath) {
+    public final void save(T object, Path filepath) {
         data.clear();
         saveInt(getVersionNumber());
         save(object);
@@ -31,8 +32,8 @@ public abstract class Saver<T> {
         }
     }
 
-    public final T load(String filepath) {
-        File saveFile = new File(filepath);
+    public final T load(Path filepath) {
+        File saveFile = filepath.toFile();
         if (!saveFile.exists()) return getDefault();
         try {
             FileInputStream reader = new FileInputStream(saveFile);
@@ -237,7 +238,7 @@ public abstract class Saver<T> {
         return builder.toString();
     }
 
-    public final <V> void saveGeneric(GenericSaver<V> savable) {
+    public final void saveGeneric(GenericSaver savable) {
         savable.save(this);
     }
 
@@ -252,7 +253,7 @@ public abstract class Saver<T> {
         T load(Saver<?> saver);
     }
 
-    public interface GenericSaver<T> {
+    public interface GenericSaver {
         void save(Saver<?> saver);
     }
 }

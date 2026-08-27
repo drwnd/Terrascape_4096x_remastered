@@ -18,7 +18,7 @@ import org.joml.Vector3f;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static game.utils.Constants.*;
@@ -172,7 +172,7 @@ public final class CustomShapeTab extends Renderable implements InventoryTab {
             int option = fileChooser.showOpenDialog(null);
             if (option != JFileChooser.APPROVE_OPTION) return ButtonResult.FAILURE;
 
-            selectedFilepath = fileChooser.getSelectedFile().getPath();
+            selectedFilepath = fileChooser.getSelectedFile().toPath();
             loadShapeShader();
             return ButtonResult.SUCCESS;
         };
@@ -181,7 +181,7 @@ public final class CustomShapeTab extends Renderable implements InventoryTab {
     private Clickable getReloadButtonClickable() {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            if (selectedFilepath == null || !new File(selectedFilepath).exists()) return ButtonResult.FAILURE;
+            if (selectedFilepath == null || !selectedFilepath.toFile().exists()) return ButtonResult.FAILURE;
             loadShapeShader();
             return ButtonResult.SUCCESS;
         };
@@ -199,7 +199,7 @@ public final class CustomShapeTab extends Renderable implements InventoryTab {
 
     private final CustomShape shape = new CustomShape(STONE, "bool isInside(int x, int y, int z) {return true;}");
     private final ArrayList<CubeDisplay> cubeDisplays = new ArrayList<>();
-    private String selectedFilepath = null;
+    private Path selectedFilepath = null;
     private StructureDisplay shapePreview;
     private boolean refreshShapePreview = true;
 }

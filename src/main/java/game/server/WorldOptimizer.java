@@ -49,7 +49,7 @@ public final class WorldOptimizer {
     }
 
     private static boolean deleteIfRedundant(ChunkSaver saver, File chunkFile) {
-        Chunk savedChunk = saver.load(chunkFile.getPath());
+        Chunk savedChunk = saver.load(chunkFile.toPath());
         if (savedChunk == null) return delete(chunkFile);
         Chunk worldChunk = new Chunk(savedChunk.X, savedChunk.Y, savedChunk.Z, savedChunk.LOD);
 

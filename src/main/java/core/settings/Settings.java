@@ -7,6 +7,7 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +62,7 @@ public final class Settings {
     }
 
     private static SettingsFile loadSettingsFile() {
-        String[] settingsFileContents = FileManager.readAllLines(new File(SETTINGS_FILE_LOCATION));
+        String[] settingsFileContents = FileManager.readAllLines(Path.of("Settings").toFile());
         String[][] settings = new String[settingsFileContents.length][0];
         for (int index = 0; index < settingsFileContents.length; index++) settings[index] = settingsFileContents[index].split(":");
         return new SettingsFile(settings);
@@ -87,7 +88,7 @@ public final class Settings {
     }
 
     private static final ArrayList<Setting> settings;
-    private static final String SETTINGS_FILE_LOCATION = "Settings";
+    private static final Path SETTINGS_FILE_LOCATION = Path.of("Settings");
     private static final AssetIdentifier<SettingsFile> fileIdentifier;
 
     private static class AssetPackSetting implements Setting {

@@ -5,6 +5,7 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,12 +43,12 @@ public final class AssetManager {
         }
     }
 
-    public static String getAssetFilepath(String assetName) {
+    public static Path getAssetFilepath(Path assetPath) {
         for (String assetPackName : assetPackNames) {
-            String filepath = "assetPacks/%s/%s".formatted(assetPackName, assetName);
-            if (new File(filepath).exists()) return filepath;
+            Path filepath = Path.of("assetPacks", assetPackName).resolve(assetPath);
+            if (filepath.toFile().exists()) return filepath;
         }
-        return "assetPacks/Default/" + assetName;
+        return Path.of("assetPacks", "Default").resolve(assetPath);
     }
 
     public static ArrayList<String> getAssetFilePathsInFolder(String folderName) {

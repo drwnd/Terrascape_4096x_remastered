@@ -11,13 +11,14 @@ import game.server.generation.WorldGeneration;
 import game.utils.Status;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static game.utils.Constants.*;
 
 public final class ChunkSaver extends Saver<Chunk> {
 
-    public static String getSaveFileLocation(ChunkID id, int lod) {
-        return "saves/%s/chunks/%s/%s".formatted(Game.getWorld().getName(), lod, id);
+    public static Path getSaveFileLocation(ChunkID id, int lod) {
+        return Path.of("saves", Game.getWorld().getName(), "chunks", String.valueOf(lod), String.valueOf(id));
     }
 
     public static String getSaveFileLocation(int lod) {
@@ -45,7 +46,7 @@ public final class ChunkSaver extends Saver<Chunk> {
         if (!lowerLodFile.exists()) return; // No stored chunks to propagate into higher LODs
         if (thisLodFile.exists()) return;   // LOD is saved from previous play session
 
-        else thisLodFile = FileManager.loadAndCreateDirectory(thisLodFile.getPath());
+        else thisLodFile = FileManager.loadAndCreateDirectory(thisLodFile.toPath());
         File[] lowerLodChunkFiles = FileManager.getChildren(lowerLodFile);
 
         if (lowerLodChunkFiles == null) {
@@ -54,7 +55,7 @@ public final class ChunkSaver extends Saver<Chunk> {
         }
 
         for (File chunkFile : lowerLodChunkFiles) {
-            Chunk chunk = saver.load(chunkFile.getPath());
+            Chunk chunk = saver.load(chunkFile.toPath());
             if (chunk == null) continue;
             long thisLodChunkX = chunk.X >> 1;
             long thisLodChunkY = chunk.Y >> 1;
