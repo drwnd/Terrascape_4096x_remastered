@@ -535,7 +535,7 @@ public final class Renderer extends Renderable {
         Shader shader = AssetManager.get(Shaders.MODEL);
         shader.bind();
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
-        shader.setUniform("position", 32.0F, 32.0F, 32.0F);
+        shader.setUniform("position", 32.0F, 16, 32.0F);
         shader.setUniform("image", 0);
 
         glDisable(GL_STENCIL_TEST);
