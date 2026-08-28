@@ -65,17 +65,34 @@ public final class AssetLoader {
     }
 
     public static GuiElement loadGuiElement(GuiElementIdentifier identifier) {
-        int vao = createVAO();
-        int vbo1 = storeDateInAttributeList(0, 2, identifier.vertices());
-        int vbo2 = storeDateInAttributeList(1, 2, identifier.textureCoordinates());
+        Object[] attributes = identifier.attributes();
+        int[] attributeSizes = identifier.attributeSizes();
+
+        if (attributes == null || attributeSizes == null) throw new NullPointerException("Attributes and their sizes cannot be null");
+        if (attributes.length != attributeSizes.length) throw new IllegalArgumentException("Specify same number of attributes and attribute sizes");
+        for (Object attribute : attributes)
+            if (!(attribute instanceof int[]) && !(attribute instanceof float[]))
+                throw new IllegalArgumentException("Attribute must either be float[] or int[]");
+
+        int vao = createVAO(), vertexCount;
+
+        if (attributes[0] instanceof int[] array) vertexCount = array.length / attributeSizes[0];
+        else if (attributes[0] instanceof float[] array) vertexCount = array.length / attributeSizes[0];
+        else vertexCount = 0;
+
+        int[] vbos = new int[attributes.length];
+        for (int index = 0; index < attributes.length; index++) {
+            if (attributes[index] instanceof int[] array) vbos[index] = storeDateInAttributeList(index, attributeSizes[index], array);
+            else if (attributes[index] instanceof float[] array) vbos[index] = storeDateInAttributeList(index, attributeSizes[index], array);
+        }
 
         glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo1);
-        glDeleteBuffers(vbo1);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-        glDeleteBuffers(vbo2);
+        for (int vbo : vbos) {
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glDeleteBuffers(vbo);
+        }
 
-        return new GuiElement(vao, identifier.vertices().length);
+        return new GuiElement(vao, vertexCount);
     }
 
     public static int generateModelIndexBuffer(int quadCount) {
@@ -111,7 +128,7 @@ public final class AssetLoader {
             textData[i + 2] = i >> 2 | offsetY;
             textData[i + 3] = i >> 2 | offsetX | offsetY;
         }
-        int vbo = storeDateInAttributeList(textData);
+        int vbo = storeDateInAttributeList(0, 1, textData);
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -136,11 +153,11 @@ public final class AssetLoader {
         return vbo;
     }
 
-    public static int storeDateInAttributeList(int[] data) {
+    public static int storeDateInAttributeList(int attributeNo, int size, int[] data) {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
-        glVertexAttribIPointer(0, 1, GL_INT, 0, 0);
+        glVertexAttribIPointer(attributeNo, size, GL_INT, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         return vbo;
     }

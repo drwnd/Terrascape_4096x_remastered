@@ -5,9 +5,9 @@ import core.assets.GuiElement;
 
 public interface GuiElementIdentifier extends AssetIdentifier<GuiElement> {
 
-    float[] vertices();
+    Object[] attributes();
 
-    float[] textureCoordinates();
+    int[] attributeSizes();
 
     @Override
     default GuiElement generateAsset() {
