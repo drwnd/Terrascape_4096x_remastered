@@ -1,9 +1,7 @@
 package game.player.rendering;
 
-import core.assets.AssetManager;
-import core.assets.CoreShaders;
-import core.assets.Texture;
-import core.assets.TextureArray;
+import core.assets.*;
+import core.assets.identifiers.TextureIdentifier;
 import core.renderables.Renderable;
 import core.renderables.UiElement;
 import core.rendering_api.CoreObjectLoader;
@@ -18,10 +16,7 @@ import core.settings.CoreToggleSettings;
 import core.settings.optionSettings.FontOption;
 import core.utils.Vector3l;
 
-import game.assets.Shaders;
-import game.assets.TextureArrays;
-import game.assets.Textures;
-import game.assets.VertexArrays;
+import game.assets.*;
 import game.player.ChatTextField;
 import game.player.Player;
 import game.player.interaction.*;
@@ -202,6 +197,7 @@ public final class Renderer extends Renderable {
         renderSkybox(camera);
         renderOpaqueGeometry(cameraPosition, projectionViewMatrix, sunMatrix);
         renderOpaqueParticles(cameraPosition, projectionViewMatrix, sunMatrix);
+        renderPlayerCharacter(projectionViewMatrix);
 
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
         if (ToggleSettings.USE_AMBIENT_OCCLUSION.value() && IntSettings.AMBIENT_OCCLUSION_SAMPLES.value() > 0)
@@ -532,6 +528,25 @@ public final class Renderer extends Renderable {
         shader.setUniform("viewPosition", cameraPosition.getInChunkPosition());
 
         renderParticles(shader, currentTick, true);
+    }
+
+    private static void renderPlayerCharacter(Matrix4f projectionViewMatrix) {
+        GuiElement playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+        Shader shader = AssetManager.get(Shaders.MODEL);
+        shader.bind();
+        shader.setUniform("projectionViewMatrix", projectionViewMatrix);
+        shader.setUniform("position", 32.0F, 32.0F, 32.0F);
+        shader.setUniform("image", 0);
+
+        glDisable(GL_STENCIL_TEST);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, AssetManager.get((TextureIdentifier) OptionSettings.SKIN.value()).id());
+
+        glBindVertexArray(playerCharacter.vao());
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glDrawArrays(GL_TRIANGLES, 0, playerCharacter.vertexCount());
     }
 
     private void applyAmbientOcclusion(Position cameraPosition, Matrix4f projectionViewMatrix) {

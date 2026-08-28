@@ -13,13 +13,8 @@ public enum CoreGuiElements implements GuiElementIdentifier {
     }
 
     @Override
-    public Object[] attributes() {
-        return new Object[]{vertices, textureCoordinates};
-    }
-
-    @Override
-    public int[] attributeSizes() {
-        return new int[]{2, 2};
+    public GuiElementData getData() {
+        return new GuiElementData(new float[][]{vertices, textureCoordinates}, new int[]{2, 2});
     }
 
     private final float[] vertices, textureCoordinates;

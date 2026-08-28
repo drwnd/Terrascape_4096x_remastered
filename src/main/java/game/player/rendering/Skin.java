@@ -3,7 +3,6 @@ package game.player.rendering;
 import core.assets.AssetLoader;
 import core.assets.Texture;
 import core.assets.identifiers.TextureIdentifier;
-import core.language.Language;
 import core.settings.optionSettings.Option;
 import core.utils.FileManager;
 
@@ -22,21 +21,21 @@ public final class Skin implements Option, TextureIdentifier {
 
     @Override
     public Option next() {
-        File[] languages = FileManager.getSiblings(skinFile);
-        int index = (FileManager.indexOf(skinFile, languages) + 1) % languages.length;
-        return new Skin(languages[index]);
+        File[] skins = FileManager.getSiblings(skinFile);
+        int index = (FileManager.indexOf(skinFile, skins) + 1) % skins.length;
+        return new Skin(skins[index]);
     }
 
     @Override
     public Option previous() {
-        File[] languages = FileManager.getSiblings(skinFile);
-        int index = (FileManager.indexOf(skinFile, languages) - 1 + languages.length) % languages.length;
-        return new Skin(languages[index]);
+        File[] skins = FileManager.getSiblings(skinFile);
+        int index = (FileManager.indexOf(skinFile, skins) - 1 + skins.length) % skins.length;
+        return new Skin(skins[index]);
     }
 
     @Override
     public Option value(String name) {
-        return new Language(name);
+        return new Skin(name);
     }
 
     @Override

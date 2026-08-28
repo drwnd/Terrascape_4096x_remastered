@@ -1,6 +1,5 @@
 package core.assets;
 
-import core.assets.identifiers.GuiElementIdentifier;
 import core.rendering_api.Debug;
 import core.rendering_api.shaders.TextShader;
 
@@ -45,7 +44,7 @@ public final class AssetLoader {
 
             buffer = STBImage.stbi_load(filepath.toString(), w, h, c, 4);
             if (buffer == null) {
-                Debug.err("Image File %s ot loaded %s%n", filepath, STBImage.stbi_failure_reason());
+                Debug.err("Image File %s not loaded %s%n", filepath, STBImage.stbi_failure_reason());
                 return new Texture(0);
             }
 
@@ -64,27 +63,14 @@ public final class AssetLoader {
         return new Texture(id, width, height);
     }
 
-    public static GuiElement loadGuiElement(GuiElementIdentifier identifier) {
-        Object[] attributes = identifier.attributes();
-        int[] attributeSizes = identifier.attributeSizes();
-
-        if (attributes == null || attributeSizes == null) throw new NullPointerException("Attributes and their sizes cannot be null");
-        if (attributes.length != attributeSizes.length) throw new IllegalArgumentException("Specify same number of attributes and attribute sizes");
-        for (Object attribute : attributes)
-            if (!(attribute instanceof int[]) && !(attribute instanceof float[]))
-                throw new IllegalArgumentException("Attribute must either be float[] or int[]");
-
-        int vao = createVAO(), vertexCount;
-
-        if (attributes[0] instanceof int[] array) vertexCount = array.length / attributeSizes[0];
-        else if (attributes[0] instanceof float[] array) vertexCount = array.length / attributeSizes[0];
-        else vertexCount = 0;
+    public static GuiElement loadGuiElement(GuiElementData data) {
+        int vertexCount = verifyGuiElementData(data), vao = createVAO();
+        float[][] attributes = data.attributes();
+        int[] attributeSizes = data.attributeSizes();
 
         int[] vbos = new int[attributes.length];
-        for (int index = 0; index < attributes.length; index++) {
-            if (attributes[index] instanceof int[] array) vbos[index] = storeDateInAttributeList(index, attributeSizes[index], array);
-            else if (attributes[index] instanceof float[] array) vbos[index] = storeDateInAttributeList(index, attributeSizes[index], array);
-        }
+        for (int index = 0; index < attributes.length; index++)
+            vbos[index] = storeDateInAttributeList(index, attributeSizes[index], attributes[index]);
 
         glBindVertexArray(0);
         for (int vbo : vbos) {
@@ -194,5 +180,27 @@ public final class AssetLoader {
         STBVorbis.stb_vorbis_close(decoder);
 
         return result;
+    }
+
+    private static int verifyGuiElementData(GuiElementData data) {
+        if (data == null || data.attributes() == null || data.attributeSizes() == null) throw new NullPointerException();
+        float[][] attributes = data.attributes();
+        int[] attributeSizes = data.attributeSizes();
+
+        if (attributes.length != attributeSizes.length) throw new IllegalArgumentException("Specify same number of attributes and attribute sizes");
+
+        int vertexCount;
+        if (attributes.length == 0) vertexCount = 0;
+        else vertexCount = attributes[0].length / attributeSizes[0];
+
+        for (int index = 0; index < attributes.length; index++) {
+            if (attributeSizes[index] <= 0) throw new IllegalArgumentException("Sizes must be strictly positive integers");
+            if (attributes[index] == null) throw new IllegalArgumentException("An attribute cannot be null");
+            float[] attribute = attributes[index];
+            if (attribute.length / attributeSizes[index] != vertexCount || attribute.length % attributeSizes[index] != 0)
+                throw new IllegalArgumentException("Inconsistent vertex count");
+        }
+
+        return vertexCount;
     }
 }
