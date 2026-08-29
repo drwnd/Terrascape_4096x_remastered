@@ -27,15 +27,21 @@ public enum Models implements GuiElementIdentifier {
     private record ModelData(ModelBox[] boxes) {
 
         private GuiElementData toGuiElementData() {
-            ArrayList<Float> vertices = new ArrayList<>(boxes.length * 6 * 6 * 3);
-            ArrayList<Float> textureCoordinates = new ArrayList<>(boxes.length * 6 * 6 * 2);
+            ArrayList<Float> vertices = new ArrayList<>(boxes.length * VERTICES_PER_BOX * 3);
+            ArrayList<Integer> transformIndices = new ArrayList<>(boxes.length * VERTICES_PER_BOX * 1);
+            ArrayList<Float> textureCoordinates = new ArrayList<>(boxes.length * VERTICES_PER_BOX * 2);
 
-            for (ModelBox box : boxes) {
+            for (int index = 0; index < boxes.length; index++) {
+                ModelBox box = boxes[index];
                 generateModelPart(vertices, textureCoordinates, box.position, box.size, false, box.textureCoordinate);
                 if (box.hasOuterLayer) generateModelPart(vertices, textureCoordinates, box.position, box.size, true, box.outerTextureCoordinate);
+                for (int count = box.hasOuterLayer ? VERTICES_PER_BOX * 2 : VERTICES_PER_BOX * 1; count != 0; count--) transformIndices.add(index);
             }
 
-            return new GuiElementData(new float[][]{toArray(vertices), toArray(textureCoordinates)}, new int[]{3, 2});
+            return new GuiElementData(
+                    new float[][]{toFloatArray(vertices), toFloatArray(textureCoordinates)},
+                    new int[][]{toIntArray(transformIndices)},
+                    new int[]{3, 2});
         }
 
         private static void generateModelPart(ArrayList<Float> vert, ArrayList<Float> text, Vector3f position, Vector3i size,
@@ -153,13 +159,22 @@ public enum Models implements GuiElementIdentifier {
 
         }
 
-        private static float[] toArray(ArrayList<Float> list) {
+        private static float[] toFloatArray(ArrayList<Float> list) {
             float[] array = new float[list.size()];
+            for (int index = 0; index < array.length; index++) array[index] = list.get(index);
+            return array;
+        }
+
+        private static int[] toIntArray(ArrayList<Integer> list) {
+            int[] array = new int[list.size()];
             for (int index = 0; index < array.length; index++) array[index] = list.get(index);
             return array;
         }
     }
 
-    private record ModelBox(Vector3i size, Vector3f center, Vector3f position, Vector2f textureCoordinate, boolean hasOuterLayer, Vector2f outerTextureCoordinate) {
+    private record ModelBox(Vector3i size, Vector3f center, Vector3f position, Vector2f textureCoordinate, boolean hasOuterLayer,
+                            Vector2f outerTextureCoordinate) {
     }
+
+    private static final int VERTICES_PER_BOX = 36;
 }
