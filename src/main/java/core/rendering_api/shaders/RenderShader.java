@@ -5,7 +5,7 @@ import core.assets.identifiers.ShaderIdentifier;
 import core.rendering_api.Debug;
 import core.utils.FileManager;
 
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL46.*;
 
 public class RenderShader extends Shader {
 
@@ -20,8 +20,8 @@ public class RenderShader extends Shader {
             link(programID, vertexShaderID, fragmentShaderID);
 
             Debug.log("Creating uniforms for Shader %s%n", identifier);
-            createUniforms(vertexShaderCode);
-            createUniforms(fragmentShaderCode);
+            createUniforms(vertexShaderCode, identifier.toString());
+            createUniforms(fragmentShaderCode, identifier.toString());
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }

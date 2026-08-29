@@ -4,6 +4,7 @@ import core.assets.Asset;
 
 import core.rendering_api.Debug;
 import core.utils.Vector3l;
+
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -146,7 +147,7 @@ public abstract class Shader implements Asset {
         return shaderID;
     }
 
-    void createUniforms(String shaderCode) {
+    void createUniforms(String shaderCode, String shaderName) {
         String[] lines = shaderCode.split("\n");
 
         for (String line : lines) {
@@ -154,13 +155,13 @@ public abstract class Shader implements Asset {
             if (!stripped.startsWith("uniform")) continue;
 
             String uniformName = stripped.split(" ")[2];
-            createUniform(uniformName);
+            createUniform(uniformName, shaderName);
         }
     }
 
-    private void createUniform(String uniformName) {
+    private void createUniform(String uniformName, String shaderName) {
         int uniformLocation = glGetUniformLocation(programID, uniformName);
-        if (uniformLocation == -1) Debug.err("Could not find uniform " + uniformName);
+        if (uniformLocation == -1) Debug.err("Could not find uniform %s in shader %s%n", uniformName, shaderName);
         uniforms.put(uniformName, uniformLocation);
         Debug.log("-Created uniform %s with binding %s%n", uniformName, uniformLocation);
     }

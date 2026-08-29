@@ -4,6 +4,7 @@ import core.assets.AssetManager;
 import core.assets.identifiers.ShaderIdentifier;
 import core.rendering_api.Debug;
 import core.utils.FileManager;
+
 import org.lwjgl.opengl.GL46;
 
 public class ComputeShader extends Shader {
@@ -12,14 +13,14 @@ public class ComputeShader extends Shader {
         this(FileManager.loadFileContents(AssetManager.getAssetFilepath(SHADER_FOLDER_PATH.resolve(computeShaderFilepath))), identifier.toString());
     }
 
-    public ComputeShader(String computeShaderCode, String name) {
+    public ComputeShader(String computeShaderCode, String shaderName) {
         try {
             programID = createProgram();
             int computeShaderID = createComputeShader(computeShaderCode, programID);
             link(programID, computeShaderID);
 
-            Debug.log("Creating uniforms for Shader %s%n", name);
-            createUniforms(computeShaderCode);
+            Debug.log("Creating uniforms for Shader %s%n", shaderName);
+            createUniforms(computeShaderCode, shaderName);
 
         } catch (Exception exception) {
             throw new RuntimeException(exception);
