@@ -64,6 +64,7 @@ public final class AssetLoader {
     }
 
     public static GuiElement loadGuiElement(GuiElementData data) {
+        verifyGuiElementData(data);
         int vertexCount = data.getVertexCount(), vao = createVAO();
         float[][] floatAttributes = data.floatAttributes();
         int[][] intAttributes = data.intAttributes();
@@ -183,5 +184,32 @@ public final class AssetLoader {
         STBVorbis.stb_vorbis_close(decoder);
 
         return result;
+    }
+
+    private static void verifyGuiElementData(GuiElementData data) {
+        if (data == null || data.floatAttributes() == null || data.intAttributes() == null || data.attributeSizes() == null) throw new NullPointerException();
+        float[][] floatAttributes = data.floatAttributes();
+        int[][] intAttributes = data.intAttributes();
+        int[] attributeSizes = data.attributeSizes();
+
+        if (floatAttributes.length + intAttributes.length != attributeSizes.length)
+            throw new IllegalArgumentException("Specify same number of attributes and attribute sizes");
+
+        int vertexCount = data.getVertexCount();
+        for (int attributeSize : attributeSizes) if (attributeSize <= 0) throw new IllegalArgumentException("Sizes must be strictly positive integers");
+
+        for (int index = 0; index < floatAttributes.length; index++) {
+            float[] attribute = floatAttributes[index];
+            if (attribute == null) throw new IllegalArgumentException("An attribute cannot be null");
+            if (attribute.length / attributeSizes[index] != vertexCount || attribute.length % attributeSizes[index] != 0)
+                throw new IllegalArgumentException("Inconsistent vertex count");
+        }
+
+        for (int index = 0; index < intAttributes.length; index++) {
+            int[] attribute = intAttributes[index];
+            if (attribute == null) throw new IllegalArgumentException("An attribute cannot be null");
+            if (attribute.length / attributeSizes[floatAttributes.length + index] != vertexCount || attribute.length % attributeSizes[floatAttributes.length + index] != 0)
+                throw new IllegalArgumentException("Inconsistent vertex count");
+        }
     }
 }

@@ -8,6 +8,7 @@ import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -26,6 +27,14 @@ public abstract class Shader implements Asset {
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             glUniformMatrix4fv(getUniform(uniformName), false, value.get(stack.mallocFloat(16)));
+        }
+    }
+
+    public void setUniform(String uniformName, Matrix4f[] values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(16 * values.length);
+            for (int index = 0; index < values.length; index++) values[index].get(index * 16, buffer);
+            glUniformMatrix4fv(getUniform(uniformName), false, buffer);
         }
     }
 

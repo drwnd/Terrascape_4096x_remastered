@@ -531,22 +531,24 @@ public final class Renderer extends Renderable {
     }
 
     private static void renderPlayerCharacter(Matrix4f projectionViewMatrix) {
-        GuiElement playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+        Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
         Shader shader = AssetManager.get(Shaders.MODEL);
         shader.bind();
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
         shader.setUniform("position", 32.0F, 16, 32.0F);
         shader.setUniform("image", 0);
+        shader.setUniform("transformations", playerCharacter.transforms());
 
         glDisable(GL_STENCIL_TEST);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, AssetManager.get((TextureIdentifier) OptionSettings.SKIN.value()).id());
 
-        glBindVertexArray(playerCharacter.vao());
+        glBindVertexArray(playerCharacter.guiElement().vao());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
-        glDrawArrays(GL_TRIANGLES, 0, playerCharacter.vertexCount());
+        glDrawArrays(GL_TRIANGLES, 0, playerCharacter.guiElement().vertexCount());
     }
 
     private void applyAmbientOcclusion(Position cameraPosition, Matrix4f projectionViewMatrix) {
