@@ -531,19 +531,24 @@ public final class Renderer extends Renderable {
     }
 
     private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Position playerPosition) {
-        if (OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON) return;
         Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
         Shader shader = AssetManager.get(Shaders.MODEL);
         Matrix4f[] transforms = playerCharacter.transforms();
         Model.ModelBox[] boxes = playerCharacter.boxes();
 
-        float angleY = (float) Math.toRadians(player.getCamera().getRotation().y);
+        Vector3f cameraRotation = player.getCamera().getRotation();
         for (int index = 0; index < transforms.length; index++)
             transforms[index].identity()
-                    .setRotationXYZ(0, -angleY, 0)
+                    .rotate((float) -Math.toRadians(cameraRotation.y), 0.0F, 1.0F, 0.0F)
                     .translate(boxes[index].position());
 
-        transforms[0].rotate((float) -Math.toRadians(player.getCamera().getRotation().x), new Vector3f(1, 0, 0));
+        float speed = (float) Math.clamp(player.getMovement().getRenderVelocity().length() * 0.2, -Math.PI * 0.5, Math.PI * 0.5);
+        double time = System.currentTimeMillis() * 0.01;
+        transforms[0].rotate((float) -Math.toRadians(cameraRotation.x), 1.0F, 0.0F, 0.0F);
+        transforms[2].rotate((float) Math.sin(time) * speed, 1.0F, 0.0F, 0.0F);
+        transforms[3].rotate((float) -Math.sin(time) * speed, 1.0F, 0.0F, 0.0F);
+        transforms[4].rotate((float) -Math.sin(time) * speed * 0.5F, 1.0F, 0.0F, 0.0F);
+        transforms[5].rotate((float) Math.sin(time) * speed * 0.5F, 1.0F, 0.0F, 0.0F);
 
         Vector3l cameraChunkPosition = new Vector3l(
                 cameraPosition.longX & ~CHUNK_SIZE_MASK,
