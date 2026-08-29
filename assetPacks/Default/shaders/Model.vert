@@ -11,6 +11,7 @@ layout (location = 2) in int transformIndex;
 out vec2 fragTextureCoordinate;
 
 void main() {
-    gl_Position = projectionViewMatrix * transformations[transformIndex] * vec4(position + positionOffset, 1);
+    vec3 transformedPosition = (transformations[transformIndex] * vec4(positionOffset, 1)).xyz;
+    gl_Position = projectionViewMatrix * vec4(transformedPosition + position, 1);
     fragTextureCoordinate = textureCoordinate;
 }

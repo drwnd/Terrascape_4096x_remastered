@@ -26,8 +26,13 @@ public record Model(GuiElement guiElement, ModelBox[] boxes, Matrix4f[] transfor
 
     private static Matrix4f[] getTransforms(ModelBox[] boxes) {
         Matrix4f[] transforms = new Matrix4f[boxes.length];
-        for (int index = 0; index < boxes.length; index++)
-            transforms[index] = new Matrix4f().translate(boxes[index].position);
+        for (int index = 0; index < boxes.length; index++) {
+            transforms[index] = new Matrix4f()
+                    .translate(boxes[index].position);
+            if (index == 1) continue;
+            transforms[index].rotate((float) (Math.random() * 2 * Math.PI), new Vector3f(0, 1, 0))
+                    .rotate((float) (Math.random() * 2 * Math.PI), new Vector3f(1, 0, 0));
+        }
         return transforms;
     }
 
@@ -52,61 +57,61 @@ public record Model(GuiElement guiElement, ModelBox[] boxes, Matrix4f[] transfor
 
         private static void generateModelPart(ArrayList<Float> vert, ArrayList<Float> text, Vector3i size, Vector3f center,
                                               boolean padSize, Vector2f textureCoordinate) {
-            float x = size.x * 0.5F, y = size.y * 0.5F, z = size.z * 0.5F;
             float dx = size.x / 64F, dy = size.y / 64F, dz = size.z / 64F;
             float u = textureCoordinate.x, v = textureCoordinate.y;
-            x += padSize ? 0.25F : 0.0F;
-            y += padSize ? 0.25F : 0.0F;
-            z += padSize ? 0.25F : 0.0F;
+            float padding = padSize ? 0.25F : 0;
+            float px = size.x + padding - center.x, nx = -center.x - padding;
+            float py = size.y + padding - center.y, ny = -center.y - padding;
+            float pz = size.z + padding - center.z, nz = -center.z - padding;
 
             vert.addAll(List.of(
                     // front
-                    -x, -y, -z,
-                    -x, +y, -z,
-                    +x, -y, -z,
-                    -x, +y, -z,
-                    +x, +y, -z,
-                    +x, -y, -z,
+                    nx, ny, nz,
+                    nx, py, nz,
+                    px, ny, nz,
+                    nx, py, nz,
+                    px, py, nz,
+                    px, ny, nz,
 
                     //back
-                    -x, +y, +z,
-                    -x, -y, +z,
-                    +x, -y, +z,
-                    +x, +y, +z,
-                    -x, +y, +z,
-                    +x, -y, +z,
+                    nx, py, pz,
+                    nx, ny, pz,
+                    px, ny, pz,
+                    px, py, pz,
+                    nx, py, pz,
+                    px, ny, pz,
 
                     // left
-                    +x, -y, -z,
-                    +x, +y, -z,
-                    +x, -y, +z,
-                    +x, +y, -z,
-                    +x, +y, +z,
-                    +x, -y, +z,
+                    px, ny, nz,
+                    px, py, nz,
+                    px, ny, pz,
+                    px, py, nz,
+                    px, py, pz,
+                    px, ny, pz,
 
                     // right
-                    -x, +y, -z,
-                    -x, -y, -z,
-                    -x, -y, +z,
-                    -x, +y, +z,
-                    -x, +y, -z,
-                    -x, -y, +z,
+                    nx, py, nz,
+                    nx, ny, nz,
+                    nx, ny, pz,
+                    nx, py, pz,
+                    nx, py, nz,
+                    nx, ny, pz,
 
                     // top
-                    -x, +y, -z,
-                    -x, +y, +z,
-                    +x, +y, +z,
-                    +x, +y, -z,
-                    -x, +y, -z,
-                    +x, +y, +z,
+                    nx, py, nz,
+                    nx, py, pz,
+                    px, py, pz,
+                    px, py, nz,
+                    nx, py, nz,
+                    px, py, pz,
 
                     // bottom
-                    +x, -y, +z,
-                    -x, -y, +z,
-                    -x, -y, -z,
-                    +x, -y, -z,
-                    +x, -y, +z,
-                    -x, -y, -z
+                    px, ny, pz,
+                    nx, ny, pz,
+                    nx, ny, nz,
+                    px, ny, nz,
+                    px, ny, pz,
+                    nx, ny, nz
             ));
             text.addAll(List.of(
                     // front
