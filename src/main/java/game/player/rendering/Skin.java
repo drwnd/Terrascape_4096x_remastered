@@ -64,5 +64,16 @@ public final class Skin implements Option, TextureIdentifier {
         return AssetLoader.loadTexture2D(filepath);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Skin)) return false;
+        return skinFile.getName().equalsIgnoreCase(((Skin) obj).skinFile.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return skinFile.getName().hashCode();
+    }
+
     private final File skinFile;
 }
