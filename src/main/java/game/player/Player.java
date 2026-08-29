@@ -45,7 +45,7 @@ public final class Player {
     }
 
 
-    public void updateFrame() {
+    public Position updateFrame() {
         Sound.setListenerData(camera.getPosition(), camera.getDirection(), movement.getVelocity());
         particleCollector.unloadParticleEffects();
         particleCollector.uploadParticleEffects();
@@ -53,17 +53,16 @@ public final class Player {
         meshCollector.uploadAllMeshes();
         meshCollector.deleteOldMeshes();
 
-        float fraction = Game.getServer().getCurrentGameTickFraction();
-        fraction = Math.clamp(fraction, 0.0F, 1.0F);
-
+        Position toRenderPosition;
+        float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0.0F, 1.0F);
         synchronized (this) {
             camera.rotate(input.getCursorMovement());
             Vector3f movementThisTick = movement.getRenderVelocity().mul(fraction - 1.0F);
-            Position toRenderPosition = new Position(position)
-                    .add(movementThisTick.x, movementThisTick.y, movementThisTick.z)
-                    .addComponent(Y_COMPONENT, movement.getState().getCameraElevation());
-            camera.setPosition(camera.applyPerspectiveOffset(toRenderPosition));
+            toRenderPosition = new Position(position)
+                    .add(movementThisTick.x, movementThisTick.y, movementThisTick.z);
+            camera.setPosition(camera.applyPerspectiveOffset(new Position(toRenderPosition).addComponent(Y_COMPONENT, movement.getState().getCameraElevation())));
         }
+        return toRenderPosition;
     }
 
     public void updateGameTick() {

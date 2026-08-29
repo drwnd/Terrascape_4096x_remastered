@@ -173,7 +173,7 @@ public final class Renderer extends Renderable {
         glDepthFunc(GL_GREATER);
 
         Camera camera = player.getCamera();
-        player.updateFrame();
+        Position toRenderPlayerPosition = player.updateFrame();
         Matrix4f projectionViewMatrix = Transformation.getProjectionViewMatrix(camera);
         Matrix4f sunMatrix = Transformation.getSunMatrix(getRenderTime());
         Position cameraPosition = player.getCamera().getPosition();
@@ -197,7 +197,7 @@ public final class Renderer extends Renderable {
         renderSkybox(camera);
         renderOpaqueGeometry(cameraPosition, projectionViewMatrix, sunMatrix);
         renderOpaqueParticles(cameraPosition, projectionViewMatrix, sunMatrix);
-        renderPlayerCharacter(projectionViewMatrix);
+        renderPlayerCharacter(cameraPosition, projectionViewMatrix, toRenderPlayerPosition);
 
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
         if (ToggleSettings.USE_AMBIENT_OCCLUSION.value() && IntSettings.AMBIENT_OCCLUSION_SAMPLES.value() > 0)
@@ -530,14 +530,35 @@ public final class Renderer extends Renderable {
         renderParticles(shader, currentTick, true);
     }
 
-    private static void renderPlayerCharacter(Matrix4f projectionViewMatrix) {
+    private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Position playerPosition) {
+        if (OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON) return;
         Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
         Shader shader = AssetManager.get(Shaders.MODEL);
+        Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+
+        float angleY = (float) Math.toRadians(player.getCamera().getRotation().y);
+        for (int index = 0; index < transforms.length; index++)
+            transforms[index].identity()
+                    .setRotationXYZ(0, -angleY, 0)
+                    .translate(boxes[index].position());
+
+        transforms[0].rotate((float) -Math.toRadians(player.getCamera().getRotation().x), new Vector3f(1, 0, 0));
+
+        Vector3l cameraChunkPosition = new Vector3l(
+                cameraPosition.longX & ~CHUNK_SIZE_MASK,
+                cameraPosition.longY & ~CHUNK_SIZE_MASK,
+                cameraPosition.longZ & ~CHUNK_SIZE_MASK);
+
         shader.bind();
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
-        shader.setUniform("position", 32.0F, 16, 32.0F);
+        shader.setUniform("position",
+                (playerPosition.longX - cameraChunkPosition.x) + playerPosition.fractionX,
+                (playerPosition.longY - cameraChunkPosition.y) + playerPosition.fractionY,
+                (playerPosition.longZ - cameraChunkPosition.z) + playerPosition.fractionZ
+        );
         shader.setUniform("image", 0);
-        shader.setUniform("transformations", playerCharacter.transforms());
+        shader.setUniform("transformations", transforms);
 
         glDisable(GL_STENCIL_TEST);
         glActiveTexture(GL_TEXTURE0);

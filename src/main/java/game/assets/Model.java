@@ -26,17 +26,11 @@ public record Model(GuiElement guiElement, ModelBox[] boxes, Matrix4f[] transfor
 
     private static Matrix4f[] getTransforms(ModelBox[] boxes) {
         Matrix4f[] transforms = new Matrix4f[boxes.length];
-        for (int index = 0; index < boxes.length; index++) {
-            transforms[index] = new Matrix4f()
-                    .translate(boxes[index].position);
-            if (index == 1) continue;
-            transforms[index].rotate((float) (Math.random() * 2 * Math.PI), new Vector3f(0, 1, 0))
-                    .rotate((float) (Math.random() * 2 * Math.PI), new Vector3f(1, 0, 0));
-        }
+        for (int index = 0; index < boxes.length; index++) transforms[index] = new Matrix4f();
         return transforms;
     }
 
-    record ModelData(ModelBox[] boxes) {
+    public record ModelData(ModelBox[] boxes) {
 
         public GuiElementData toGuiElementData() {
             ArrayList<Float> vertices = new ArrayList<>(boxes.length * VERTICES_PER_BOX * 3);
@@ -177,7 +171,7 @@ public record Model(GuiElement guiElement, ModelBox[] boxes, Matrix4f[] transfor
         }
     }
 
-    private record ModelBox(Vector3i size, Vector3f center, Vector3f position, Vector2f textureCoordinate, boolean hasOuterLayer,
+    public record ModelBox(Vector3i size, Vector3f center, Vector3f position, Vector2f textureCoordinate, boolean hasOuterLayer,
                             Vector2f outerTextureCoordinate) {
     }
 
