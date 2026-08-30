@@ -3,9 +3,13 @@ package game.player.movement;
 import core.rendering_api.Input;
 import core.utils.MathUtils;
 
+import game.assets.Model;
+import game.player.rendering.Camera;
+import game.server.Game;
 import game.settings.KeySettings;
 import game.utils.Position;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -39,6 +43,29 @@ public final class SneakingState extends MovementState {
             if (System.nanoTime() - lastJumpTime < JUMP_FLYING_INTERVALL) next = MovementState.load(FlyingState.class);
             lastJumpTime = System.nanoTime();
         }
+    }
+
+    @Override
+    public double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime) {
+        Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+        float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1);
+        Vector3f velocity = movement.getRenderVelocity().mul(fraction).add(movement.getOldRenderVelocity().mul(1 - fraction));
+        Vector3f cameraRotation = camera.getRotation();
+        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
+
+        WalkingState.rotateBody(transforms, boxes, cameraRotation, velocity, direction);
+
+        float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
+        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
+        transforms[0].translate(0, -4, 0).rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[1].translate(0, -2, 6).rotate(-0.5F, 1, 0, 0);
+        transforms[2].translate(0, -4, 0).rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.2F, 0, 0, 1);
+        transforms[3].translate(0, -4, 0).rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.2F, 0, 0, 1);
+        transforms[4].translate(0, 0, 5.5F).rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+        transforms[5].translate(0, 0, 5.5F).rotate((float) Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+
+        return animationTimer + frameTime * 0.005;
     }
 
     @Override
