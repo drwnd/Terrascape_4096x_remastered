@@ -71,6 +71,7 @@ public final class Player {
         }
         if (canDoActiveActions()) interactionHandler.updateGameTick();
         renderer.updateGameTick();
+        camera.updateGameTick();
     }
 
     public void updateRenderDistance(int oldRenderDistance) {

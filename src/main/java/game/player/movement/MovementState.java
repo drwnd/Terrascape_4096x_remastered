@@ -7,6 +7,7 @@ import core.utils.FileManager;
 import core.utils.MathUtils;
 
 import game.assets.Model;
+import game.player.rendering.Camera;
 import game.server.Game;
 import game.server.World;
 import game.server.material.Properties;
@@ -63,6 +64,26 @@ public abstract class MovementState {
         velocity.y += waterIntersection * WATER_BUOYANCY + lavaIntersection * LAVA_BUOYANCY;
     }
 
+    /**
+     * Animates the given Model (assumed to be a player model).
+     *
+     * @param playerCharacter The model to animate.
+     * @param camera The camera of the player.
+     * @param animationTimer A value to be used as input into trigonometric functions. In whatever unit is convenient.
+     * @param frameTime The time since the last frame in ms.
+     * @return The new value of {@code animationTimer}
+     */
+    public double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime) {
+        Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+
+        for (int index = 0; index < transforms.length; index++)
+            transforms[index].identity()
+                    .rotate((float) -Math.toRadians(camera.getRotation().y), 0.0F, 1.0F, 0.0F)
+                    .translate(boxes[index].position());
+        return animationTimer;
+    }
+
     byte getStandingMaterial(Position position) {
         World world = Game.getWorld();
 
@@ -87,16 +108,6 @@ public abstract class MovementState {
     abstract void handleInput(int key, int action);
 
     public abstract byte getIdentifier();
-
-    public void applyAnimation(Model playerCharacter, Vector3f cameraRotation) {
-        Matrix4f[] transforms = playerCharacter.transforms();
-        Model.ModelBox[] boxes = playerCharacter.boxes();
-
-        for (int index = 0; index < transforms.length; index++)
-            transforms[index].identity()
-                    .rotate((float) -Math.toRadians(cameraRotation.y), 0.0F, 1.0F, 0.0F)
-                    .translate(boxes[index].position());
-    }
 
     int ticksBetweenFootsteps() {
         return ticksBetweenFootsteps;

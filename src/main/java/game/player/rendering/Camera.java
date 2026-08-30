@@ -28,6 +28,12 @@ public final class Camera {
     }
 
 
+    public void updateGameTick() {
+        oldRotationSpeed.set(rotationSpeed);
+        rotationSpeed.set(oldRotation.sub(rotation));
+        oldRotation.set(rotation);
+    }
+
     public void updateProjectionMatrix() {
         projectionMatrix
                 .identity()
@@ -91,6 +97,10 @@ public final class Camera {
         }
     }
 
+    public Vector3f getCurrentRotationSpeed(float gameTickFraction) {
+        return new Vector3f(rotationSpeed).mul(gameTickFraction).add(new Vector3f(oldRotationSpeed).mul(1 - gameTickFraction));
+    }
+
     public int getPrimaryDirection() {
         Vector3f direction = getDirection();
         int component = direction.maxComponent();
@@ -148,7 +158,8 @@ public final class Camera {
     private boolean zoomed = false;
     private float zoomFactor = 1.0F;
     private Position position;
-    private final Vector3f rotation;
+    private final Vector3f rotation, oldRotation = new Vector3f();
+    private final Vector3f rotationSpeed = new Vector3f(), oldRotationSpeed = new Vector3f();
 
     private final Matrix4f projectionMatrix = new Matrix4f();
 

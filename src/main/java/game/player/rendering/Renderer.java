@@ -533,7 +533,11 @@ public final class Renderer extends Renderable {
     private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Position playerPosition) {
         Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
         Shader shader = AssetManager.get(Shaders.MODEL);
-        player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera().getRotation());
+        float frameTime;
+        if (frameTimes.size() >= 2)
+            frameTime = (frameTimes.getLast() - frameTimes.get(frameTimes.size() - 2)) / 1_000_000F;
+        else frameTime = 0;
+        animationTimer = player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera(), animationTimer, frameTime);
 
         Vector3l cameraChunkPosition = new Vector3l(
                 cameraPosition.longX & ~CHUNK_SIZE_MASK,
@@ -988,6 +992,7 @@ public final class Renderer extends Renderable {
     private final ArrayList<Renderable> hudElements = new ArrayList<>();
     private final UiElement crosshair;
     private final Player player;
+    private double animationTimer = 0;
 
     private Position lastCameraPosition;
     private Matrix4f lastProjectionViewMatrix;

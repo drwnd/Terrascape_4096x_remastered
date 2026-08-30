@@ -33,6 +33,7 @@ public final class Movement {
         state.changeVelocity(velocity, acceleration, position, rotation);
 
         velocity.set(move(position));
+        oldRenderVelocity = renderVelocity;
         renderVelocity = position.vectorFrom(lastPosition);
         playFootstepSound(position);
 
@@ -51,6 +52,10 @@ public final class Movement {
 
     public Vector3f getRenderVelocity() {
         return new Vector3f(renderVelocity);
+    }
+
+    public Vector3f getOldRenderVelocity() {
+        return new Vector3f(oldRenderVelocity);
     }
 
     public void setVelocity(Vector3f velocity) {
@@ -335,5 +340,5 @@ public final class Movement {
     private MovementState state;
     private boolean wideGrounded, thinGrounded;
     private final Vector3f velocity = new Vector3f();
-    private Vector3f renderVelocity = new Vector3f();
+    private Vector3f renderVelocity = new Vector3f(), oldRenderVelocity = new Vector3f();
 }

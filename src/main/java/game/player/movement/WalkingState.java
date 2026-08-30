@@ -5,6 +5,8 @@ import core.sound.Sound;
 import core.utils.MathUtils;
 
 import game.assets.Model;
+import game.player.rendering.Camera;
+import game.server.Game;
 import game.server.material.Material;
 import game.settings.FloatSettings;
 import game.settings.KeySettings;
@@ -62,17 +64,40 @@ public final class WalkingState extends MovementState {
     }
 
     @Override
-    public void applyAnimation(Model playerCharacter, Vector3f cameraRotation) {
-        super.applyAnimation(playerCharacter, cameraRotation);
+    public double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime) {
         Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+        float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1);
+        Vector3f velocity = movement.getRenderVelocity().mul(fraction).add(movement.getOldRenderVelocity().mul(1 - fraction));
+        Vector3f cameraRotation = camera.getRotation();
+        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
 
-        float speed = (float) Math.clamp(movement.getRenderVelocity().length() * 0.2, -Math.PI * 0.5, Math.PI * 0.5);
-        double time = System.currentTimeMillis() * 0.01;
-        transforms[0].rotate((float) -Math.toRadians(cameraRotation.x), 1.0F, 0.0F, 0.0F);
-        transforms[2].rotate((float) Math.sin(time) * speed, 1.0F, 0.0F, 0.0F);
-        transforms[3].rotate((float) -Math.sin(time) * speed, 1.0F, 0.0F, 0.0F);
-        transforms[4].rotate((float) -Math.sin(time) * speed * 0.5F, 1.0F, 0.0F, 0.0F);
-        transforms[5].rotate((float) Math.sin(time) * speed * 0.5F, 1.0F, 0.0F, 0.0F);
+        float angle = (float) -Math.toRadians(cameraRotation.y);
+        float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
+        float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);
+
+        transforms[0].identity()
+                .rotate(angle, 0, 1, 0)
+                .translate(boxes[0].position())
+                .rotate(-sidewaysTilt, 0, 1, 0)
+                .translate(0, 0, 3)
+                .rotate(sidewaysTilt, 0, 1, 0)
+                .translate(0, 0, -3);
+        for (int index = 1; index < transforms.length; index++)
+            transforms[index].identity()
+                    .rotate(angle - sidewaysTilt, 0, 1, 0)
+                    .translate(boxes[index].position());
+
+        float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
+        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
+        double time = animationTimer * 0.01;
+        transforms[0].rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[2].rotate((float) Math.sin(time) * speed, 1, 0, 0).rotate(-speed * 0.1F, 0, 0, 1);
+        transforms[3].rotate((float) -Math.sin(time) * speed, 1, 0, 0).rotate(speed * 0.1F, 0, 0, 1);
+        transforms[4].rotate((float) -Math.sin(time) * speed * 0.5F, 1, 0, 0);
+        transforms[5].rotate((float) Math.sin(time) * speed * 0.5F, 1, 0, 0);
+
+        return animationTimer + (Input.isKeyPressed(KeySettings.SPRINT) ? 1.5 : 1) * frameTime;
     }
 
     private void playJumpSound(Position position) {
