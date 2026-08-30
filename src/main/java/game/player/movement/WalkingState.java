@@ -72,6 +72,20 @@ public final class WalkingState extends MovementState {
         Vector3f cameraRotation = camera.getRotation();
         Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
 
+        rotateBody(transforms, boxes, cameraRotation, velocity, direction);
+
+        float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
+        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
+        transforms[0].rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[2].rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.1F, 0, 0, 1);
+        transforms[3].rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.1F, 0, 0, 1);
+        transforms[4].rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+        transforms[5].rotate((float) Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+
+        return animationTimer + (Input.isKeyPressed(KeySettings.SPRINT) ? 1.5 : 1) * frameTime * 0.01;
+    }
+
+    static void rotateBody(Matrix4f[] transforms, Model.ModelBox[] boxes, Vector3f cameraRotation, Vector3f velocity, Vector3f direction) {
         float angle = (float) -Math.toRadians(cameraRotation.y);
         float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
         float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);
@@ -87,17 +101,6 @@ public final class WalkingState extends MovementState {
             transforms[index].identity()
                     .rotate(angle - sidewaysTilt, 0, 1, 0)
                     .translate(boxes[index].position());
-
-        float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
-        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
-        double time = animationTimer * 0.01;
-        transforms[0].rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
-        transforms[2].rotate((float) Math.sin(time) * speed, 1, 0, 0).rotate(-speed * 0.1F, 0, 0, 1);
-        transforms[3].rotate((float) -Math.sin(time) * speed, 1, 0, 0).rotate(speed * 0.1F, 0, 0, 1);
-        transforms[4].rotate((float) -Math.sin(time) * speed * 0.5F, 1, 0, 0);
-        transforms[5].rotate((float) Math.sin(time) * speed * 0.5F, 1, 0, 0);
-
-        return animationTimer + (Input.isKeyPressed(KeySettings.SPRINT) ? 1.5 : 1) * frameTime;
     }
 
     private void playJumpSound(Position position) {
