@@ -6,6 +6,7 @@ import core.rendering_api.Input;
 import core.utils.FileManager;
 import core.utils.MathUtils;
 
+import game.assets.Model;
 import game.server.Game;
 import game.server.World;
 import game.server.material.Properties;
@@ -13,6 +14,7 @@ import game.settings.KeySettings;
 import game.settings.ToggleSettings;
 import game.utils.Position;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -85,6 +87,16 @@ public abstract class MovementState {
     abstract void handleInput(int key, int action);
 
     public abstract byte getIdentifier();
+
+    public void applyAnimation(Model playerCharacter, Vector3f cameraRotation) {
+        Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+
+        for (int index = 0; index < transforms.length; index++)
+            transforms[index].identity()
+                    .rotate((float) -Math.toRadians(cameraRotation.y), 0.0F, 1.0F, 0.0F)
+                    .translate(boxes[index].position());
+    }
 
     int ticksBetweenFootsteps() {
         return ticksBetweenFootsteps;
