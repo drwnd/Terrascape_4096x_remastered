@@ -4,13 +4,19 @@ import core.rendering_api.Input;
 import core.sound.Sound;
 import core.utils.MathUtils;
 
+import game.assets.Model;
+import game.player.rendering.Camera;
+import game.server.Game;
 import game.server.material.Material;
 import game.settings.FloatSettings;
 import game.settings.KeySettings;
+import game.settings.OptionSettings;
 import game.utils.Position;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import static game.assets.Models.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class WalkingState extends MovementState {
@@ -57,6 +63,45 @@ public final class WalkingState extends MovementState {
     @Override
     public int ticksBetweenFootsteps() {
         return Input.isKeyPressed(KeySettings.SPRINT) ? ticksBetweenFootstepsWhenSprinting : super.ticksBetweenFootsteps();
+    }
+
+    @Override
+    public double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime) {
+        Matrix4f[] transforms = playerCharacter.transforms();
+        Model.ModelBox[] boxes = playerCharacter.boxes();
+        float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1);
+        Vector3f velocity = movement.getRenderVelocity().mul(fraction).add(movement.getOldRenderVelocity().mul(1 - fraction));
+        Vector3f cameraRotation = camera.getRotation();
+
+        rotateBody(transforms, boxes, cameraRotation, velocity);
+
+        float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
+        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
+        float bodyMovement = (float) Math.cos(animationTimer) * Math.min(speed * 0.1F, 0.3F);
+        transforms[HEAD].translate(0, bodyMovement, 0).rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[BODY].translate(0, bodyMovement, 0);
+        transforms[LEFT_ARM].rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.1F, 0, 0, 1);
+        transforms[RIGHT_ARM].rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.1F, 0, 0, 1);
+        transforms[LEFT_LEG].rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+        transforms[RIGHT_LEG].rotate((float) Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+
+        return animationTimer + (Input.isKeyPressed(KeySettings.SPRINT) ? 1.5 : 1) * frameTime * 0.01;
+    }
+
+    static void rotateBody(Matrix4f[] transforms, Model.ModelBox[] boxes, Vector3f cameraRotation, Vector3f velocity) {
+        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
+        float angle = (float) -Math.toRadians(cameraRotation.y);
+        float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
+        float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);
+        boolean shiftCharacter = OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON;
+
+        for (int index = 0; index < transforms.length; index++)
+            transforms[index].identity()
+                    .rotate(angle - sidewaysTilt, 0, 1, 0)
+                    .translate(boxes[index].position())
+                    .translate(0, 0, shiftCharacter ? 3 : 0);
+        if (shiftCharacter) transforms[HEAD].zero();
+        else transforms[HEAD].rotate(sidewaysTilt, 0, 1, 0);
     }
 
     private void playJumpSound(Position position) {

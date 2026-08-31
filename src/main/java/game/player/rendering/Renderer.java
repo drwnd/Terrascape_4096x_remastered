@@ -1,9 +1,7 @@
 package game.player.rendering;
 
-import core.assets.AssetManager;
-import core.assets.CoreShaders;
-import core.assets.Texture;
-import core.assets.TextureArray;
+import core.assets.*;
+import core.assets.identifiers.TextureIdentifier;
 import core.renderables.Renderable;
 import core.renderables.UiElement;
 import core.rendering_api.CoreObjectLoader;
@@ -18,10 +16,7 @@ import core.settings.CoreToggleSettings;
 import core.settings.optionSettings.FontOption;
 import core.utils.Vector3l;
 
-import game.assets.Shaders;
-import game.assets.TextureArrays;
-import game.assets.Textures;
-import game.assets.VertexArrays;
+import game.assets.*;
 import game.player.ChatTextField;
 import game.player.Player;
 import game.player.interaction.*;
@@ -178,7 +173,7 @@ public final class Renderer extends Renderable {
         glDepthFunc(GL_GREATER);
 
         Camera camera = player.getCamera();
-        player.updateFrame();
+        Position toRenderPlayerPosition = player.updateFrame();
         Matrix4f projectionViewMatrix = Transformation.getProjectionViewMatrix(camera);
         Matrix4f sunMatrix = Transformation.getSunMatrix(getRenderTime());
         Position cameraPosition = player.getCamera().getPosition();
@@ -202,6 +197,7 @@ public final class Renderer extends Renderable {
         renderSkybox(camera);
         renderOpaqueGeometry(cameraPosition, projectionViewMatrix, sunMatrix);
         renderOpaqueParticles(cameraPosition, projectionViewMatrix, sunMatrix);
+        renderPlayerCharacter(cameraPosition, projectionViewMatrix, toRenderPlayerPosition);
 
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
         if (ToggleSettings.USE_AMBIENT_OCCLUSION.value() && IntSettings.AMBIENT_OCCLUSION_SAMPLES.value() > 0)
@@ -532,6 +528,43 @@ public final class Renderer extends Renderable {
         shader.setUniform("viewPosition", cameraPosition.getInChunkPosition());
 
         renderParticles(shader, currentTick, true);
+    }
+
+    private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Position playerPosition) {
+        Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+        Shader shader = AssetManager.get(Shaders.MODEL);
+        float frameTime;
+        if (frameTimes.size() >= 2)
+            frameTime = (frameTimes.getLast() - frameTimes.get(frameTimes.size() - 2)) / 1_000_000F;
+        else frameTime = 0;
+        animationTimer = player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera(), animationTimer, frameTime);
+        player.applyAnimation(playerCharacter);
+
+        Vector3l cameraChunkPosition = new Vector3l(
+                cameraPosition.longX & ~CHUNK_SIZE_MASK,
+                cameraPosition.longY & ~CHUNK_SIZE_MASK,
+                cameraPosition.longZ & ~CHUNK_SIZE_MASK);
+
+        shader.bind();
+        shader.setUniform("projectionViewMatrix", projectionViewMatrix);
+        shader.setUniform("position",
+                (playerPosition.longX - cameraChunkPosition.x) + playerPosition.fractionX,
+                (playerPosition.longY - cameraChunkPosition.y) + playerPosition.fractionY,
+                (playerPosition.longZ - cameraChunkPosition.z) + playerPosition.fractionZ
+        );
+        shader.setUniform("image", 0);
+        shader.setUniform("transformations", playerCharacter.transforms());
+
+        glDisable(GL_STENCIL_TEST);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, AssetManager.get((TextureIdentifier) OptionSettings.SKIN.value()).id());
+
+        glBindVertexArray(playerCharacter.guiElement().vao());
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
+        glDrawArrays(GL_TRIANGLES, 0, playerCharacter.guiElement().vertexCount());
     }
 
     private void applyAmbientOcclusion(Position cameraPosition, Matrix4f projectionViewMatrix) {
@@ -960,6 +993,7 @@ public final class Renderer extends Renderable {
     private final ArrayList<Renderable> hudElements = new ArrayList<>();
     private final UiElement crosshair;
     private final Player player;
+    private double animationTimer = 0;
 
     private Position lastCameraPosition;
     private Matrix4f lastProjectionViewMatrix;

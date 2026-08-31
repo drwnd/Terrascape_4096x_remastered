@@ -1,6 +1,5 @@
 package core.assets;
 
-import core.assets.identifiers.GuiElementIdentifier;
 import core.rendering_api.Debug;
 import core.rendering_api.shaders.TextShader;
 
@@ -45,7 +44,7 @@ public final class AssetLoader {
 
             buffer = STBImage.stbi_load(filepath.toString(), w, h, c, 4);
             if (buffer == null) {
-                Debug.err("Image File %s ot loaded %s%n", filepath, STBImage.stbi_failure_reason());
+                Debug.err("Image File %s not loaded %s%n", filepath, STBImage.stbi_failure_reason());
                 return new Texture(0);
             }
 
@@ -64,18 +63,26 @@ public final class AssetLoader {
         return new Texture(id, width, height);
     }
 
-    public static GuiElement loadGuiElement(GuiElementIdentifier identifier) {
-        int vao = createVAO();
-        int vbo1 = storeDateInAttributeList(0, 2, identifier.vertices());
-        int vbo2 = storeDateInAttributeList(1, 2, identifier.textureCoordinates());
+    public static GuiElement loadGuiElement(GuiElementData data) {
+        verifyGuiElementData(data);
+        int vertexCount = data.getVertexCount(), vao = createVAO();
+        float[][] floatAttributes = data.floatAttributes();
+        int[][] intAttributes = data.intAttributes();
+        int[] attributeSizes = data.attributeSizes();
+
+        int[] vbos = new int[floatAttributes.length + intAttributes.length];
+        for (int index = 0; index < floatAttributes.length; index++)
+            vbos[index] = storeDateInAttributeList(index, attributeSizes[index], floatAttributes[index]);
+        for (int index = floatAttributes.length; index < attributeSizes.length; index++)
+            vbos[index] = storeDateInAttributeList(index, attributeSizes[index], intAttributes[index - floatAttributes.length]);
 
         glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo1);
-        glDeleteBuffers(vbo1);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-        glDeleteBuffers(vbo2);
+        for (int vbo : vbos) {
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glDeleteBuffers(vbo);
+        }
 
-        return new GuiElement(vao, identifier.vertices().length);
+        return new GuiElement(vao, vertexCount);
     }
 
     public static int generateModelIndexBuffer(int quadCount) {
@@ -111,7 +118,7 @@ public final class AssetLoader {
             textData[i + 2] = i >> 2 | offsetY;
             textData[i + 3] = i >> 2 | offsetX | offsetY;
         }
-        int vbo = storeDateInAttributeList(textData);
+        int vbo = storeDateInAttributeList(0, 1, textData);
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -136,11 +143,11 @@ public final class AssetLoader {
         return vbo;
     }
 
-    public static int storeDateInAttributeList(int[] data) {
+    public static int storeDateInAttributeList(int attributeNo, int size, int[] data) {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
-        glVertexAttribIPointer(0, 1, GL_INT, 0, 0);
+        glVertexAttribIPointer(attributeNo, size, GL_INT, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         return vbo;
     }
@@ -177,5 +184,32 @@ public final class AssetLoader {
         STBVorbis.stb_vorbis_close(decoder);
 
         return result;
+    }
+
+    private static void verifyGuiElementData(GuiElementData data) {
+        if (data == null || data.floatAttributes() == null || data.intAttributes() == null || data.attributeSizes() == null) throw new NullPointerException();
+        float[][] floatAttributes = data.floatAttributes();
+        int[][] intAttributes = data.intAttributes();
+        int[] attributeSizes = data.attributeSizes();
+
+        if (floatAttributes.length + intAttributes.length != attributeSizes.length)
+            throw new IllegalArgumentException("Specify same number of attributes and attribute sizes");
+
+        int vertexCount = data.getVertexCount();
+        for (int attributeSize : attributeSizes) if (attributeSize <= 0) throw new IllegalArgumentException("Sizes must be strictly positive integers");
+
+        for (int index = 0; index < floatAttributes.length; index++) {
+            float[] attribute = floatAttributes[index];
+            if (attribute == null) throw new IllegalArgumentException("An attribute cannot be null");
+            if (attribute.length / attributeSizes[index] != vertexCount || attribute.length % attributeSizes[index] != 0)
+                throw new IllegalArgumentException("Inconsistent vertex count");
+        }
+
+        for (int index = 0; index < intAttributes.length; index++) {
+            int[] attribute = intAttributes[index];
+            if (attribute == null) throw new IllegalArgumentException("An attribute cannot be null");
+            if (attribute.length / attributeSizes[floatAttributes.length + index] != vertexCount || attribute.length % attributeSizes[floatAttributes.length + index] != 0)
+                throw new IllegalArgumentException("Inconsistent vertex count");
+        }
     }
 }

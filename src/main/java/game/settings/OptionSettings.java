@@ -3,17 +3,19 @@ package game.settings;
 import core.settings.KeySetting;
 import core.settings.OptionSetting;
 import core.settings.optionSettings.Option;
-
 import core.settings.stand_alones.StandAloneKeySetting;
+
 import game.player.interaction.PlaceMode;
 import game.player.rendering.Camera;
 import game.player.rendering.RenderingOptimizer;
+import game.player.rendering.Skin;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public enum OptionSettings implements OptionSetting {
     OCCLUSION_CULLING(RenderingOptimizer.OcclusionCullingOptions.NORMAL),
     PERSPECTIVE(Camera.Perspective.FIRST_PERSON, GLFW_KEY_UNKNOWN, GLFW_KEY_C),
+    SKIN(new Skin("Zombie.png")),
     PLACE_MODE(PlaceMode.REPLACE);
 
     OptionSettings(Option defaultValue) {

@@ -1,9 +1,12 @@
 package game.player;
 
+import core.rendering_api.Input;
 import core.rendering_api.Window;
 import core.sound.Sound;
 import core.utils.Vector3l;
 
+import game.assets.Model;
+import game.assets.Models;
 import game.player.interaction.*;
 import game.player.inventory.Inventory;
 import game.player.movement.Movement;
@@ -13,6 +16,7 @@ import game.player.particles.ParticleCollector;
 import game.player.rendering.Renderer;
 import game.server.Game;
 import game.server.material.Material;
+import game.settings.IntSettings;
 import game.settings.KeySettings;
 import game.settings.ToggleSettings;
 import game.utils.Position;
@@ -45,7 +49,7 @@ public final class Player {
     }
 
 
-    public void updateFrame() {
+    public Position updateFrame() {
         Sound.setListenerData(camera.getPosition(), camera.getDirection(), movement.getVelocity());
         particleCollector.unloadParticleEffects();
         particleCollector.uploadParticleEffects();
@@ -53,17 +57,16 @@ public final class Player {
         meshCollector.uploadAllMeshes();
         meshCollector.deleteOldMeshes();
 
-        float fraction = Game.getServer().getCurrentGameTickFraction();
-        fraction = Math.clamp(fraction, 0.0F, 1.0F);
-
+        Position toRenderPosition;
+        float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0.0F, 1.0F);
         synchronized (this) {
             camera.rotate(input.getCursorMovement());
             Vector3f movementThisTick = movement.getRenderVelocity().mul(fraction - 1.0F);
-            Position toRenderPosition = new Position(position)
-                    .add(movementThisTick.x, movementThisTick.y, movementThisTick.z)
-                    .addComponent(Y_COMPONENT, movement.getState().getCameraElevation());
-            camera.setPosition(camera.applyPerspectiveOffset(toRenderPosition));
+            toRenderPosition = new Position(position)
+                    .add(movementThisTick.x, movementThisTick.y, movementThisTick.z);
+            camera.setPosition(camera.applyPerspectiveOffset(new Position(toRenderPosition).addComponent(Y_COMPONENT, movement.getState().getCameraElevation())));
         }
+        return toRenderPosition;
     }
 
     public void updateGameTick() {
@@ -72,6 +75,12 @@ public final class Player {
         }
         if (canDoActiveActions()) interactionHandler.updateGameTick();
         renderer.updateGameTick();
+        camera.updateGameTick();
+
+        long currentGameTick = Game.getServer().getCurrentGameTick();
+        if (currentGameTick >= lastInteractionTick + IntSettings.BREAK_PLACE_INTERVALL.value()
+                && (Input.isKeyPressed(KeySettings.DESTROY) || Input.isKeyPressed(KeySettings.USE)))
+            lastInteractionTick = currentGameTick;
     }
 
     public void updateRenderDistance(int oldRenderDistance) {
@@ -100,6 +109,9 @@ public final class Player {
             renderer.invalidateHologram();
             getHeldPlaceable().rotateBackwards();
         }
+
+        if (action == GLFW_PRESS && (button == KeySettings.DESTROY.keybind() || button == KeySettings.USE.keybind()))
+            lastInteractionTick = Game.getServer().getCurrentGameTick();
     }
 
     /**
@@ -129,6 +141,18 @@ public final class Player {
         }
 
         if (ToggleSettings.SCROLL_HOTBAR.value()) hotbar.setSelectedSlot(hotbar.getSelectedSlot() + (yScroll < 0.0 ? 1 : -1));
+    }
+
+    public void applyAnimation(Model playerCharacter) {
+        final int animationLength = 8;
+        long currentTick = Game.getServer().getCurrentGameTick();
+        if (currentTick > lastInteractionTick + animationLength) return;
+
+        float ticksPassed = Math.min(Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1) + (currentTick - lastInteractionTick), animationLength);
+
+        playerCharacter.transforms()[Models.RIGHT_ARM]
+                .rotate((float) Math.sin(ticksPassed * Math.PI / animationLength), 0, 0, 1)
+                .rotate((float) Math.sin(ticksPassed * Math.PI * 2 / animationLength) * (1 - ticksPassed / animationLength) * 2, 1, 0, 0);
     }
 
 
@@ -240,4 +264,5 @@ public final class Player {
     private final ChatTextField chat;
 
     private Position position; // Center of the players feet
+    private long lastInteractionTick = 0;
 }
