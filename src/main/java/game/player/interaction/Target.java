@@ -2,6 +2,7 @@ package game.player.interaction;
 
 import core.utils.Vector3l;
 
+import game.player.Player;
 import game.server.Game;
 import game.server.material.Material;
 import game.server.material.Properties;
@@ -21,35 +22,36 @@ public record Target(Vector3l position, int side, byte material) {
     }
 
     public static Target getPlayerTarget() {
-        Position playerPosition = Game.getPlayer().getCamera().getPosition();
-        Vector3f playerDirection = Game.getPlayer().getCamera().getDirection();
-        return Target.getTarget(playerPosition, playerDirection);
+        Player player = Game.getPlayer();
+        Position origin = player.getPosition().addComponent(Y_COMPONENT, player.getMovement().getState().getCameraElevation());
+        Vector3f direction = player.getCamera().getDirection();
+        return Target.getTarget(origin, direction);
     }
 
-    public static Target getTarget(Position origin, Vector3f dir) {
+    public static Target getTarget(Position origin, Vector3f direction) {
 
         long x = origin.longX;
         long y = origin.longY;
         long z = origin.longZ;
 
-        int xDir = dir.x < 0 ? -1 : 1;
-        int yDir = dir.y < 0 ? -1 : 1;
-        int zDir = dir.z < 0 ? -1 : 1;
+        int xDir = direction.x < 0 ? -1 : 1;
+        int yDir = direction.y < 0 ? -1 : 1;
+        int zDir = direction.z < 0 ? -1 : 1;
 
-        int xSide = dir.x < 0 ? WEST : EAST;
-        int ySide = dir.y < 0 ? TOP : BOTTOM;
-        int zSide = dir.z < 0 ? NORTH : SOUTH;
+        int xSide = direction.x < 0 ? WEST : EAST;
+        int ySide = direction.y < 0 ? TOP : BOTTOM;
+        int zSide = direction.z < 0 ? NORTH : SOUTH;
 
-        double dirXSquared = dir.x * dir.x;
-        double dirYSquared = dir.y * dir.y;
-        double dirZSquared = dir.z * dir.z;
+        double dirXSquared = direction.x * direction.x;
+        double dirYSquared = direction.y * direction.y;
+        double dirZSquared = direction.z * direction.z;
         double xUnit = (float) Math.sqrt(1 + (dirYSquared + dirZSquared) / dirXSquared);
         double yUnit = (float) Math.sqrt(1 + (dirXSquared + dirZSquared) / dirYSquared);
         double zUnit = (float) Math.sqrt(1 + (dirXSquared + dirYSquared) / dirZSquared);
 
-        double lengthX = xUnit * (dir.x < 0 ? origin.fractionX : 1 - origin.fractionX);
-        double lengthY = yUnit * (dir.y < 0 ? origin.fractionY : 1 - origin.fractionY);
-        double lengthZ = zUnit * (dir.z < 0 ? origin.fractionZ : 1 - origin.fractionZ);
+        double lengthX = xUnit * (direction.x < 0 ? origin.fractionX : 1 - origin.fractionX);
+        double lengthY = yUnit * (direction.y < 0 ? origin.fractionY : 1 - origin.fractionY);
+        double lengthZ = zUnit * (direction.z < 0 ? origin.fractionZ : 1 - origin.fractionZ);
         double length = 0;
 
         int intersectedSide = 0;
