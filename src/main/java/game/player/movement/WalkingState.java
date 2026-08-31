@@ -10,6 +10,7 @@ import game.server.Game;
 import game.server.material.Material;
 import game.settings.FloatSettings;
 import game.settings.KeySettings;
+import game.settings.OptionSettings;
 import game.utils.Position;
 
 import org.joml.Matrix4f;
@@ -89,18 +90,14 @@ public final class WalkingState extends MovementState {
         float angle = (float) -Math.toRadians(cameraRotation.y);
         float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
         float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);
+        boolean shiftCharacter = OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON;
 
-        transforms[0].identity()
-                .rotate(angle, 0, 1, 0)
-                .translate(boxes[0].position())
-                .rotate(-sidewaysTilt, 0, 1, 0)
-                .translate(0, 0, 3)
-                .rotate(sidewaysTilt, 0, 1, 0)
-                .translate(0, 0, -3);
-        for (int index = 1; index < transforms.length; index++)
+        for (int index = 0; index < transforms.length; index++)
             transforms[index].identity()
                     .rotate(angle - sidewaysTilt, 0, 1, 0)
-                    .translate(boxes[index].position());
+                    .translate(boxes[index].position())
+                    .translate(0, 0, shiftCharacter ? 3 : 0);
+        if (shiftCharacter) transforms[0].zero();
     }
 
     private void playJumpSound(Position position) {
