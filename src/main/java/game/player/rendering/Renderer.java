@@ -21,6 +21,7 @@ import game.player.ChatTextField;
 import game.player.Player;
 import game.player.interaction.*;
 import game.player.interaction.placeable_shapes.CapsulePlaceable;
+import game.player.movement.MovementState;
 import game.player.particles.ParticleEffect;
 import game.server.*;
 import game.server.generation.Structure;
@@ -178,13 +179,18 @@ public final class Renderer extends Renderable {
         Matrix4f sunMatrix = Transformation.getSunMatrix(getRenderTime());
         Position cameraPosition = player.getCamera().getPosition();
 
+        Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+        float frameTime = frameTimes.size() >= 2 ? (frameTimes.getLast() - frameTimes.get(frameTimes.size() - 2)) / 1_000_000F : 0;
+        animationTimer = player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera(), animationTimer, frameTime);
+        player.applyAnimation(playerCharacter);
+
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         if (ToggleSettings.CULLING_COMPUTATION.value()) {
             if (OptionSettings.OCCLUSION_CULLING.value() == RenderingOptimizer.OcclusionCullingOptions.AGGRESSIVE)
                 renderingOptimizer.computeVisibility(player, lastCameraPosition, lastProjectionViewMatrix);
             else renderingOptimizer.computeVisibility(player, cameraPosition, projectionViewMatrix);
         }
-        if (ToggleSettings.USE_SHADOW_MAPPING.value()) computeShadowMap(cameraPosition, sunMatrix);
+        if (ToggleSettings.USE_SHADOW_MAPPING.value()) computeShadowMap(cameraPosition, sunMatrix, toRenderPlayerPosition);
 
         lastProjectionViewMatrix = projectionViewMatrix;
         lastCameraPosition = cameraPosition;
@@ -197,7 +203,7 @@ public final class Renderer extends Renderable {
         renderSkybox(camera);
         renderOpaqueGeometry(cameraPosition, projectionViewMatrix, sunMatrix);
         renderOpaqueParticles(cameraPosition, projectionViewMatrix, sunMatrix);
-        renderPlayerCharacter(cameraPosition, projectionViewMatrix, toRenderPlayerPosition);
+        renderPlayerCharacter(cameraPosition, projectionViewMatrix, sunMatrix, toRenderPlayerPosition);
 
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
         if (ToggleSettings.USE_AMBIENT_OCCLUSION.value() && IntSettings.AMBIENT_OCCLUSION_SAMPLES.value() > 0)
@@ -264,74 +270,6 @@ public final class Renderer extends Renderable {
     }
 
 
-    private void createTextures(int width, int height) {
-        colorTexture = CoreObjectLoader.createTexture2D(GL_RGBA8, width, height, GL_RGBA, GL_UNSIGNED_BYTE, GL_NEAREST);
-        intPosTexture = CoreObjectLoader.createTexture2D(GL_RGBA16I, width, height, GL_RGBA_INTEGER, GL_SHORT, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new int[]{1000, 1000, 1000, 6});
-        shadowColorTexture = CoreObjectLoader.createTexture2D(GL_RGB8, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, GL_RGB, GL_UNSIGNED_BYTE, GL_NEAREST);
-
-        depthTexture = CoreObjectLoader.createTexture2D(GL_DEPTH32F_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[]{0, 0, 0, 0});
-
-        shadowTexture = CoreObjectLoader.createTexture2D(GL_DEPTH_COMPONENT32F, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[]{0, 0, 0, 0});
-
-        accumulationTexture = CoreObjectLoader.createTexture2D(GL_RGBA16F, width, height, GL_RGBA, GL_HALF_FLOAT, GL_NEAREST);
-        revealTexture = CoreObjectLoader.createTexture2D(GL_R8, width, height, GL_RED, GL_FLOAT, GL_NEAREST);
-    }
-
-    private void createFrameBuffers() {
-        framebuffer = glCreateFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, intPosTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            throw new IllegalStateException("Frame buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
-
-        shadowFramebuffer = glCreateFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadowColorTexture, 0);
-        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            throw new IllegalStateException("Shadow Frame buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
-
-        transparencyFramebuffer = glCreateFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, transparencyFramebuffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, accumulationTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, revealTexture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            throw new IllegalStateException("Transparency buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
-    private void deleteTextures() {
-        glDeleteTextures(colorTexture);
-        glDeleteTextures(depthTexture);
-        glDeleteTextures(intPosTexture);
-        glDeleteTextures(shadowTexture);
-        glDeleteTextures(shadowColorTexture);
-        glDeleteTextures(accumulationTexture);
-        glDeleteTextures(revealTexture);
-    }
-
-    private void deleteFrameBuffers() {
-        glDeleteFramebuffers(framebuffer);
-        glDeleteFramebuffers(shadowFramebuffer);
-        glDeleteFramebuffers(transparencyFramebuffer);
-    }
-
     private void setupRenderState() {
         for (Renderable renderable : hudElements) renderable.setVisible(ToggleSettings.RENDER_HUD.value());
 
@@ -384,7 +322,7 @@ public final class Renderer extends Renderable {
         glDepthMask(true);
     }
 
-    private void computeShadowMap(Position cameraPosition, Matrix4f sunMatrix) {
+    private void computeShadowMap(Position cameraPosition, Matrix4f sunMatrix, Position playerPosition) {
         Vector3f sunDirection = Transformation.getSunDirection(getRenderTime()).mul(-4096);
         int shadowLod = Math.min(SHADOW_LOD, IntSettings.LOD_COUNT.value() - 1);
 
@@ -437,6 +375,12 @@ public final class Renderer extends Renderable {
             glDisable(GL_STENCIL_TEST);
 
             renderParticles(shader, currentTick, true);
+        }
+
+        {
+            Shader shader = AssetManager.get(Shaders.MODEL_SHADOW);
+            shader.bind();
+            renderPlayerCharacter(shader, cameraPosition, playerPosition, sunMatrix);
         }
 
         glColorMask(true, true, true, true);
@@ -496,7 +440,6 @@ public final class Renderer extends Renderable {
         Shader shader = AssetManager.get(Shaders.OPAQUE_GEOMETRY);
         setupOpaqueRendering(shader, projectionViewMatrix, cameraPosition.longX, cameraPosition.longY, cameraPosition.longZ, getRenderTime());
         setUpShadowMappedRendering(sunMatrix, shader);
-        shader.setUniform("sunMatrix", sunMatrix);
         shader.setUniform("cameraPosition", cameraPosition.getInChunkPosition());
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, player.getMeshCollector().getBuffer());
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, renderingOptimizer.getOpaqueIndirectBuffer());
@@ -530,34 +473,45 @@ public final class Renderer extends Renderable {
         renderParticles(shader, currentTick, true);
     }
 
-    private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Position playerPosition) {
-        Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+    private void renderPlayerCharacter(Position cameraPosition, Matrix4f projectionViewMatrix, Matrix4f sunMatrix, Position playerPosition) {
         Shader shader = AssetManager.get(Shaders.MODEL);
-        float frameTime;
-        if (frameTimes.size() >= 2)
-            frameTime = (frameTimes.getLast() - frameTimes.get(frameTimes.size() - 2)) / 1_000_000F;
-        else frameTime = 0;
-        animationTimer = player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera(), animationTimer, frameTime);
-        player.applyAnimation(playerCharacter);
+        shader.bind();
+        setupOpaqueRendering(shader, projectionViewMatrix, cameraPosition.longX, cameraPosition.longY, cameraPosition.longZ, getRenderTime());
+        setUpShadowMappedRendering(sunMatrix, shader);
+        shader.setUniform("cameraPosition", cameraPosition.getInChunkPosition());
+        shader.setUniform("image", 0);
+        shader.setUniform("flags", getFlags(cameraPosition));
 
+        glDisable(GL_STENCIL_TEST);
+        glDisable(GL_CULL_FACE);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, AssetManager.get((TextureIdentifier) OptionSettings.SKIN.value()).id());
+
+        if (OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON) {
+            Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
+            MovementState state = player.getMovement().getState();
+            if (state.hideHeadInFirstPerson()) playerCharacter.transforms()[Models.HEAD].zero();
+            if (state.hideBodyInFirstPerson()) playerCharacter.transforms()[Models.BODY].zero();
+        }
+
+        renderPlayerCharacter(shader, cameraPosition, playerPosition, projectionViewMatrix);
+        glEnable(GL_CULL_FACE);
+    }
+
+    private static void renderPlayerCharacter(Shader shader, Position cameraPosition, Position playerPosition, Matrix4f matrix) {
+        Model playerCharacter = AssetManager.get(Models.PLAYER_MODEL);
         Vector3l cameraChunkPosition = new Vector3l(
                 cameraPosition.longX & ~CHUNK_SIZE_MASK,
                 cameraPosition.longY & ~CHUNK_SIZE_MASK,
                 cameraPosition.longZ & ~CHUNK_SIZE_MASK);
 
-        shader.bind();
-        shader.setUniform("projectionViewMatrix", projectionViewMatrix);
+        shader.setUniform("projectionViewMatrix", matrix);
         shader.setUniform("position",
                 (playerPosition.longX - cameraChunkPosition.x) + playerPosition.fractionX,
                 (playerPosition.longY - cameraChunkPosition.y) + playerPosition.fractionY,
                 (playerPosition.longZ - cameraChunkPosition.z) + playerPosition.fractionZ
         );
-        shader.setUniform("image", 0);
         shader.setUniform("transformations", playerCharacter.transforms());
-
-        glDisable(GL_STENCIL_TEST);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, AssetManager.get((TextureIdentifier) OptionSettings.SKIN.value()).id());
 
         glBindVertexArray(playerCharacter.guiElement().vao());
         glEnableVertexAttribArray(0);
@@ -947,6 +901,75 @@ public final class Renderer extends Renderable {
                 cameraPositon.longY & ~CHUNK_SIZE_MASK,
                 cameraPositon.longZ & ~CHUNK_SIZE_MASK);
         shader.setUniform("projectionViewMatrix", projectionViewMatrix);
+    }
+
+
+    private void createTextures(int width, int height) {
+        colorTexture = CoreObjectLoader.createTexture2D(GL_RGBA8, width, height, GL_RGBA, GL_UNSIGNED_BYTE, GL_NEAREST);
+        intPosTexture = CoreObjectLoader.createTexture2D(GL_RGBA16I, width, height, GL_RGBA_INTEGER, GL_SHORT, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new int[]{1000, 1000, 1000, 6});
+        shadowColorTexture = CoreObjectLoader.createTexture2D(GL_RGB8, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, GL_RGB, GL_UNSIGNED_BYTE, GL_NEAREST);
+
+        depthTexture = CoreObjectLoader.createTexture2D(GL_DEPTH32F_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[]{0, 0, 0, 0});
+
+        shadowTexture = CoreObjectLoader.createTexture2D(GL_DEPTH_COMPONENT32F, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[]{0, 0, 0, 0});
+
+        accumulationTexture = CoreObjectLoader.createTexture2D(GL_RGBA16F, width, height, GL_RGBA, GL_HALF_FLOAT, GL_NEAREST);
+        revealTexture = CoreObjectLoader.createTexture2D(GL_R8, width, height, GL_RED, GL_FLOAT, GL_NEAREST);
+    }
+
+    private void createFrameBuffers() {
+        framebuffer = glCreateFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, intPosTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            throw new IllegalStateException("Frame buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+
+        shadowFramebuffer = glCreateFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadowColorTexture, 0);
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0});
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            throw new IllegalStateException("Shadow Frame buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+
+        transparencyFramebuffer = glCreateFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, transparencyFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, accumulationTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, revealTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+        glDrawBuffers(new int[]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1});
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            throw new IllegalStateException("Transparency buffer not complete. status " + Integer.toHexString(glCheckFramebufferStatus(GL_FRAMEBUFFER)));
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    private void deleteTextures() {
+        glDeleteTextures(colorTexture);
+        glDeleteTextures(depthTexture);
+        glDeleteTextures(intPosTexture);
+        glDeleteTextures(shadowTexture);
+        glDeleteTextures(shadowColorTexture);
+        glDeleteTextures(accumulationTexture);
+        glDeleteTextures(revealTexture);
+    }
+
+    private void deleteFrameBuffers() {
+        glDeleteFramebuffers(framebuffer);
+        glDeleteFramebuffers(shadowFramebuffer);
+        glDeleteFramebuffers(transparencyFramebuffer);
     }
 
     private void synchronizeHologramModel(Placeable placeable) {

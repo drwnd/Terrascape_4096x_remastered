@@ -7,6 +7,7 @@
     "y": 7,
     "z": 7
   },
+  "hideBodyInFirstPerson" : true,
   "ticksBetweenFootsteps": -1,
   "jumpStrength": 10.0,
   "swimStrength": 0.0033,

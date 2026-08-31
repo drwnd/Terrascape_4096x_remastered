@@ -15,7 +15,6 @@ import game.settings.KeySettings;
 import game.settings.ToggleSettings;
 import game.utils.Position;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -68,21 +67,12 @@ public abstract class MovementState {
      * Animates the given Model (assumed to be a player model).
      *
      * @param playerCharacter The model to animate.
-     * @param camera The camera of the player.
-     * @param animationTimer A value to be used as input into trigonometric functions. In whatever unit is convenient.
-     * @param frameTime The time since the last frame in ms.
+     * @param camera          The camera of the player.
+     * @param animationTimer  A value to be used as input into trigonometric functions. In whatever unit is convenient.
+     * @param frameTime       The time since the last frame in ms.
      * @return The new value of {@code animationTimer}
      */
-    public double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime) {
-        Matrix4f[] transforms = playerCharacter.transforms();
-        Model.ModelBox[] boxes = playerCharacter.boxes();
-
-        for (int index = 0; index < transforms.length; index++)
-            transforms[index].identity()
-                    .rotate((float) -Math.toRadians(camera.getRotation().y), 0.0F, 1.0F, 0.0F)
-                    .translate(boxes[index].position());
-        return animationTimer;
-    }
+    public abstract double applyAnimation(Model playerCharacter, Camera camera, double animationTimer, float frameTime);
 
     byte getStandingMaterial(Position position) {
         World world = Game.getWorld();
@@ -119,6 +109,14 @@ public abstract class MovementState {
 
     final boolean preventsFallingFromEdge() {
         return preventsFallingFromEdge;
+    }
+
+    public boolean hideBodyInFirstPerson() {
+        return hideBodyInFirstPerson;
+    }
+
+    public boolean hideHeadInFirstPerson() {
+        return hideHeadInFirstPerson;
     }
 
     public final Vector3i getHitboxSize() {
@@ -223,8 +221,8 @@ public abstract class MovementState {
     protected long lastJumpTime = System.nanoTime() - JUMP_FLYING_INTERVALL;
     @SuppressWarnings("unused")
     private int maxAutoStepHeight, ticksBetweenFootsteps;
-    @SuppressWarnings("unused")
-    private boolean preventsFallingFromEdge;
+    @SuppressWarnings({"unused", "FieldCanBeLocal", "FieldMayBeFinal"})
+    private boolean preventsFallingFromEdge, hideBodyInFirstPerson = false, hideHeadInFirstPerson = true;
     @SuppressWarnings("unused")
     private float cameraElevation;
     @SuppressWarnings("unused")

@@ -1,26 +1,12 @@
 #version 460 core
-#define MAX_AMOUNT_OF_MATERIALS 256
 const int HEAD_UNDER_WATER_BIT = 1;
 const int DO_SHADOW_MAPPING_BIT = 2;
 const int DO_GLASS_SHADOWS_BIT = 4;
 
-flat in int textureData;
-flat in vec3 normal;
-in vec3 texturePosition;
-in vec3 voxelPosition;
-in vec2 trianglePos;
-
-layout (location = 0) out vec4 fragColor;
-layout (location = 1) out ivec4 intPos;
-
-uniform sampler2DArray textures;
-uniform sampler2DArray propertiesTextures;
+uniform sampler2D image;
 uniform sampler2D shadowMap;
 uniform sampler2D shadowColor;
 uniform mat4 sunMatrix;
-
-uniform int[MAX_AMOUNT_OF_MATERIALS] textureSizes;
-uniform int maxTextureSize;
 
 uniform int flags;
 uniform float nightBrightness;
@@ -28,22 +14,11 @@ uniform float time;
 uniform vec3 sunDirection;
 uniform vec3 cameraPosition;
 
-vec2 getUVOffset(int side, int textureSize) {
-    float invTextureSize = 1.0 / textureSize;
-    vec3 textureCoordinate = fract(texturePosition * invTextureSize);
-    float normalizer = float(textureSize) / maxTextureSize;
+in vec3 voxelPosition;
+in vec2 fragTextureCoordinate;
 
-    switch (side) {
-        case 0: return vec2(textureCoordinate.x, 1 - textureCoordinate.y) * normalizer;
-        case 1: return textureCoordinate.xz * normalizer;
-        case 2: return (1 - textureCoordinate.zy) * normalizer;
-        case 3: return (1 - textureCoordinate.xy) * normalizer;
-        case 4: return textureCoordinate.xz * normalizer;
-        case 5: return vec2(textureCoordinate.z, 1 - textureCoordinate.y) * normalizer;
-    }
-
-    return fract(textureCoordinate.zx);
-}
+layout (location = 0) out vec4 fragColor;
+layout (location = 1) out ivec4 intPos;
 
 int isFlag(int bit) {
     return int((flags & bit) != 0);
@@ -74,26 +49,24 @@ vec3 getSkyLight(vec3 position, vec3 normal) {
     return currentDepth + bias < closestDepth ? vec3(0.5) : getLightColor(shadowCoord.xy);
 }
 
-vec3 getColor(vec3 color, vec3 textureCoord) {
-    float emissivness = texture(propertiesTextures, textureCoord).r;
+vec3 getColor(vec3 color) {
     float absTime = abs(time);
     float timeLight = max(nightBrightness, easeInOutQuart(absTime));
     float nightLight = 0.6 * (1 - absTime) * (1 - absTime);
-    float distance = length(cameraPosition - texturePosition);
+    float distance = length(cameraPosition - voxelPosition);
     float waterFogMultiplier = min(1, isFlag(HEAD_UNDER_WATER_BIT) * max(0.5, distance * 0.000625));
     float fogMultiplier = 1 - exp(-distance * 0.000005);
 
     vec3 nightLightVec = vec3(nightLight, nightLight, nightLight);
     vec3 nightBrightnessVec = vec3(nightBrightness);
-    vec3 skyLight = getSkyLight(voxelPosition, normal);
-    vec3 sunIllumination = dot(normal, sunDirection) * 0.2 * absTime * skyLight;
+    vec3 skyLight = getSkyLight(voxelPosition, vec3(0, 0, 0));
+    vec3 sunIllumination = 0.2 * absTime * skyLight;
     vec3 light = max(nightBrightnessVec, skyLight) * timeLight + sunIllumination;
 
     light = max(nightBrightnessVec, light);
     light.b = max(nightBrightness, max(nightBrightness, skyLight.b + nightLight) * timeLight + sunIllumination.b);
 
-    vec3 fragLight = max(vec3(emissivness), light);
-    vec3 baseColor = color * fragLight * (1 - waterFogMultiplier) * (1 - fogMultiplier);
+    vec3 baseColor = color * light * (1 - waterFogMultiplier) * (1 - fogMultiplier);
     vec3 waterColor = vec3(0.0, 0.098, 0.643) * waterFogMultiplier * timeLight;
     vec3 fogColor = vec3(0.46, 0.63, 0.79) * fogMultiplier * timeLight;
 
@@ -101,15 +74,8 @@ vec3 getColor(vec3 color, vec3 textureCoord) {
 }
 
 void main() {
-    if (trianglePos.x > 1 || trianglePos.y > 1) discard;
-    int side = textureData >> 8 & 7;
-    int material = textureData & 0xFF;
-    int textureSize = textureSizes[material];
-    vec3 textureCoord = vec3(getUVOffset(side, textureSize), material);
-
-    fragColor = texture(textures, textureCoord);
-    if (fragColor.a == 0) discard;
-
-    fragColor.rgb = getColor(fragColor.rgb, textureCoord);
-    intPos = ivec4(ivec3(floor(voxelPosition - normal * 0.5)), side);
+    vec4 color = texture(image, fragTextureCoordinate);
+    if (color.a == 0.0) discard;
+    fragColor = vec4(getColor(color.rgb), 1);
+    intPos = ivec4(floor(voxelPosition), 7);
 }

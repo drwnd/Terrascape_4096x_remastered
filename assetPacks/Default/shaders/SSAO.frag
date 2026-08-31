@@ -60,6 +60,7 @@ float computeVisibilityFactor() {
 
         ivec4 geometryIntPos = texture(intPosTexture, offset.xy);
         vec3 relativePosition = vec3(geometryIntPos.xyz) - inChunkPosition + 0.5;
+        if (geometryIntPos.w == 7) geometryIntPos.w = 0;
         if (geometryIntPos.w < 0 || geometryIntPos.w >= 6) continue;
 
         float geometryDepth = length(relativePosition);

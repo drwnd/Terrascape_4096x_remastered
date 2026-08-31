@@ -93,14 +93,19 @@ public final class WalkingState extends MovementState {
         float angle = (float) -Math.toRadians(cameraRotation.y);
         float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
         float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);
-        boolean shiftCharacter = OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON;
+        boolean isFirstPerson = OptionSettings.PERSPECTIVE.value() == Camera.Perspective.FIRST_PERSON;
 
         for (int index = 0; index < transforms.length; index++)
             transforms[index].identity()
                     .rotate(angle - sidewaysTilt, 0, 1, 0)
                     .translate(boxes[index].position())
-                    .translate(0, 0, shiftCharacter ? 3 : 0);
-        if (shiftCharacter) transforms[HEAD].zero();
+                    .translate(0, 0, isFirstPerson ? 3 : 0);
+        if (isFirstPerson) transforms[HEAD].identity()
+                .rotate(angle, 0, 1, 0)
+                .translate(boxes[HEAD].position())
+                .rotate(-sidewaysTilt, 0, 1, 0)
+                .translate(0, 0, 3)
+                .rotate(sidewaysTilt, 0, 1, 0);
         else transforms[HEAD].rotate(sidewaysTilt, 0, 1, 0);
     }
 

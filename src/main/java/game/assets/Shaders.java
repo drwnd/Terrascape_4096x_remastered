@@ -19,7 +19,8 @@ public enum Shaders implements ShaderIdentifier {
     PARTICLE_SHADOW,
     VOLUME_INDICATOR,
     TRANSPARENCY_APPLIER,
-    MODEL;
+    MODEL,
+    MODEL_SHADOW;
 
     @Override
     public Shader generateAsset() {

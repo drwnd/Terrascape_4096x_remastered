@@ -1,10 +1,10 @@
 #version 460 core
 #define MAX_AMOUNT_OF_MATERIALS 256
-#define HEAD_UNDER_WATER_BIT 1
-#define DO_SHADOW_MAPPING_BIT 2
-#define DO_GLASS_SHADOWS_BIT 4
-#define USE_WEIGHT_1 8
 #define WATER 4
+const int HEAD_UNDER_WATER_BIT = 1;
+const int DO_SHADOW_MAPPING_BIT = 2;
+const int DO_GLASS_SHADOWS_BIT = 4;
+const int USE_WEIGHT_1 = 8;
 
 in vec3 texturePosition;
 in vec3 voxelPosition;
