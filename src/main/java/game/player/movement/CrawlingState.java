@@ -14,9 +14,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import static game.assets.Models.*;
-import static game.assets.Models.LEFT_LEG;
-import static game.assets.Models.RIGHT_ARM;
-import static game.assets.Models.RIGHT_LEG;
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class CrawlingState extends MovementState {
@@ -68,8 +65,10 @@ public final class CrawlingState extends MovementState {
                     .rotate(angle - sidewaysTilt, 0, 1, 0)
                     .translate(boxes[index].position())
                     .translate(0, 0, shiftCharacter ? 3 : 0);
-        if (shiftCharacter) transforms[HEAD].zero();
-        else transforms[HEAD].identity()
+        if (shiftCharacter) {
+            transforms[HEAD].zero();
+            transforms[BODY].zero();
+        } else transforms[HEAD].identity()
                 .rotate(angle, 0, 1, 0)
                 .translate(boxes[HEAD].position())
                 .rotate(-sidewaysTilt, 0, 1, 0)
@@ -78,16 +77,20 @@ public final class CrawlingState extends MovementState {
                 .translate(0, 0, 6);
 
         float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
-        float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
+        float speed = velocity.length();
+        float amplitude = (float) Math.clamp(speed + rotationSpeed, -Math.PI * 0.35, Math.PI * 0.35);
 
         transforms[HEAD].translate(0, -22, -6).rotate((float) -Math.PI * 0.25F, 1, 0, 0);
         transforms[BODY].translate(0, -10, 6).rotate((float) -Math.PI * 0.5F, 1, 0, 0);
-        transforms[LEFT_ARM].translate(0, -20, -4).rotate((float) -Math.PI * 0.5F, 1, 0, 0);
-        transforms[RIGHT_ARM].translate(0, -20, -4).rotate((float) -Math.PI * 0.5F, 1, 0, 0);
-        transforms[LEFT_LEG].translate(0, -10, 6).rotate((float) -Math.PI * 0.5F, 1, 0, 0);
-        transforms[RIGHT_LEG].translate(0, -10, 6).rotate((float) -Math.PI * 0.5F, 1, 0, 0);
+        transforms[LEFT_ARM].translate(0, -20, -4).rotate((float) -Math.PI * 0.5F, 1, 0, 0)
+                .rotate((float) -Math.abs(Math.sin(animationTimer) * Math.PI), 0, 0, 1)
+                .rotate((float) Math.min(0, -Math.sin(animationTimer * 2) * Math.PI * 0.25), 1, 0, 0);
+        transforms[RIGHT_ARM].translate(0, -20, -4).rotate((float) -Math.PI * 0.5F, 1, 0, 0)
+                .rotate((float) Math.abs(Math.cos(animationTimer) * Math.PI), 0, 0, 1)
+                .rotate((float) Math.min(0, Math.sin(animationTimer * 2) * Math.PI * 0.25), 1, 0, 0);
+        SwimmingState.applyLegAnimation(animationTimer, transforms, amplitude);
 
-        return animationTimer + frameTime * 0.005;
+        return animationTimer + frameTime * amplitude * 0.0025;
     }
 
     @Override
