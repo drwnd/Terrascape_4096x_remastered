@@ -72,9 +72,8 @@ public final class WalkingState extends MovementState {
         float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1);
         Vector3f velocity = movement.getRenderVelocity().mul(fraction).add(movement.getOldRenderVelocity().mul(1 - fraction));
         Vector3f cameraRotation = camera.getRotation();
-        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
 
-        rotateBody(transforms, boxes, cameraRotation, velocity, direction);
+        rotateBody(transforms, boxes, cameraRotation, velocity);
 
         float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
         float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
@@ -89,7 +88,8 @@ public final class WalkingState extends MovementState {
         return animationTimer + (Input.isKeyPressed(KeySettings.SPRINT) ? 1.5 : 1) * frameTime * 0.01;
     }
 
-    static void rotateBody(Matrix4f[] transforms, Model.ModelBox[] boxes, Vector3f cameraRotation, Vector3f velocity, Vector3f direction) {
+    static void rotateBody(Matrix4f[] transforms, Model.ModelBox[] boxes, Vector3f cameraRotation, Vector3f velocity) {
+        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
         float angle = (float) -Math.toRadians(cameraRotation.y);
         float sidewaysVelocity = -velocity.x * direction.z + velocity.z * direction.x;
         float sidewaysTilt = (float) Math.clamp(sidewaysVelocity * 0.2F, -Math.PI * 0.25, Math.PI * 0.25);

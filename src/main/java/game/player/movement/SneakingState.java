@@ -53,9 +53,8 @@ public final class SneakingState extends MovementState {
         float fraction = Math.clamp(Game.getServer().getCurrentGameTickFraction(), 0, 1);
         Vector3f velocity = movement.getRenderVelocity().mul(fraction).add(movement.getOldRenderVelocity().mul(1 - fraction));
         Vector3f cameraRotation = camera.getRotation();
-        Vector3f direction = MathUtils.getHorizontalDirection(cameraRotation);
 
-        WalkingState.rotateBody(transforms, boxes, cameraRotation, velocity, direction);
+        WalkingState.rotateBody(transforms, boxes, cameraRotation, velocity);
 
         float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
         float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
