@@ -78,7 +78,9 @@ public final class WalkingState extends MovementState {
 
         float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
         float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
-        transforms[HEAD].rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        float bodyMovement = (float) Math.cos(animationTimer) * Math.min(speed * 0.1F, 0.3F);
+        transforms[HEAD].translate(0, bodyMovement, 0).rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[BODY].translate(0, bodyMovement, 0);
         transforms[LEFT_ARM].rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.1F, 0, 0, 1);
         transforms[RIGHT_ARM].rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.1F, 0, 0, 1);
         transforms[LEFT_LEG].rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);

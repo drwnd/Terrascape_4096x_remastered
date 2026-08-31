@@ -538,6 +538,7 @@ public final class Renderer extends Renderable {
             frameTime = (frameTimes.getLast() - frameTimes.get(frameTimes.size() - 2)) / 1_000_000F;
         else frameTime = 0;
         animationTimer = player.getMovement().getState().applyAnimation(playerCharacter, player.getCamera(), animationTimer, frameTime);
+        player.applyAnimation(playerCharacter);
 
         Vector3l cameraChunkPosition = new Vector3l(
                 cameraPosition.longX & ~CHUNK_SIZE_MASK,
