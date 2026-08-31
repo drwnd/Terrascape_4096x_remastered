@@ -12,6 +12,7 @@ import game.utils.Position;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import static game.assets.Models.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class SneakingState extends MovementState {
@@ -58,12 +59,12 @@ public final class SneakingState extends MovementState {
 
         float rotationSpeed = camera.getCurrentRotationSpeed(fraction).length() * 0.05F;
         float speed = (float) Math.clamp(velocity.length() * 0.2 + rotationSpeed, -Math.PI * 0.5, Math.PI * 0.5);
-        transforms[0].translate(0, -4, 0).rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
-        transforms[1].translate(0, -2, 6).rotate(-0.5F, 1, 0, 0);
-        transforms[2].translate(0, -4, 0).rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.2F, 0, 0, 1);
-        transforms[3].translate(0, -4, 0).rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.2F, 0, 0, 1);
-        transforms[4].translate(0, 0, 5.5F).rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
-        transforms[5].translate(0, 0, 5.5F).rotate((float) Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+        transforms[HEAD].translate(0, -4, 0).rotate((float) -Math.toRadians(cameraRotation.x), 1, 0, 0);
+        transforms[BODY].translate(0, -2, 6).rotate(-0.5F, 1, 0, 0);
+        transforms[LEFT_ARM].translate(0, -4, 0).rotate((float) Math.sin(animationTimer) * speed, 1, 0, 0).rotate(-speed * 0.2F, 0, 0, 1);
+        transforms[RIGHT_ARM].translate(0, -4, 0).rotate((float) -Math.sin(animationTimer) * speed, 1, 0, 0).rotate(speed * 0.2F, 0, 0, 1);
+        transforms[LEFT_LEG].translate(0, 0, 5.5F).rotate((float) -Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
+        transforms[RIGHT_LEG].translate(0, 0, 5.5F).rotate((float) Math.sin(animationTimer) * speed * 0.5F, 1, 0, 0);
 
         return animationTimer + frameTime * 0.005;
     }
