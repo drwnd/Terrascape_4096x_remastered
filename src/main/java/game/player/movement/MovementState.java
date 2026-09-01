@@ -55,7 +55,7 @@ public abstract class MovementState {
         float waterIntersection = intersectedVolume(playerPosition, this, WATER);
         float lavaIntersection = intersectedVolume(playerPosition, this, LAVA);
 
-        float drag = movement.isWideGrounded() ? WALKING_DRAG : AIR_DRAG;
+        float drag = movement.isGrounded() ? WALKING_DRAG : AIR_DRAG;
         float liquidDrag = (float) (Math.pow(WATER_DRAG, waterIntersection)) * (float) (Math.pow(LAVA_DRAG, lavaIntersection));
 
         velocity.add(acceleration).mul(drag).mul(liquidDrag);
@@ -141,12 +141,12 @@ public abstract class MovementState {
 
 
     void handleJump(Position position, Vector3f velocityChange, float jumpStrength, float swimStrength) {
-        if (movement.isWideGrounded()) velocityChange.y = jumpStrength;
+        if (movement.isGrounded()) velocityChange.y = jumpStrength;
         else velocityChange.y += intersectedVolume(position, this, WATER) * swimStrength + intersectedVolume(position, this, LAVA) * swimStrength;
     }
 
     float getMovementSpeed(Position lastPosition, float movementSpeed, float inAirSpeed, float swimStrength) {
-        float speed = movement.isWideGrounded() ? movementSpeed : inAirSpeed;
+        float speed = movement.isGrounded() ? movementSpeed : inAirSpeed;
         speed += intersectedVolume(lastPosition, this, WATER) * swimStrength * movementSpeed * 0.25F;
         speed += intersectedVolume(lastPosition, this, LAVA) * swimStrength * movementSpeed * 0.25F;
         return speed;

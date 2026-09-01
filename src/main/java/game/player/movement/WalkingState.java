@@ -37,7 +37,7 @@ public final class WalkingState extends MovementState {
         if (Input.isKeyPressed(KeySettings.JUMP)) {
             playJumpSound(lastPosition);
             handleJump(lastPosition, velocityChange, jumpStrength, swimStrength);
-            if (Input.isKeyPressed(KeySettings.MOVE_FORWARD) && Input.isKeyPressed(KeySettings.SPRINT) && movement.isWideGrounded())
+            if (Input.isKeyPressed(KeySettings.MOVE_FORWARD) && Input.isKeyPressed(KeySettings.SPRINT) && movement.isGrounded())
                 velocityChange.x += jumpSpeedGain;
         }
 
@@ -110,7 +110,7 @@ public final class WalkingState extends MovementState {
     }
 
     private void playJumpSound(Position position) {
-        if (!movement.isWideGrounded()) return;
+        if (!movement.isGrounded()) return;
         byte standingMaterial = getStandingMaterial(position);
         Sound.play3D(Material.getJumpSounds(standingMaterial), FloatSettings.JUMP_AUDIO, position, null);
     }

@@ -114,6 +114,17 @@ public final class Position implements Distanceable {
         return this;
     }
 
+    public Position addComponent(int component, int value) {
+
+        switch (component) {
+            case X_COMPONENT -> longX += value;
+            case Y_COMPONENT -> longY += value;
+            case Z_COMPONENT -> longZ += value;
+        }
+
+        return this;
+    }
+
     @Override
     public Vector3f vectorFrom(Distanceable distanceable) {
         if (!(distanceable instanceof Position position)) return new Vector3f(Float.NaN);

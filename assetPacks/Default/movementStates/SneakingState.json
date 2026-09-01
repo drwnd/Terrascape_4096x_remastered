@@ -3,9 +3,9 @@
   "preventsFallingFromEdge": true,
   "cameraElevation": 22,
   "hitboxSize": {
-    "x": 7,
+    "x": 8,
     "y": 24,
-    "z": 7
+    "z": 8
   },
   "ticksBetweenFootsteps": -1,
   "jumpStrength": 11.125,

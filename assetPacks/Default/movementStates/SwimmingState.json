@@ -3,9 +3,9 @@
   "preventsFallingFromEdge": false,
   "cameraElevation": 5,
   "hitboxSize": {
-    "x": 7,
-    "y": 7,
-    "z": 7
+    "x": 8,
+    "y": 8,
+    "z": 8
   },
   "hideBodyInFirstPerson" : true,
   "ticksBetweenFootsteps": 13,
