@@ -129,7 +129,7 @@ public final class Window {
     }
 
     public static void cleanUp() {
-        AssetManager.deleteAll();
+        AssetManager.cleanUp();
         glfwDestroyWindow(window);
         Sound.cleanUp();
         Settings.writeToFile();

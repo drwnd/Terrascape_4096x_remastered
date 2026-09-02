@@ -3,7 +3,6 @@ package core.rendering_api;
 import core.assets.AssetManager;
 import core.renderables.TextFieldInput;
 import core.settings.*;
-import core.settings.optionSettings.FontOption;
 
 public final class StandardWindowInput extends Input {
 
@@ -29,12 +28,11 @@ public final class StandardWindowInput extends Input {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
+        if (Window.getInput() instanceof TextFieldInput) return;
+
         if (Input.isKeyPressed(CoreKeySettings.RESIZE_WINDOW)) Window.toggleFullScreen();
         if (Input.isKeyPressed(CoreKeySettings.RELOAD_ASSETS)) AssetManager.deleteAll();
-        if (Input.isKeyPressed(CoreKeySettings.RELOAD_SETTINGS)) Settings.loadFromFile();
-        if (Input.isKeyPressed(CoreKeySettings.RELOAD_FONT)) ((FontOption) CoreOptionSettings.FONT.value()).load();
-
-        if (!(Window.getInput() instanceof TextFieldInput)) handleToggleKeybinds();
+        handleToggleKeybinds();
     }
 
     @Override

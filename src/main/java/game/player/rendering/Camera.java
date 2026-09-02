@@ -151,7 +151,7 @@ public final class Camera {
 
     private static void pushPositionToWall(Position position, Vector3f direction) {
         direction.mul(-0.05F);
-        while (isObstructed(position)) position.add(direction.x, direction.y, direction.z);
+        for (int count = 0; count < 20 && isObstructed(position); count++) position.add(direction.x, direction.y, direction.z);
     }
 
 

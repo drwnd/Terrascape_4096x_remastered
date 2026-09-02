@@ -15,6 +15,16 @@ public final class AssetManager {
     }
 
 
+    public static void cleanUp() {
+        Debug.log("---Deleting old Assets---");
+        synchronized (assets) {
+            for (Asset asset : assets.values()) asset.delete();
+            assets.clear();
+        }
+        deleteAllCallbacks.clear();
+        assetPackNames.clear();
+    }
+
     public static void deleteAll() {
         Debug.log("---Deleting old Assets---");
         synchronized (assets) {
@@ -78,7 +88,8 @@ public final class AssetManager {
     }
 
     public static void setActiveAssetPackNames(ArrayList<String> assetPackNames) {
-        AssetManager.assetPackNames = new ArrayList<>(assetPackNames);
+        AssetManager.assetPackNames.clear();
+        AssetManager.assetPackNames.addAll(assetPackNames);
         deleteAll();
     }
 
@@ -90,5 +101,5 @@ public final class AssetManager {
 
     private static final ArrayList<Runnable> deleteAllCallbacks = new ArrayList<>();
     private static final HashMap<AssetIdentifier<?>, Asset> assets = new HashMap<>();
-    private static ArrayList<String> assetPackNames = new ArrayList<>();
+    private static final ArrayList<String> assetPackNames = new ArrayList<>();
 }

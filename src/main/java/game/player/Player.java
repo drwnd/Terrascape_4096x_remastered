@@ -15,7 +15,6 @@ import game.player.rendering.MeshCollector;
 import game.player.particles.ParticleCollector;
 import game.player.rendering.Renderer;
 import game.server.Game;
-import game.server.material.Material;
 import game.settings.IntSettings;
 import game.settings.KeySettings;
 import game.settings.ToggleSettings;
@@ -78,7 +77,7 @@ public final class Player {
         camera.updateGameTick();
 
         long currentGameTick = Game.getServer().getCurrentGameTick();
-        if (currentGameTick >= lastInteractionTick + IntSettings.BREAK_PLACE_INTERVALL.value()
+        if (canDoActiveActions() && currentGameTick >= lastInteractionTick + IntSettings.BREAK_PLACE_INTERVALL.value()
                 && (Input.isKeyPressed(KeySettings.DESTROY) || Input.isKeyPressed(KeySettings.USE)))
             lastInteractionTick = currentGameTick;
     }
@@ -112,6 +111,7 @@ public final class Player {
 
         if (action == GLFW_PRESS && (button == KeySettings.DESTROY.keybind() || button == KeySettings.USE.keybind()))
             lastInteractionTick = Game.getServer().getCurrentGameTick();
+        if (button == KeySettings.ZOOM.keybind() && action != GLFW_REPEAT) camera.setZoomed(action == GLFW_PRESS);
     }
 
     /**
@@ -121,12 +121,9 @@ public final class Player {
     public void handleInactiveKeyInput(int button, int action) {
         InteractionHandler.handleInactiveInput(button, action);
 
-        if (button == KeySettings.ZOOM.keybind() && action != GLFW_REPEAT) camera.setZoomed(action == GLFW_PRESS);
         if (button == KeySettings.OPEN_INVENTORY.keybind() && action == GLFW_PRESS) toggleInventory();
         if (button == KeySettings.OPEN_CHAT.keybind() && action == GLFW_PRESS) toggleChat();
         if (button == KeySettings.START_COMMAND.keybind() && action == GLFW_PRESS) startCommand();
-
-        if (button == KeySettings.RELOAD_MATERIALS.keybind() && action == GLFW_PRESS) Material.loadMaterials();
     }
 
     public void handleScrollInput(double yScroll) {

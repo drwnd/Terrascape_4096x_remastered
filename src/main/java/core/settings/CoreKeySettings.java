@@ -4,9 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public enum CoreKeySettings implements KeySetting {
     RESIZE_WINDOW(GLFW_KEY_F11),
-    RELOAD_ASSETS(GLFW_KEY_F10),
-    RELOAD_SETTINGS(GLFW_KEY_F9),
-    RELOAD_FONT(GLFW_KEY_F7);
+    RELOAD_ASSETS(GLFW_KEY_F10);
 
     CoreKeySettings(int defaultValue) {
         this.defaultKeybind = defaultValue;

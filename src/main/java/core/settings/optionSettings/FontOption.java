@@ -1,9 +1,11 @@
 package core.settings.optionSettings;
 
 import core.assets.AssetLoader;
+import core.assets.AssetManager;
 import core.assets.Texture;
 import core.assets.identifiers.AssetIdentifier;
 import core.rendering_api.Window;
+import core.settings.CoreOptionSettings;
 import core.utils.FileManager;
 
 import org.joml.Vector2f;
@@ -13,6 +15,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class FontOption implements Option, AssetIdentifier<Texture> {
+
+    static {
+        AssetManager.addDeleteAllCallback(() -> ((FontOption) CoreOptionSettings.FONT.value()).load());
+    }
 
     public FontOption(String fontName) {
         this(Path.of("assets", "fonts", fontName).toFile());

@@ -19,6 +19,7 @@ public final class Settings {
         settings = new ArrayList<>();
         registerSettingsEnums(CoreFloatSettings.class, CoreKeySettings.class, CoreToggleSettings.class, CoreOptionSettings.class);
         registerSettings(List.of(new AssetPackSetting()));
+        AssetManager.addDeleteAllCallback(Settings::loadFromFile);
     }
 
     @SafeVarargs

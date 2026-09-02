@@ -155,10 +155,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         SettingsRenderable section = new SettingsRenderable();
 
         section.addKeySelector(CoreKeySettings.RESIZE_WINDOW);
-        section.addKeySelector(CoreKeySettings.RELOAD_SETTINGS);
         section.addKeySelector(CoreKeySettings.RELOAD_ASSETS);
-        section.addKeySelector(CoreKeySettings.RELOAD_FONT);
-        section.addKeySelector(KeySettings.RELOAD_MATERIALS);
         section.addKeySelector(KeySettings.START_COMMAND);
 
         section.addToggle(ToggleSettings.OPEN_DEBUG_MENU);
