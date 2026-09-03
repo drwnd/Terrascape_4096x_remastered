@@ -155,12 +155,12 @@ public final class Player {
 
     public Vector3l getMinCoordinate() {
         Vector3i hitboxSize = movement.getState().getHitboxSize();
-        return new Position(this.position).add(-hitboxSize.x * 0.5F, 0.0F, -hitboxSize.z * 0.5F).longPosition();
+        return new Vector3l(Movement.minX(position, hitboxSize), Movement.minY(position, hitboxSize), Movement.minZ(position, hitboxSize));
     }
 
     public Vector3l getMaxCoordinate() {
         Vector3i hitboxSize = movement.getState().getHitboxSize();
-        return new Position(this.position).add(hitboxSize.x * 0.5F, hitboxSize.y, hitboxSize.z * 0.5F).longPosition();
+        return new Vector3l(Movement.maxX(position, hitboxSize), Movement.maxY(position, hitboxSize), Movement.maxZ(position, hitboxSize));
     }
 
     public Placeable getHeldPlaceable() {

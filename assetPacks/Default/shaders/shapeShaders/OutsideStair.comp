@@ -91,7 +91,7 @@ bool isInsideRotated(int a, int b, int c) {
     int outerThreshold = (size.x + heightOffset) / stepHeight;
     int innerThreshold = min(outerThreshold - 1, outerThreshold - thickness / stepHeight);
 
-    float distance = a / stepHeight * slope + max(b, c) / stepHeight;
+    float distance = max(b, c) / stepHeight * slope + a / stepHeight;
     return distance < outerThreshold && distance >= innerThreshold;
 }
 

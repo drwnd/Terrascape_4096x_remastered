@@ -133,9 +133,9 @@ public abstract class ShapePlaceable implements Placeable {
         if (Properties.hasProperties(material, NO_COLLISION)) return false;
         int preferredSize = getPreferredSize();
 
-        int minX = Math.max(0, (int) (min.x - position.x) - 1), maxX = Math.min((int) (max.x - position.x), preferredSize);
-        int minY = Math.max(0, (int) (min.y - position.y) - 1), maxY = Math.min((int) (max.y - position.y), preferredSize);
-        int minZ = Math.max(0, (int) (min.z - position.z) - 1), maxZ = Math.min((int) (max.z - position.z), preferredSize);
+        int minX = Math.max(0, (int) (min.x - position.x)), maxX = Math.min((int) (max.x - position.x), preferredSize);
+        int minY = Math.max(0, (int) (min.y - position.y)), maxY = Math.min((int) (max.y - position.y), preferredSize);
+        int minZ = Math.max(0, (int) (min.z - position.z)), maxZ = Math.min((int) (max.z - position.z), preferredSize);
 
         for (int x = minX; x < maxX; x++)
             for (int y = minY; y < maxY; y++)
