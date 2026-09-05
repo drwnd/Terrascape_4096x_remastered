@@ -3,7 +3,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-/saves/
 /idea/
 
 ### IntelliJ IDEA ###
@@ -40,4 +39,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 /src/main/java/DebugLauncher.java
+
+### Game ###
+/saves/
 /Settings
+/Screenshots/

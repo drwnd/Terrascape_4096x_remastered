@@ -3,17 +3,21 @@ package core.rendering_api;
 import core.assets.AssetManager;
 import core.renderables.Renderable;
 import core.settings.CoreFloatSettings;
-
 import core.settings.Settings;
 import core.sound.Sound;
+
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.stb.STBImageWrite;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.lwjgl.opengl.GL46.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -126,6 +130,22 @@ public final class Window {
 
         if (maximized) glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), GLFW_DONT_CARE);
         else glfwSetWindowMonitor(window, MemoryUtil.NULL, width / 4, height / 4, width / 2, height / 2, GLFW_DONT_CARE);
+    }
+
+    public static String takeScreenShot() {
+        String name = new Date().toString().replace(':', '_') + ".png";
+        String filepath = Path.of("Screenshots", name).toString();
+
+        Debug.clearErrors();
+        ByteBuffer screenshot = ByteBuffer.allocateDirect(width * height * 3);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        glReadnPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, screenshot);
+
+        if (Debug.getError() != GL_NO_ERROR) return null;
+        STBImageWrite.stbi_flip_vertically_on_write(true);
+        STBImageWrite.stbi_write_png(filepath, width, height, 3, screenshot, 3 * width);
+        return name;
     }
 
     public static void cleanUp() {

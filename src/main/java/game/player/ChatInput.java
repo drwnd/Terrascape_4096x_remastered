@@ -3,10 +3,12 @@ package game.player;
 import core.renderables.TextField;
 import core.renderables.TextFieldInput;
 
+import game.player.rendering.Renderer;
 import game.server.ChatMessage;
 import game.server.Game;
 
 import game.server.Sender;
+import game.settings.KeySettings;
 
 import java.util.ArrayList;
 
@@ -54,6 +56,7 @@ public final class ChatInput extends TextFieldInput {
 
     @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
+        if (key == KeySettings.TAKE_SCREENSHOT.keybind() && action == GLFW_PRESS) Renderer.takeScreenshot();
         if (action != GLFW_PRESS && action != GLFW_REPEAT) return;
         if (key == GLFW_KEY_ESCAPE) Game.getPlayer().toggleChat();
         if (key == GLFW_KEY_ENTER) {

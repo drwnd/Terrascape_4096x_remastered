@@ -5,7 +5,6 @@ import core.assets.identifiers.TextureIdentifier;
 import core.renderables.Renderable;
 import core.renderables.UiElement;
 import core.rendering_api.CoreObjectLoader;
-import core.rendering_api.Debug;
 import core.rendering_api.Input;
 import core.rendering_api.Window;
 import core.rendering_api.shaders.GuiShader;
@@ -33,14 +32,10 @@ import game.utils.Transformation;
 import game.utils.Utils;
 
 import org.joml.*;
-import org.lwjgl.stb.STBImageWrite;
 
 import java.awt.*;
 import java.lang.Math;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static game.utils.Constants.*;
 import static org.lwjgl.opengl.GL46.*;
@@ -98,25 +93,12 @@ public final class Renderer extends Renderable {
         renderingOptimizer = new RenderingOptimizer(player.getMeshCollector());
     }
 
-    public void takeScreenShot() {
-        String name = new Date().toString().replace(':', '_') + ".png";
-        String filepath = Path.of("Screenshots", name).toString();
 
-        Debug.clearErrors();
-        ByteBuffer screenshot = ByteBuffer.allocateDirect(Window.getWidth() * Window.getHeight() * 3);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glReadnPixels(0, 0, Window.getWidth(), Window.getHeight(), GL_RGB, GL_UNSIGNED_BYTE, screenshot);
-
-        if (Debug.getError() != GL_NO_ERROR) {
-            Game.getServer().sendServerMessage("Could not save screenshot", ColorOption.RED);
-            return;
-        }
-        STBImageWrite.stbi_write_png(filepath, Window.getWidth(), Window.getHeight(), 3, screenshot, 3 * Window.getWidth());
-        Game.getServer().sendServerMessage("Saved Screenshot as " + name, ColorOption.WHITE);
+    public static void takeScreenshot() {
+        String screenshotName = Window.takeScreenShot();
+        if (screenshotName == null) Game.getServer().sendServerMessage("Could not save Screenshot", ColorOption.RED);
+        else Game.getServer().sendServerMessage("Saved Screenshot as " + screenshotName, ColorOption.WHITE);
     }
-
 
     public static void setupOpaqueRendering(Shader shader, Matrix4f matrix, long x, long y, long z, float time) {
         TextureArray materialsTexture = AssetManager.get(TextureArrays.MATERIALS);
@@ -243,6 +225,11 @@ public final class Renderer extends Renderable {
         renderPlaceableHologram(cameraPosition, projectionViewMatrix);
 
         glDisable(GL_STENCIL_TEST);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBlitNamedFramebuffer(framebuffer, 0,
+                0, 0, Window.getWidth(), Window.getHeight(),
+                0, 0, Window.getWidth(), Window.getHeight(),
+                GL_COLOR_BUFFER_BIT, GL_NEAREST);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
 
@@ -256,12 +243,6 @@ public final class Renderer extends Renderable {
 
         renderChat();
         renderDebugInfo();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBlitNamedFramebuffer(framebuffer, 0,
-                0, 0, Window.getWidth(), Window.getHeight(),
-                0, 0, Window.getWidth(), Window.getHeight(),
-                GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
         glDepthMask(true);
     }
