@@ -124,6 +124,7 @@ public final class Player {
         if (button == KeySettings.OPEN_INVENTORY.keybind() && action == GLFW_PRESS) toggleInventory();
         if (button == KeySettings.OPEN_CHAT.keybind() && action == GLFW_PRESS) toggleChat();
         if (button == KeySettings.START_COMMAND.keybind() && action == GLFW_PRESS) startCommand();
+        if (button == KeySettings.TAKE_SCREENSHOT.keybind() && action == GLFW_PRESS) renderer.takeScreenShot();
     }
 
     public void handleScrollInput(double yScroll) {

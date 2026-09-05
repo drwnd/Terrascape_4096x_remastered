@@ -25,6 +25,10 @@ public final class Debug {
         while (glGetError() != GL_NO_ERROR) ;
     }
 
+    public static int getError() {
+        return glGetError();
+    }
+
     public static void log(String message) {
         if (CoreOptionSettings.LOG_MESSAGES.value() != LogMessages.ALL) return;
         System.out.println(message);
