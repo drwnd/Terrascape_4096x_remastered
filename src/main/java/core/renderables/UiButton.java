@@ -7,11 +7,14 @@ import core.sound.Sound;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class UiButton extends UiBackgroundElement {
 
     public UiButton(Vector2f sizeToParent, Vector2f offsetToParent, Runnable runnable) {
         super(sizeToParent, offsetToParent);
-        clickable = (_, _, _) -> {
+        clickable = (_, _, action) -> {
+            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
             runnable.run();
             return ButtonResult.SUCCESS;
         };
@@ -37,7 +40,8 @@ public class UiButton extends UiBackgroundElement {
 
     public void setAction(Runnable action) {
         if (action == null) return;
-        clickable = (_, _, _) -> {
+        clickable = (_, _, buttonAction) -> {
+            if (buttonAction != GLFW_PRESS) return ButtonResult.IGNORE;
             action.run();
             return ButtonResult.SUCCESS;
         };

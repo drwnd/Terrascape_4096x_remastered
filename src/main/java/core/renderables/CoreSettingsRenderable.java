@@ -1,5 +1,6 @@
 package core.renderables;
 
+import core.rendering_api.MenuInput;
 import core.rendering_api.Window;
 import core.settings.*;
 import core.utils.StringGetter;
@@ -46,6 +47,12 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
         for (UiButton resetButton : resetButtons) resetButton.move(offset);
         for (Renderable renderable : movingRenderables) renderable.move(offset);
+    }
+
+    public float getMaxScroll() {
+        int settingCount = Math.max(Math.max(Math.max(Math.max(Math.max(
+                sliders.size(), keySelectors.size()), toggles.size()), options.size()), resetButtons.size()), movingRenderables.size());
+        return settingCount * SETTING_DISTANCE - 1 + 0.025F;
     }
 
     public static void cancelSelection() {
@@ -222,5 +229,17 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     private final ArrayList<UiButton> resetButtons = new ArrayList<>();
     protected final ArrayList<Renderable> movingRenderables = new ArrayList<>();
 
-    private static final float SETTING_DISTANCE = 0.125F;
+    protected static final float SETTING_DISTANCE = 0.125F;
+
+    protected static final class SettingsRenderableInput extends MenuInput<CoreSettingsRenderable> {
+
+        public SettingsRenderableInput(CoreSettingsRenderable menu) {
+            super(menu, menu::scrollSettingButtons, menu::getMaxScroll);
+        }
+
+        @Override
+        public void keyCallback(long window, int key, int scancode, int action, int mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) CoreSettingsRenderable.cancelSelection();
+        }
+    }
 }

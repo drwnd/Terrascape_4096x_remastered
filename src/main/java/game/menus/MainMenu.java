@@ -1,6 +1,7 @@
 package game.menus;
 
 import core.renderables.*;
+import core.rendering_api.MenuInput;
 import core.utils.FileManager;
 import core.language.Language;
 import core.language.CoreUiMessages;
@@ -33,7 +34,7 @@ public final class MainMenu extends UiBackgroundElement {
         TextElement text = new TextElement(new Vector2f(0.05F, 0.5F), UiMessages.QUIT_GAME);
         closeApplicationButton.addRenderable(text);
 
-        UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.725F), getCreateWorldAction());
+        UiButton createNewWorldButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.725F), () -> Window.pushRenderable(new WorldCreationMenu()));
         text = new TextElement(new Vector2f(0.05F, 0.5F), UiMessages.NEW_WORLD);
         createNewWorldButton.addRenderable(text);
 
@@ -78,7 +79,7 @@ public final class MainMenu extends UiBackgroundElement {
     @Override
     public void setOnTop() {
         // IDK why but sometimes it doesn't find MainMenuInput without the package declaration
-        input = new game.menus.MainMenuInput(this);
+        input = new MenuInput<>(this, this::moveWorldButtons, this::getMaxScroll);
         Window.setInput(input);
         createWorldButtons();
         hideWorldSpecificButtons();
@@ -102,7 +103,7 @@ public final class MainMenu extends UiBackgroundElement {
     private void setSelectedWorld(World world) {
         hideWorldSpecificButtons();
 
-        playWorldButton.setAction(getPlayWorldAction(world));
+        playWorldButton.setAction(() -> Game.play(world));
         deleteWorldButton.setAction(getDeleteWorldAction(world));
         optimizeWorldButton.setAction(getOptimizeWorldAction(world));
 
@@ -129,6 +130,7 @@ public final class MainMenu extends UiBackgroundElement {
 
     private void createWorldButtons() {
         for (Renderable worldButton : worldButtons) removeRenderable(worldButton).delete();
+        worldButtons.clear();
 
         WorldSaver saver = new WorldSaver();
         File[] savedWorlds = getSavedWorlds();
@@ -193,6 +195,10 @@ public final class MainMenu extends UiBackgroundElement {
         };
     }
 
+    private float getMaxScroll() {
+        return worldButtons.size() * 0.14F - 1 + 0.0825F;
+    }
+
 
     private static Clickable getSettingsAction() {
         return (Vector2i _, int _, int action) -> {
@@ -202,23 +208,7 @@ public final class MainMenu extends UiBackgroundElement {
         };
     }
 
-    private static Clickable getCreateWorldAction() {
-        return (Vector2i _, int _, int action) -> {
-            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Window.pushRenderable(new WorldCreationMenu());
-            return ButtonResult.SUCCESS;
-        };
-    }
-
-    private static Clickable getPlayWorldAction(World world) {
-        return (Vector2i _, int _, int action) -> {
-            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Game.play(world);
-            return ButtonResult.SUCCESS;
-        };
-    }
-
     private final ArrayList<UiButton> worldButtons = new ArrayList<>();
     private final UiButton playWorldButton, deleteWorldButton, optimizeWorldButton, confirmDeletionButton, cancelDeletionButton;
-    private game.menus.MainMenuInput input;  // IDK why but sometimes it doesn't find MainMenuInput without the package declaration
+    private MenuInput<MainMenu> input;
 }

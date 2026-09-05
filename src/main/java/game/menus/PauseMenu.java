@@ -3,10 +3,9 @@ package game.menus;
 import core.assets.AssetManager;
 import core.assets.Texture;
 import core.language.CoreUiMessages;
-import core.renderables.Renderable;
-import core.renderables.TextElement;
-import core.renderables.UiButton;
+import core.renderables.*;
 import core.rendering_api.CoreObjectLoader;
+import core.rendering_api.MenuInput;
 import core.rendering_api.Window;
 import core.rendering_api.shaders.GuiShader;
 import core.assets.CoreShaders;
@@ -16,7 +15,10 @@ import game.server.Game;
 import game.settings.FloatSettings;
 
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.opengl.GL46.*;
 
 public final class PauseMenu extends Renderable {
@@ -26,10 +28,10 @@ public final class PauseMenu extends Renderable {
 
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
 
-        UiButton quitButton = new UiButton(sizeToParent, new Vector2f(0.2F, 0.3F), getQuitButtonAction());
+        UiButton quitButton = new UiButton(sizeToParent, new Vector2f(0.2F, 0.3F), Game::quit);
         quitButton.addRenderable(new TextElement(new Vector2f(0.05F, 0.5F), UiMessages.QUIT_WORLD));
 
-        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.2F, 0.45F), getSettingsButtonAction());
+        UiButton settingsButton = new UiButton(sizeToParent, new Vector2f(0.2F, 0.45F), () -> Window.pushRenderable(new SettingsMenu()));
         settingsButton.addRenderable(new TextElement(new Vector2f(0.05F, 0.5F), CoreUiMessages.SETTINGS));
 
         UiButton playButton = new UiButton(sizeToParent, new Vector2f(0.2F, 0.6F), getPlayButtonAction());
@@ -81,20 +83,29 @@ public final class PauseMenu extends Renderable {
     }
 
 
-    private static Runnable getQuitButtonAction() {
-        return Game::quit;
-    }
-
-    private static Runnable getSettingsButtonAction() {
-        return () -> Window.pushRenderable(new SettingsMenu());
-    }
-
-    private static Runnable getPlayButtonAction() {
-        return () -> {
+    private static Clickable getPlayButtonAction() {
+        return (Vector2i _, int _, int action) -> {
+            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
             Window.popRenderable();
             Game.getServer().startTicks();
+            return ButtonResult.SUCCESS;
         };
     }
 
     private final Texture backGround;
+
+    private static final class PauseMenuInput extends MenuInput<PauseMenu> {
+
+        private PauseMenuInput(PauseMenu menu) {
+            super(menu);
+        }
+
+        @Override
+        public void keyCallback(long window, int key, int scancode, int action, int mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+                Window.popRenderable();
+                Game.getServer().startTicks();
+            }
+        }
+    }
 }
