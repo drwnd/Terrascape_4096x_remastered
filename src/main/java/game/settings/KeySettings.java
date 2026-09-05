@@ -40,7 +40,8 @@ public enum KeySettings implements KeySetting {
     LOCK_PLACE_POSITION(GLFW_KEY_Y),
     ROTATE_SHAPE_FORWARD(GLFW_KEY_F1),
     ROTATE_SHAPE_BACKWARD(GLFW_KEY_F2),
-    SHOW_PLACEABLE_PREVIEW(GLFW_KEY_X);
+    SHOW_PLACEABLE_PREVIEW(GLFW_KEY_X),
+    TAKE_SCREENSHOT(GLFW_KEY_F5);
 
     KeySettings(int defaultValue) {
         this.defaultKeybind = defaultValue;

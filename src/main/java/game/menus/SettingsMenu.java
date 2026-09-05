@@ -84,6 +84,7 @@ public final class SettingsMenu extends UiBackgroundElement {
         section.addKeySelector(KeySettings.DECREASE_BREAK_PLACE_ALIGN);
         section.addKeySelector(KeySettings.DROP);
         section.addKeySelector(KeySettings.OPEN_CHAT);
+        section.addKeySelector(KeySettings.TAKE_SCREENSHOT);
         section.addKeySelector(CoreKeySettings.RESIZE_WINDOW);
 
         return section;
