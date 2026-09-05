@@ -2,21 +2,33 @@ package core.rendering_api;
 
 import core.renderables.Renderable;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class MenuInput<T extends Renderable> extends Input {
 
     public MenuInput(T menu) {
         super(menu);
         this.menu = menu;
         this.scrollCallback = null;
+        this.maxScrollGetter = null;
     }
 
-    public MenuInput(T menu, ScrollCallback scrollCallback) {
+    public MenuInput(T menu, ScrollCallback scrollCallback, MaxScrollGetter maxScrollGetter) {
         super(menu);
         this.menu = menu;
         this.scrollCallback = scrollCallback;
+        this.maxScrollGetter = maxScrollGetter;
     }
 
     protected T menu;
+
+    public float getScroll() {
+        return scroll;
+    }
+
+    public void setScroll(float scroll) {
+        this.scroll = scroll;
+    }
 
     @Override
     public void setInputMode() {
@@ -26,7 +38,9 @@ public class MenuInput<T extends Renderable> extends Input {
     @Override
     public void cursorPosCallback(long window, double xPos, double yPos) {
         standardCursorPosCallBack(xPos, yPos);
-        menu.hoverOver(cursorPos);
+        if (Input.isKeyPressed(GLFW_MOUSE_BUTTON_LEFT | IS_MOUSE_BUTTON) || Input.isKeyPressed(GLFW_MOUSE_BUTTON_RIGHT | IS_MOUSE_BUTTON))
+            menu.dragOver(cursorPos);
+        else menu.hoverOver(cursorPos);
     }
 
     @Override
@@ -36,7 +50,8 @@ public class MenuInput<T extends Renderable> extends Input {
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
-        float newScroll = Math.max((float) (scroll - yScroll * 0.05), 0.0F);
+        float maxScroll = maxScrollGetter == null ? Float.POSITIVE_INFINITY : maxScrollGetter.getMaxScroll();
+        float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (scroll - yScroll * 0.05), 0.0F, maxScroll);
         if (scrollCallback != null) scrollCallback.scroll(newScroll - scroll);
         scroll = newScroll;
 
@@ -55,8 +70,13 @@ public class MenuInput<T extends Renderable> extends Input {
 
     private float scroll = 0.0F;
     private final ScrollCallback scrollCallback;
+    private final MaxScrollGetter maxScrollGetter;
 
     public interface ScrollCallback {
         void scroll(float scrolled);
+    }
+
+    public interface MaxScrollGetter {
+        float getMaxScroll();
     }
 }
