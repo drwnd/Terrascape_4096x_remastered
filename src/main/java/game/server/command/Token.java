@@ -28,7 +28,7 @@ interface Token {
         }
         if (isNumberChar(startChar)) {
             int numberEndIndex = nextNonNumberIndex(chars, startIndex);
-            double number = Double.parseDouble(command.substring(startIndex, numberEndIndex));
+            double number = Double.parseDouble(command.substring(startIndex, numberEndIndex).replace("_", ""));
             tokens.add(new NumberToken(number));
             return numberEndIndex;
         }
@@ -58,6 +58,6 @@ interface Token {
     }
 
     private static boolean isNumberChar(char character) {
-        return Character.isDigit(character) || character == '.' || character == '-';
+        return Character.isDigit(character) || character == '.' || character == '-' || character == '_';
     }
 }
