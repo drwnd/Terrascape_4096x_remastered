@@ -6,10 +6,13 @@ import core.language.Language;
 import core.language.CoreUiMessages;
 import core.rendering_api.Window;
 
+import core.utils.Message;
 import game.language.UiMessages;
 import game.server.Game;
+import game.server.World;
 import game.server.WorldOptimizer;
 
+import game.server.saving.WorldSaver;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -96,16 +99,16 @@ public final class MainMenu extends UiBackgroundElement {
     }
 
 
-    private void setSelectedWorld(File saveFile) {
+    private void setSelectedWorld(World world) {
         hideWorldSpecificButtons();
 
-        playWorldButton.setAction(getPlayWorldAction(saveFile));
-        deleteWorldButton.setAction(getDeleteWorldAction(saveFile));
-        optimizeWorldButton.setAction(getOptimizeWorldAction(saveFile));
+        playWorldButton.setAction(getPlayWorldAction(world));
+        deleteWorldButton.setAction(getDeleteWorldAction(world));
+        optimizeWorldButton.setAction(getOptimizeWorldAction(world));
 
-        playWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.PLAY_WORLD).formatted(saveFile.getName()));
-        deleteWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.DELETE_WORLD).formatted(saveFile.getName()));
-        optimizeWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.OPTIMIZE_WORLD).formatted(saveFile.getName()));
+        playWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.PLAY_WORLD).formatted(world.getName()));
+        deleteWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.DELETE_WORLD).formatted(world.getName()));
+        optimizeWorldButton.firstChildOf(TextElement.class).setText(Language.getTranslation(UiMessages.OPTIMIZE_WORLD).formatted(world.getName()));
 
         playWorldButton.setVisible(true);
         deleteWorldButton.setVisible(true);
@@ -127,57 +130,64 @@ public final class MainMenu extends UiBackgroundElement {
     private void createWorldButtons() {
         for (Renderable worldButton : worldButtons) removeRenderable(worldButton).delete();
 
+        WorldSaver saver = new WorldSaver();
         File[] savedWorlds = getSavedWorlds();
         for (int index = 0; index < savedWorlds.length; index++) {
             File saveFile = savedWorlds[index];
+            World world = saver.load(WorldSaver.getSaveFileLocation(saveFile.getName()));
+            world.setName(saveFile.getName());
 
-            UiButton button = getPlayWorldButton(index, saveFile);
+            UiButton button = getPlayWorldButton(index, world);
 
             addRenderable(button);
             worldButtons.add(button);
         }
     }
 
-    private UiButton getPlayWorldButton(int index, File saveFile) {
-        Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.15F * (index + 1) + input.getScroll());
+    private UiButton getPlayWorldButton(int index, World world) {
+        Vector2f sizeToParent = new Vector2f(0.6F, 0.125F);
+        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - 0.035F - 0.14F * (index + 1) + input.getScroll());
 
-        UiButton button = new UiButton(sizeToParent, offsetToParent, () -> setSelectedWorld(saveFile));
+        UiButton button = new UiButton(sizeToParent, offsetToParent, () -> setSelectedWorld(world));
 
-        TextElement text = new TextElement(new Vector2f(0.05F, 0.5F));
-        text.setText(saveFile.getName());
-        button.addRenderable(text);
+        String worldInfo = UiMessages.WORLD_INFO_TEMPLATE.get().formatted(world.created.toString(), world.lastPlayed.toString());
+        TextElement worldInfoText = new TextElement(new Vector2f(0.05F, 1 / 3F), new Message(worldInfo), Color.LIGHT_GRAY);
+        TextElement worldNameText = new TextElement(new Vector2f(0.05F, 2 / 3F), new Message(world.getName()));
+        worldNameText.setTextSize(1.5F);
+
+        button.addRenderable(worldNameText);
+        button.addRenderable(worldInfoText);
 
         return button;
     }
 
-    private Clickable getDeleteWorldAction(File saveFile) {
+    private Clickable getDeleteWorldAction(World world) {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
             hideWorldSpecificButtons();
 
-            confirmDeletionButton.setAction(getConfirmDeletionAction(saveFile));
+            confirmDeletionButton.setAction(getConfirmDeletionAction(world));
             confirmDeletionButton.setVisible(true);
             cancelDeletionButton.setVisible(true);
             return ButtonResult.SUCCESS;
         };
     }
 
-    private Clickable getConfirmDeletionAction(File saveFile) {
+    private Clickable getConfirmDeletionAction(World world) {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
 
-            FileManager.delete(saveFile);
+            FileManager.delete(WorldSaver.getSaveFileLocation(world.getName()).getParent().toFile());
             createWorldButtons();
             hideWorldSpecificButtons();
             return ButtonResult.SUCCESS;
         };
     }
 
-    private Clickable getOptimizeWorldAction(File saveFile) {
+    private Clickable getOptimizeWorldAction(World world) {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            WorldOptimizer.optimize(saveFile);
+            WorldOptimizer.optimize(world);
             hideWorldSpecificButtons();
             return ButtonResult.SUCCESS;
         };
@@ -200,10 +210,10 @@ public final class MainMenu extends UiBackgroundElement {
         };
     }
 
-    private static Clickable getPlayWorldAction(File saveFile) {
+    private static Clickable getPlayWorldAction(World world) {
         return (Vector2i _, int _, int action) -> {
             if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Game.play(saveFile);
+            Game.play(world);
             return ButtonResult.SUCCESS;
         };
     }

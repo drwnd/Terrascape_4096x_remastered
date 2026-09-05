@@ -46,7 +46,8 @@ public enum UiMessages implements Translatable {
     LOAD_SHADER_CODE,
     LENGTH_X,
     LENGTH_Y,
-    LENGTH_Z;
+    LENGTH_Z,
+    WORLD_INFO_TEMPLATE;
 
     @Override
     public String translationFileName() {

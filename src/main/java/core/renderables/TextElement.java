@@ -42,7 +42,7 @@ public final class TextElement extends Renderable {
         Vector2f defaultTextSize = ((FontOption) CoreOptionSettings.FONT.value()).getDefaultTextSize();
         String text = this.text.get();
 
-        float textSize = CoreFloatSettings.TEXT_SIZE.value();
+        float textSize = CoreFloatSettings.TEXT_SIZE.value() * this.textSize;
         float guiSize = scalesWithGuiSize() ? CoreFloatSettings.GUI_SIZE.value() : 1.0F;
         float charWidth = defaultTextSize.x * textSize;
         float charHeight = defaultTextSize.y * textSize;
@@ -82,7 +82,12 @@ public final class TextElement extends Renderable {
         this.addTransparentBackground = addTransparentBackground;
     }
 
+    public void setTextSize(float textSize) {
+        this.textSize = textSize;
+    }
+
     private boolean addTransparentBackground = false;
     private Color color = Color.WHITE;
     private StringGetter text;
+    private float textSize = 1.0F;
 }

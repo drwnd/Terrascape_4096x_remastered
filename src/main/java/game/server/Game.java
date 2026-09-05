@@ -11,8 +11,6 @@ import game.server.saving.ServerSaver;
 import game.server.saving.WorldSaver;
 import game.settings.IntSettings;
 
-import java.io.File;
-
 public final class Game {
 
     static {
@@ -25,15 +23,14 @@ public final class Game {
         });
     }
 
-    public static void play(File saveFile) {
+    public static void play(World toPlayWorld) {
+        String worldName = toPlayWorld.getName();
         Material.loadMaterials();
-        String worldName = saveFile.getName();
 
-        world = new WorldSaver().load(WorldSaver.getSaveFileLocation(worldName));
+        world = toPlayWorld;
         server = new ServerSaver().load(ServerSaver.getSaveFileLocation(worldName));
         player = new PlayerSaver().load(PlayerSaver.getSaveFileLocation(worldName));
 
-        world.setName(worldName);
         World.init();
         server.startTicks();
         Window.setCrashCallback(server);

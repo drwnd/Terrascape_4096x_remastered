@@ -14,6 +14,7 @@ import org.joml.Vector2i;
 
 import java.io.*;
 import java.security.SecureRandom;
+import java.util.Date;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -63,7 +64,7 @@ public final class WorldCreationMenu extends UiBackgroundElement {
             for (File file : savedWorlds) if (file.getName().equalsIgnoreCase(worldName)) return ButtonResult.FAILURE;
 
             long seed = getSeed(seedField.getText());
-            new WorldSaver().save(new World(seed), WorldSaver.getSaveFileLocation(worldName));
+            new WorldSaver().save(new World(seed, new Date(), new Date(0)), WorldSaver.getSaveFileLocation(worldName));
 
             Window.popRenderable();
             return ButtonResult.SUCCESS;

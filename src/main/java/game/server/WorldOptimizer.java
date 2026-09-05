@@ -4,17 +4,13 @@ import core.rendering_api.Debug;
 import core.utils.FileManager;
 import game.server.generation.WorldGeneration;
 import game.server.saving.ChunkSaver;
-import game.server.saving.WorldSaver;
 
 import java.io.File;
 import java.util.Arrays;
 
 public final class WorldOptimizer {
 
-    public static void optimize(File saveFile) {
-        String worldName = saveFile.getName();
-        World world = new WorldSaver().load(WorldSaver.getSaveFileLocation(worldName));
-        world.setName(worldName);
+    public static void optimize(World world) {
         if (!Game.setTemporaryWorld(world)) return;
 
         long start = System.nanoTime();

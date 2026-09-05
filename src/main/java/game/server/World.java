@@ -12,6 +12,7 @@ import game.utils.Status;
 import game.utils.Utils;
 
 import java.io.File;
+import java.util.Date;
 
 import static game.utils.Constants.*;
 
@@ -23,7 +24,10 @@ public final class World {
     public final int CHUNKS_PER_LOD;
     public final int LOD_COUNT;
 
-    public World(long seed) {
+    public final Date created, lastPlayed;
+    public final long seed;
+
+    public World(long seed, Date created, Date lastPlayed) {
         int renderDistance = IntSettings.RENDER_DISTANCE.value();
 
         LOD_COUNT = IntSettings.LOD_COUNT.value();
@@ -34,6 +38,9 @@ public final class World {
 
         WorldGeneration.SEED = seed;
         chunks = new Chunk[LOD_COUNT][RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH];
+        this.created = created;
+        this.lastPlayed = lastPlayed;
+        this.seed = seed;
     }
 
     public World(World oldWorld, boolean updateRenderDistance) {
@@ -47,7 +54,6 @@ public final class World {
             CHUNKS_PER_LOD = RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH;
 
             chunks = new Chunk[LOD_COUNT][RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH];
-            name = oldWorld.name;
 
             Position playerPosition = Game.getPlayer().getPosition();
             ChunkSaver saver = new ChunkSaver();
@@ -76,15 +82,20 @@ public final class World {
             CHUNKS_PER_LOD = oldWorld.CHUNKS_PER_LOD;
 
             chunks = new Chunk[LOD_COUNT][RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH * RENDERED_WORLD_WIDTH];
-            name = oldWorld.name;
             System.arraycopy(oldWorld.chunks, 0, chunks, 0, Math.min(LOD_COUNT, oldWorld.LOD_COUNT));
         }
+
+        name = oldWorld.name;
+        created = oldWorld.created;
+        lastPlayed = oldWorld.lastPlayed;
+        seed = oldWorld.seed;
     }
 
     public static void init() {
         ChunkSaver.generateHigherLODs();
         Server.loadImmediateSurroundings();
         Sound.setDistanceScaler(0.0625F);
+        WorldGeneration.SEED = Game.getWorld().seed;
     }
 
     public Chunk getChunk(long chunkX, long chunkY, long chunkZ, int lod) {
