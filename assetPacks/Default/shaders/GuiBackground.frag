@@ -3,6 +3,7 @@
 uniform sampler2D image;
 uniform float rimWidth;
 uniform float aspectRatio;
+uniform vec3 colorMultiplier;
 uniform vec2 size;
 
 in vec2 fragTextureCoordinate;
@@ -26,5 +27,5 @@ void main() {
 
     vec4 color = texture(image, textureCoord);
     if (color.a == 0.0) discard;
-    fragColor = color;
+    fragColor = vec4(color.rgb * colorMultiplier, color.a);
 }

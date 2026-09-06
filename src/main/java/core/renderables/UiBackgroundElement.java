@@ -4,11 +4,14 @@ import core.assets.AssetManager;
 import core.assets.Texture;
 import core.assets.CoreShaders;
 import core.assets.CoreTextures;
+import core.assets.identifiers.AssetIdentifier;
 import core.rendering_api.Window;
 import core.rendering_api.shaders.GuiShader;
 import core.settings.CoreFloatSettings;
 
 import org.joml.Vector2f;
+
+import java.awt.*;
 
 public class UiBackgroundElement extends Renderable {
     public UiBackgroundElement(Vector2f sizeToParent, Vector2f offsetToParent) {
@@ -17,13 +20,14 @@ public class UiBackgroundElement extends Renderable {
 
     @Override
     protected void renderSelf(Vector2f position, Vector2f size) {
-        float guiSize = scalesWithGuiSize() ? CoreFloatSettings.GUI_SIZE.value() : 1.0f;
+        float guiSize = scalesWithGuiSize() ? CoreFloatSettings.GUI_SIZE.value() : 1.0F;
 
         GuiShader shader = (GuiShader) AssetManager.get(CoreShaders.GUI_BACKGROUND);
-        Texture background = AssetManager.get(CoreTextures.GUI_ELEMENT_BACKGROUND);
+        Texture background = AssetManager.get(textureIdentifier);
         shader.bind();
         shader.setUniform("rimWidth", CoreFloatSettings.RIM_THICKNESS.value() * rimThicknessMultiplier * guiSize);
         shader.setUniform("aspectRatio", Window.getAspectRatio());
+        shader.setUniform("colorMultiplier", colorMultiplier);
         shader.drawQuadCustomScale(position, size, background, guiSize);
     }
 
@@ -35,5 +39,15 @@ public class UiBackgroundElement extends Renderable {
         return rimThicknessMultiplier;
     }
 
-    private float rimThicknessMultiplier = 1.0f;
+    public void setColorMultiplier(Color colorMultiplier) {
+        if (colorMultiplier != null) this.colorMultiplier = colorMultiplier;
+    }
+
+    public void setTextureIdentifier(AssetIdentifier<Texture> textureIdentifier) {
+        if (textureIdentifier != null) this.textureIdentifier = textureIdentifier;
+    }
+
+    private float rimThicknessMultiplier = 1.0F;
+    private Color colorMultiplier = Color.WHITE;
+    private AssetIdentifier<Texture> textureIdentifier = CoreTextures.GUI_ELEMENT_BACKGROUND;
 }
