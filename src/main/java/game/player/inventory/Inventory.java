@@ -44,7 +44,7 @@ public final class Inventory extends UiElement {
         Vector2f sizeToParent = new Vector2f(1.0F - TabOpenerButton.SIZE / Window.getAspectRatio(), 1.0F);
         Vector2f offsetToParent = new Vector2f(TabOpenerButton.SIZE / Window.getAspectRatio(), 0.0F);
 
-        addRenderable(structureTab = new StructureTab(sizeToParent, offsetToParent));
+        addRenderable(structureTab = new StructureTab(sizeToParent, offsetToParent, input));
         addRenderable(shapesTab = new ShapesTab(sizeToParent, offsetToParent));
         addRenderable(miscellaneousTab = new MiscellaneousTab(sizeToParent, offsetToParent));
         addRenderable(customShapeTab = new CustomShapeTab(sizeToParent, offsetToParent));

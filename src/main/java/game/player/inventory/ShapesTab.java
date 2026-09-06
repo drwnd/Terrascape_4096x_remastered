@@ -68,12 +68,13 @@ public final class ShapesTab extends Renderable implements InventoryTab {
     @Override
     public void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         if (shapePreview != null && shapePreview.containsPixelCoordinate(pixelCoordinate)) {
-            shapePreview.changeZoom(yScroll <= 0 ? 1.05F : 1 / 1.05F);
+            shapePreview.changeZoom(yScroll > 0 ? 1.05F : 1 / 1.05F);
             return;
         }
 
         InventoryInput input = Game.getPlayer().getInventory().getInput();
-        float newScroll = Math.max((float) (input.materialScroll + yScroll), 0.0F);
+        float maxScroll = getMaxScroll(pixelCoordinate);
+        float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (input.materialScroll - yScroll * 0.05), 0.0F, maxScroll);
         moveMaterialButtons(newScroll - input.materialScroll);
         input.materialScroll = newScroll;
     }

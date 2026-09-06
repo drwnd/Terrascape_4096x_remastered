@@ -23,6 +23,13 @@ public class SideScroller extends UiButton {
         this.input = input;
     }
 
+    protected void applyScrolling(Vector2i cursorPos, Vector2f position, Vector2f size) {
+        float fraction = 1 - (cursorPos.y - position.y) / size.y;
+        fraction = Math.clamp(fraction, 0.0F, 1.0F);
+        input.setScroll(input.maxScrollGetter.getMaxScroll() * fraction);
+        slider.setOffsetToParent(0.0F, fraction - slider.getSizeToParent().y * 0.5F);
+    }
+
     @Override
     public void dragOver(Vector2i pixelCoordinate) {
         setValueOnClick(pixelCoordinate, GLFW_MOUSE_BUTTON_LEFT, GLFW_HOVERED);
@@ -60,15 +67,12 @@ public class SideScroller extends UiButton {
         position = Window.toPixelCoordinate(position, scalesWithGuiSize());
         size = Window.toPixelSize(size, scalesWithGuiSize());
 
-        float fraction = 1 - (cursorPos.y - position.y) / size.y;
-        fraction = Math.clamp(fraction, 0.0F, 1.0F);
-        input.setScroll(input.maxScrollGetter.getMaxScroll() * fraction);
-        slider.setOffsetToParent(0.0F, fraction - slider.getSizeToParent().y * 0.5F);
+        applyScrolling(cursorPos, position, size);
         return ButtonResult.SUCCESS;
     }
 
-    private MenuInput<?> input;
-    private final UiBackgroundElement slider;
+    protected MenuInput<?> input;
+    protected final UiBackgroundElement slider;
 
     private static SideScroller selected = null;
 }

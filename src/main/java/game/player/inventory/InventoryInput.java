@@ -10,7 +10,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public final class InventoryInput extends MenuInput<Inventory> {
 
     public InventoryInput(Inventory inventory) {
-        super(inventory, (scrolled -> inventory.handleScroll(Input.getCursorPos(), scrolled)), () -> inventory.getMaxScroll(Input.getCursorPos()));
+        super(inventory, null, () -> inventory.getMaxScroll(Input.getCursorPos()));
     }
 
     @Override
@@ -21,10 +21,26 @@ public final class InventoryInput extends MenuInput<Inventory> {
     }
 
     @Override
+    public void scrollCallback(long window, double xScroll, double yScroll) {
+        menu.handleScroll(cursorPos, yScroll);
+        menu.hoverOver(cursorPos);
+    }
+
+    @Override
     public void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) Game.getPlayer().toggleInventory();
         Game.getPlayer().handleInactiveKeyInput(key, action);
         menu.handleInput(key, action, cursorPos);
+    }
+
+    @Override
+    public void setScroll(float scroll) {
+        super.setScroll(scroll);
+    }
+
+    @Override
+    public float getScroll() {
+        return super.getScroll();
     }
 
     float structureScroll = 0, materialScroll = 0;
