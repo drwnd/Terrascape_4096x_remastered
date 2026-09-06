@@ -1,5 +1,6 @@
 package core.renderables;
 
+import core.assets.CoreTextures;
 import core.rendering_api.MenuInput;
 import core.rendering_api.Window;
 import org.joml.Vector2f;
@@ -15,7 +16,7 @@ public class SideScroller extends UiButton {
         setAction(this::setValueOnClick);
 
         slider = new UiBackgroundElement(new Vector2f(1.0F, 0.5625F * Window.getAspectRatio() * getAspectRatio()), new Vector2f());
-        slider.setDoAutoFocusScaling(true);
+        slider.setTextureIdentifier(CoreTextures.SLIDER_ICON);
         addRenderable(slider);
     }
 
