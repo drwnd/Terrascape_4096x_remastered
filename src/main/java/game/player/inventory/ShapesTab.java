@@ -36,7 +36,7 @@ public final class ShapesTab extends Renderable implements InventoryTab {
 
     @Override
     public void resizeSelfTo(int width, int height) {
-        updateDisplayPositions();
+        updateDisplayPositions(cubeDisplays, getAspectRatio());
         for (ShapeDisplay shapeDisplay : shapeDisplays) shapeDisplay.setSizeToParent(0.0475F, 0.0475F * Window.getAspectRatio() * getAspectRatio());
 
         if (shapePreview != null) {
@@ -56,14 +56,24 @@ public final class ShapesTab extends Renderable implements InventoryTab {
     }
 
     @Override
+    public float getMaxScroll(Vector2i pixelCoordinate) {
+        if (shapePreview != null && shapePreview.containsPixelCoordinate(pixelCoordinate)) return Float.POSITIVE_INFINITY;
+
+        float itemSize = FloatSettings.INVENTORY_ITEM_SIZE.value();
+        int itemsPerRow = Math.max(1, (int) Math.floor(0.33333334F / itemSize));
+        int rows = (int) Math.ceil((float) AMOUNT_OF_MATERIALS / itemsPerRow);
+        return rows * itemSize * Window.getAspectRatio() * getAspectRatio() - 1;
+    }
+
+    @Override
     public void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         if (shapePreview != null && shapePreview.containsPixelCoordinate(pixelCoordinate)) {
-            shapePreview.changeZoom(yScroll > 0 ? 1.05F : 1 / 1.05F);
+            shapePreview.changeZoom(yScroll <= 0 ? 1.05F : 1 / 1.05F);
             return;
         }
 
         InventoryInput input = Game.getPlayer().getInventory().getInput();
-        float newScroll = Math.max((float) (input.materialScroll - yScroll * 0.05), 0.0F);
+        float newScroll = Math.max((float) (input.materialScroll + yScroll), 0.0F);
         moveMaterialButtons(newScroll - input.materialScroll);
         input.materialScroll = newScroll;
     }
@@ -120,12 +130,12 @@ public final class ShapesTab extends Renderable implements InventoryTab {
         refreshShapePreview = true;
     }
 
-    void updateDisplayPositions() {
+    static void updateDisplayPositions(ArrayList<CubeDisplay> cubeDisplays, float aspectRatio) {
         InventoryInput input = Game.getPlayer().getInventory().getInput();
         float itemSize = FloatSettings.INVENTORY_ITEM_SIZE.value();
         int itemsPerRow = Math.max(1, (int) Math.floor(0.33333334F / itemSize));
 
-        Vector2f sizeToParent = new Vector2f(itemSize, itemSize * Window.getAspectRatio() * getAspectRatio());
+        Vector2f sizeToParent = new Vector2f(itemSize, itemSize * Window.getAspectRatio() * aspectRatio);
 
         for (CubeDisplay display : cubeDisplays) {
             int index = display.material() & 0xFF;

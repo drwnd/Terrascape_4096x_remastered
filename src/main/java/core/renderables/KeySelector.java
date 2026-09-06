@@ -2,6 +2,7 @@ package core.renderables;
 
 import core.assets.CoreTextures;
 import core.rendering_api.Input;
+import core.rendering_api.MenuInput;
 import core.rendering_api.Window;
 import core.settings.KeySetting;
 import core.utils.Message;
@@ -108,4 +109,28 @@ public final class KeySelector extends UiButton {
     private final KeySetting setting;
     private final TextElement display;
     private int value;
+
+    private static final class KeySelectorInput extends MenuInput<KeySelector> {
+
+        private KeySelectorInput(KeySelector selector) {
+            super(selector);
+        }
+
+        @Override
+        public void mouseButtonCallback(long window, int button, int action, int mods) {
+            if (action != GLFW_PRESS) return;
+            menu.setValue(button | Input.IS_MOUSE_BUTTON);
+            menu.getParent().setOnTop();
+            menu.getParent().hoverOver(cursorPos);
+        }
+
+        @Override
+        public void keyCallback(long window, int key, int scancode, int action, int mods) {
+            if (action != GLFW_PRESS) return;
+            if (key == GLFW_KEY_ESCAPE) menu.setValue(GLFW_KEY_UNKNOWN);
+            else menu.setValue(key);
+            menu.getParent().setOnTop();
+            menu.getParent().hoverOver(cursorPos);
+        }
+    }
 }

@@ -54,8 +54,7 @@ public class MenuInput<T extends Renderable> extends Input {
         float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (scroll - yScroll * 0.05), 0.0F, maxScroll);
         if (scrollCallback != null) scrollCallback.scroll(newScroll - scroll);
         scroll = newScroll;
-
-        menu.hoverOver(cursorPos); // Fixes buttons being selected even if the cursor isn't hovered over them
+        menu.hoverOver(cursorPos);
     }
 
     @Override

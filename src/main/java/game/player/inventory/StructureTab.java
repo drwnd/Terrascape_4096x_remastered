@@ -89,11 +89,17 @@ public final class StructureTab extends Renderable implements InventoryTab {
     public void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         if (structureButtonsContainer.containsPixelCoordinate(pixelCoordinate)) {
             InventoryInput input = Game.getPlayer().getInventory().getInput();
-            float newScroll = Math.max((float) (input.structureScroll - yScroll * 0.05), 0.0F);
+            float newScroll = Math.max((float) (input.structureScroll + yScroll), 0.0F);
             moveStructureButtons(newScroll - input.structureScroll);
             input.structureScroll = newScroll;
         } else if (selectedStructureDisplay != null && selectedStructureDisplay.containsPixelCoordinate(pixelCoordinate))
-            selectedStructureDisplay.changeZoom(yScroll > 0 ? 1.05F : 1 / 1.05F);
+            selectedStructureDisplay.changeZoom(yScroll <= 0 ? 1.05F : 1 / 1.05F);
+    }
+
+    @Override
+    public float getMaxScroll(Vector2i pixelCoordinate) {
+        if (structureButtonsContainer.containsPixelCoordinate(pixelCoordinate)) return structureButtons.size() * 0.065F - 1;
+        return Float.POSITIVE_INFINITY;
     }
 
     void reloadStructureButtons() {
