@@ -55,24 +55,13 @@ public class SideScroller extends UiButton {
     }
 
     private ButtonResult setValueOnClick(Vector2i cursorPos, int button, int action) {
-        if (action == GLFW_HOVERED && selected != this) return ButtonResult.IGNORE;
-        if (action == GLFW_PRESS) selected = this;
-        if (action == GLFW_RELEASE)
-            if (selected == this) selected = null;
-            else return ButtonResult.IGNORE;
+        DraggableInfo info = getOwnDraggableInfo(action);
+        if (info == null) return ButtonResult.IGNORE;
 
-        Vector2f position = getPosition(), size = getSize();
-        if (isFocused()) scaleForFocused(position, size);
-
-        position = Window.toPixelCoordinate(position, scalesWithGuiSize());
-        size = Window.toPixelSize(size, scalesWithGuiSize());
-
-        applyScrolling(cursorPos, position, size);
+        applyScrolling(cursorPos, info.position(), info.size());
         return ButtonResult.SUCCESS;
     }
 
     protected MenuInput<?> input;
     protected final UiBackgroundElement slider;
-
-    private static SideScroller selected = null;
 }

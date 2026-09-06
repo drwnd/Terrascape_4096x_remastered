@@ -62,8 +62,7 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
     @Override
     public void dragOver(Vector2i pixelCoordinate) {
-        structureButtonsContainer.dragOver(pixelCoordinate);
-        if (selectedStructureDisplay == null) return;
+        if (selectedStructureDisplay == null || selectedDraggable != null) return;
 
         selectedStructureDisplay.rotate(new Vector2i(pixelCoordinate).sub(lastCursorPos));
         lastCursorPos.set(pixelCoordinate);
@@ -197,19 +196,10 @@ public final class StructureTab extends Renderable implements InventoryTab {
         }
 
         @Override
-        public void dragOver(Vector2i pixelCoordinate) {
-            for (Renderable renderable : getChildren()) {
-                if (!renderable.isVisible() || !(renderable instanceof SideScroller)) continue;
-                renderable.dragOver(pixelCoordinate);
-            }
-        }
-
-        @Override
         public void hoverOver(Vector2i pixelCoordinate) {
             for (Renderable renderable : getChildren()) {
                 if (!renderable.isVisible()) continue;
-                if (renderable instanceof StructureSelectionButton) renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
-                else renderable.hoverOver(pixelCoordinate);
+                renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
             }
         }
     }
