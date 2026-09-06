@@ -37,7 +37,7 @@ public class SideScroller extends UiButton {
 
     @Override
     protected void resizeSelfTo(int width, int height) {
-        slider.setSizeToParent(1.0F, Window.getAspectRatio() * getAspectRatio());
+        slider.setSizeToParent(1.0F, 0.5625F * Window.getAspectRatio() * getAspectRatio());
     }
 
     @Override
