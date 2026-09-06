@@ -62,7 +62,7 @@ public class AssetPackSection extends CoreSettingsRenderable {
             inactivePackElements.get(index).setOffsetToParent(0.2F, 0.9625F - (index + 1) * 0.1125F + scroll);
 
         for (int index = 0; index < activePackElements.size(); index++)
-            activePackElements.get(index).setOffsetToParent(0.6F, 0.9625F - (index + 1) * 0.1125F + scroll);
+            activePackElements.get(index).setOffsetToParent(0.55F, 0.9625F - (index + 1) * 0.1125F + scroll);
         hoverOver(Input.getCursorPos());
     }
 
@@ -197,6 +197,11 @@ public class AssetPackSection extends CoreSettingsRenderable {
             activePackElement.upButton.setSizeToParent(sizeToParentX, 0.5F);
             activePackElement.downButton.setSizeToParent(sizeToParentX, 0.5F);
         }
+    }
+
+    @Override
+    public float getMaxScroll() {
+        return Math.max(inactivePackElements.size(), activePackElements.size()) * 0.1125F - 1 + 0.0875F;
     }
 
     private final ArrayList<Renderable> inactivePackElements = new ArrayList<>();
