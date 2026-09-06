@@ -10,7 +10,8 @@ public enum CoreTextures implements TextureIdentifier {
     OVERLAY("InventoryOverlay.png"),
     CURSOR_INDICATOR("CursorIndicator.png"),
     UP_ARROW("UpArrow.png"),
-    DOWN_ARROW("DownArrow.png");
+    DOWN_ARROW("DownArrow.png"),
+    SLIDER_ICON("SliderIcon.png");
 
 
     CoreTextures(String fileName) {

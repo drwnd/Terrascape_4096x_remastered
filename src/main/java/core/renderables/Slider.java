@@ -1,5 +1,6 @@
 package core.renderables;
 
+import core.assets.CoreTextures;
 import core.rendering_api.Window;
 import core.settings.NumberSetting;
 import core.utils.StringGetter;
@@ -19,6 +20,7 @@ public class Slider<T extends Number> extends UiButton {
         this.updateImmediately = updateImmediately;
 
         slider = new UiBackgroundElement(new Vector2f(0.05F, 1.0F), new Vector2f(0.0F, 0.0F));
+        slider.setTextureIdentifier(CoreTextures.SLIDER_ICON);
         textElement = new TextElement(new Vector2f(0.05F, 0.5F), settingName);
 
         addRenderable(slider);
