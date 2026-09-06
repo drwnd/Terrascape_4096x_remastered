@@ -1,5 +1,6 @@
 package game.menus;
 
+import core.rendering_api.MenuInput;
 import core.settings.*;
 import core.utils.StringGetter;
 import core.language.CoreUiMessages;
@@ -10,7 +11,6 @@ import game.language.UiMessages;
 import game.settings.*;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -19,7 +19,7 @@ public final class SettingsMenu extends UiBackgroundElement {
     public SettingsMenu() {
         super(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F));
 
-        UiButton backButton = new UiButton(new Vector2f(0.25F, 0.1F), new Vector2f(0.05F, 0.85F), getBackButtonAction());
+        UiButton backButton = new UiButton(new Vector2f(0.25F, 0.1F), new Vector2f(0.05F, 0.85F), Window::popRenderable);
         backButton.addRenderable(new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.BACK));
         addRenderable(backButton);
 
@@ -42,8 +42,8 @@ public final class SettingsMenu extends UiBackgroundElement {
     }
 
 
-    private static SettingsRenderable createControlsSection() {
-        SettingsRenderable section = new SettingsRenderable();
+    private static CoreSettingsRenderable createControlsSection() {
+        CoreSettingsRenderable section = new CoreSettingsRenderable();
 
         section.addToggle(ToggleSettings.SCROLL_HOTBAR);
         section.addToggle(CoreToggleSettings.RAW_MOUSE_INPUT);
@@ -90,8 +90,8 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private static SettingsRenderable createRenderingSection() {
-        SettingsRenderable section = new SettingsRenderable();
+    private static CoreSettingsRenderable createRenderingSection() {
+        CoreSettingsRenderable section = new CoreSettingsRenderable();
 
         section.addSlider(FloatSettings.FOV);
         section.addSlider(IntSettings.RENDER_DISTANCE);
@@ -118,8 +118,8 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private static SettingsRenderable createUiSection() {
-        SettingsRenderable section = new SettingsRenderable();
+    private static CoreSettingsRenderable createUiSection() {
+        CoreSettingsRenderable section = new CoreSettingsRenderable();
 
         section.addOption(CoreOptionSettings.LANGUAGE);
         section.addOption(CoreOptionSettings.FONT);
@@ -138,8 +138,8 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private static SettingsRenderable createSoundSection() {
-        SettingsRenderable section = new SettingsRenderable();
+    private static CoreSettingsRenderable createSoundSection() {
+        CoreSettingsRenderable section = new CoreSettingsRenderable();
 
         section.addSlider(CoreFloatSettings.MASTER_AUDIO);
         section.addSlider(FloatSettings.FOOTSTEPS_AUDIO);
@@ -152,8 +152,8 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private static SettingsRenderable createDebugSection() {
-        SettingsRenderable section = new SettingsRenderable();
+    private static CoreSettingsRenderable createDebugSection() {
+        CoreSettingsRenderable section = new CoreSettingsRenderable();
 
         section.addKeySelector(CoreKeySettings.RESIZE_WINDOW);
         section.addKeySelector(CoreKeySettings.RELOAD_ASSETS);
@@ -182,41 +182,37 @@ public final class SettingsMenu extends UiBackgroundElement {
         return section;
     }
 
-    private static SettingsRenderable createDebugScreenSection() {
+    private static CoreSettingsRenderable createDebugScreenSection() {
         SettingsRenderable section = new SettingsRenderable();
         for (DebugScreenOptions debugOptions : DebugScreenOptions.values()) section.addDebugLineSetting(debugOptions);
         return section;
-    }
-
-    private static Clickable getBackButtonAction() {
-        return (Vector2i _, int _, int action) -> {
-            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Window.popRenderable();
-            return ButtonResult.SUCCESS;
-        };
     }
 
     private void addSection(int sectionNumber, SectionCreator sectionCreator, StringGetter name) {
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
         Vector2f offsetToParent = new Vector2f(0.35F, 0.975F - sectionNumber * 0.125F);
 
-        UiButton sectionButton = new UiButton(sizeToParent, offsetToParent, sectionButtonAction(sectionCreator));
+        UiButton sectionButton = new UiButton(sizeToParent, offsetToParent, () -> Window.pushRenderable(sectionCreator.getSection()));
         sectionButton.addRenderable(new TextElement(new Vector2f(0.05F, 0.5F), name));
 
         addRenderable(sectionButton);
-    }
-
-    private static Clickable sectionButtonAction(SectionCreator sectionCreator) {
-        return (Vector2i _, int _, int action) -> {
-            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Window.pushRenderable(sectionCreator.getSection());
-            return ButtonResult.SUCCESS;
-        };
     }
 
     private SettingsMenuInput input;
 
     private interface SectionCreator {
         Renderable getSection();
+    }
+
+    private static final class SettingsMenuInput extends MenuInput<SettingsMenu> {
+
+        private SettingsMenuInput(SettingsMenu menu) {
+            super(menu);
+        }
+
+        @Override
+        public void keyCallback(long window, int key, int scancode, int action, int mods) {
+            if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) Window.popRenderable();
+        }
     }
 }

@@ -1,8 +1,11 @@
 package core.rendering_api;
 
 import core.assets.AssetManager;
+import core.renderables.Renderable;
 import core.renderables.TextFieldInput;
 import core.settings.*;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class StandardWindowInput extends Input {
 
@@ -18,6 +21,7 @@ public final class StandardWindowInput extends Input {
 
     @Override
     public void mouseButtonCallback(long window, int button, int action, int mods) {
+        if (action == GLFW_RELEASE) Renderable.releaseSelectedDraggable();
         if (!(Window.getInput() instanceof TextFieldInput)) handleToggleKeybinds();
     }
 

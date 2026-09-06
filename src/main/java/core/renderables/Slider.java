@@ -1,7 +1,6 @@
 package core.renderables;
 
 import core.assets.CoreTextures;
-import core.rendering_api.Window;
 import core.settings.NumberSetting;
 import core.utils.StringGetter;
 
@@ -59,19 +58,10 @@ public class Slider<T extends Number> extends UiButton {
 
 
     private ButtonResult setValueOnClick(Vector2i cursorPos, int button, int action) {
-        if (action == GLFW_HOVERED && selected != this) return ButtonResult.IGNORE;
-        if (action == GLFW_PRESS) selected = this;
-        if (action == GLFW_RELEASE)
-            if (selected == this) selected = null;
-            else return ButtonResult.IGNORE;
+        DraggableInfo info = getOwnDraggableInfo(action);
+        if (info == null) return ButtonResult.IGNORE;
 
-        Vector2f position = getPosition(), size = getSize();
-        if (isFocused()) scaleForFocused(position, size);
-
-        position = Window.toPixelCoordinate(position, scalesWithGuiSize());
-        size = Window.toPixelSize(size, scalesWithGuiSize());
-
-        float fraction = (cursorPos.x - position.x) / size.x;
+        float fraction = (cursorPos.x - info.position().x) / info.size().x;
         fraction = Math.clamp(fraction, 0.0F, 1.0F);
         setValue(setting.valueFromFraction(fraction));
         return ButtonResult.SUCCESS;
@@ -83,6 +73,4 @@ public class Slider<T extends Number> extends UiButton {
     private final TextElement textElement;
     private final StringGetter settingName;
     private Number value;
-
-    private static Slider<?> selected = null;
 }

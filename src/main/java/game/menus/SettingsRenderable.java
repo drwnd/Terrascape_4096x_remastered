@@ -19,12 +19,12 @@ public class SettingsRenderable extends CoreSettingsRenderable {
         settingsCount++;
 
         Vector2f sizeToParent = new Vector2f(0.15F, 0.1F);
-        float yOffset = 1.0F - 0.15F * settingsCount;
+        float yOffset = 1.0F - SETTING_DISTANCE * settingsCount;
 
-        TextElement nameDisplay = new TextElement(new Vector2f(0.225F, 0), new Vector2f(0.375F, yOffset + 0.05F), new Message(debugLine.name()));
+        TextElement nameDisplay = new TextElement(new Vector2f(0.175F, 0), new Vector2f(0.375F, yOffset + 0.05F), new Message(debugLine.name()));
         nameDisplay.setDoAutoFocusScaling(false);
-        OptionToggle colorOption = new OptionToggle(sizeToParent, new Vector2f(0.6F, yOffset), debugLine.getColor(), null, false);
-        OptionToggle visibilityOption = new OptionToggle(sizeToParent, new Vector2f(0.8F, yOffset), debugLine.getVisibility(), null, false);
+        OptionToggle colorOption = new OptionToggle(sizeToParent, new Vector2f(0.55F, yOffset), debugLine.getColor(), null, false);
+        OptionToggle visibilityOption = new OptionToggle(sizeToParent, new Vector2f(0.75F, yOffset), debugLine.getVisibility(), null, false);
 
         addRenderable(nameDisplay);
         addRenderable(colorOption);
@@ -40,5 +40,10 @@ public class SettingsRenderable extends CoreSettingsRenderable {
             visibilityOption.setToDefault();
             return ButtonResult.SUCCESS;
         });
+    }
+
+    @Override
+    public float getMaxScroll() {
+        return movingRenderables.size() * SETTING_DISTANCE - 1 + 0.025F;
     }
 }

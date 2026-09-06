@@ -1,10 +1,7 @@
 package game.player.inventory;
 
 import core.assets.AssetManager;
-import core.renderables.ButtonResult;
-import core.renderables.Clickable;
-import core.renderables.Renderable;
-import core.renderables.TextField;
+import core.renderables.*;
 import core.rendering_api.Input;
 import core.rendering_api.Window;
 
@@ -24,16 +21,17 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public final class StructureTab extends Renderable implements InventoryTab {
 
-    public StructureTab(Vector2f sizeToParent, Vector2f offsetToParent) {
+    public StructureTab(Vector2f sizeToParent, Vector2f offsetToParent, InventoryInput input) {
         super(sizeToParent, offsetToParent);
         setVisible(false);
         setDoAutoFocusScaling(false);
         setScaleWithGuiSize(false);
 
-        filterTextField = new TextField(new Vector2f(0.275F, 0.1F), new Vector2f(0.0375F, 0.9F), UiMessages.STRUCTURE_NAME, this::reloadStructureButtons);
-        structureButtonsContainer = new Renderable(new Vector2f(0.25F, 0.9F), new Vector2f(0.05F, 0.0F));
+        filterTextField = new TextField(new Vector2f(0.3F, 0.1F), new Vector2f(0.0375F, 0.9F), UiMessages.STRUCTURE_NAME, this::reloadStructureButtons);
+        structureButtonsContainer = new StructureButtonsContainer(new Vector2f(0.3F, 0.9F), new Vector2f(0.0375F, 0.0F));
         structureButtonsContainer.setDoAutoFocusScaling(false);
         structureButtonsContainer.setScaleWithGuiSize(false);
+        structureButtonsContainer.addRenderable(new StructureScroller(input, this));
 
         addRenderable(structureButtonsContainer);
         addRenderable(filterTextField);
@@ -47,8 +45,8 @@ public final class StructureTab extends Renderable implements InventoryTab {
         reloadDisplay = false;
         removeRenderable(selectedStructureDisplay).delete();
 
-        Vector2f sizeToParent = new Vector2f(0.7F, 0.7F * Window.getAspectRatio());
-        Vector2f offsetToParent = new Vector2f(0.3F, 0.5F - sizeToParent.y * 0.5F);
+        Vector2f sizeToParent = new Vector2f(0.6625F, 0.6625F * Window.getAspectRatio());
+        Vector2f offsetToParent = new Vector2f(0.3375F, 0.5F - sizeToParent.y * 0.5F);
         selectedStructureDisplay = new StructureDisplay(sizeToParent, offsetToParent, AssetManager.get(toLoadStructureButton.getStructure()));
         selectedStructureDisplay.setDoAutoFocusScaling(false);
         selectedStructureDisplay.setScaleWithGuiSize(false);
@@ -64,7 +62,7 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
     @Override
     public void dragOver(Vector2i pixelCoordinate) {
-        if (selectedStructureDisplay == null) return;
+        if (selectedStructureDisplay == null || selectedDraggable != null) return;
 
         selectedStructureDisplay.rotate(new Vector2i(pixelCoordinate).sub(lastCursorPos));
         lastCursorPos.set(pixelCoordinate);
@@ -74,8 +72,8 @@ public final class StructureTab extends Renderable implements InventoryTab {
     public void resizeSelfTo(int width, int height) {
         if (selectedStructureDisplay == null) return;
 
-        selectedStructureDisplay.setSizeToParent(0.7F, 0.7F * Window.getAspectRatio());
-        selectedStructureDisplay.setOffsetToParent(0.3F, 0.5F - 0.7F * Window.getAspectRatio() * 0.5F);
+        selectedStructureDisplay.setSizeToParent(0.6625F, 0.6625F * Window.getAspectRatio());
+        selectedStructureDisplay.setOffsetToParent(0.3375F, 0.5F - 0.6625F * Window.getAspectRatio() * 0.5F);
     }
 
     @Override
@@ -89,11 +87,18 @@ public final class StructureTab extends Renderable implements InventoryTab {
     public void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         if (structureButtonsContainer.containsPixelCoordinate(pixelCoordinate)) {
             InventoryInput input = Game.getPlayer().getInventory().getInput();
-            float newScroll = Math.max((float) (input.structureScroll - yScroll * 0.05), 0.0F);
+            float maxScroll = getMaxScroll(pixelCoordinate);
+            float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (input.structureScroll - yScroll * 0.05), 0.0F, maxScroll);
             moveStructureButtons(newScroll - input.structureScroll);
             input.structureScroll = newScroll;
         } else if (selectedStructureDisplay != null && selectedStructureDisplay.containsPixelCoordinate(pixelCoordinate))
             selectedStructureDisplay.changeZoom(yScroll > 0 ? 1.05F : 1 / 1.05F);
+    }
+
+    @Override
+    public float getMaxScroll(Vector2i pixelCoordinate) {
+        if (structureButtonsContainer.containsPixelCoordinate(pixelCoordinate)) return getMaxScroll(structureButtons);
+        return Float.POSITIVE_INFINITY;
     }
 
     void reloadStructureButtons() {
@@ -102,7 +107,7 @@ public final class StructureTab extends Renderable implements InventoryTab {
         structureButtons.clear();
 
         int structureCount = 0;
-        Vector2f sizeToParent = new Vector2f(1.0F, 0.05F);
+        Vector2f sizeToParent = new Vector2f(0.75F, 0.05F);
         ArrayList<Path> filePaths = AssetManager.getAssetFilePathsInFolder("structures");
         String filterText = filterTextField.getText().toLowerCase();
 
@@ -110,7 +115,7 @@ public final class StructureTab extends Renderable implements InventoryTab {
             File structureFile = filepath.toFile();
             if (!structureFile.getName().toLowerCase().contains(filterText)) continue;
             String structureName = structureFile.getName();
-            Vector2f offsetToParent = new Vector2f(0.0F, 1.0F - ++structureCount * 0.065F + input.structureScroll);
+            Vector2f offsetToParent = new Vector2f(0.25F, 1.0F - ++structureCount * 0.065F + input.structureScroll);
 
             StructureSelectionButton button = new StructureSelectionButton(sizeToParent, offsetToParent, structureName);
             button.setAction(getButtonAction(button));
@@ -135,6 +140,10 @@ public final class StructureTab extends Renderable implements InventoryTab {
         };
     }
 
+    private static float getMaxScroll(ArrayList<StructureSelectionButton> structureButtons) {
+        return structureButtons.size() * 0.065F - 1;
+    }
+
     private final ArrayList<StructureSelectionButton> structureButtons = new ArrayList<>();
     private final Renderable structureButtonsContainer;
     private final Vector2i lastCursorPos = new Vector2i();
@@ -144,4 +153,54 @@ public final class StructureTab extends Renderable implements InventoryTab {
 
     private boolean reloadDisplay = false;
     private StructureSelectionButton toLoadStructureButton;
+
+    private static class StructureScroller extends SideScroller {
+
+        private StructureScroller(InventoryInput input, StructureTab structureTab) {
+            super(new Vector2f(0.2F, 0.9F), new Vector2f(0.025F, 0.05F), input);
+            this.structureTab = structureTab;
+        }
+
+        @Override
+        protected void renderSelf(Vector2f position, Vector2f size) {
+            InventoryInput input = (InventoryInput) this.input;
+            super.renderSelf(position, size);
+            float fraction = 1 - input.structureScroll / getMaxScroll(structureTab.structureButtons);
+            slider.setOffsetToParent(0.0F, fraction - slider.getSizeToParent().y * 0.5F);
+            slider.setSizeToParent(1.0F, 0.5625F * Window.getAspectRatio() * getAspectRatio());
+        }
+
+        @Override
+        protected void applyScrolling(Vector2i cursorPos, Vector2f position, Vector2f size) {
+            InventoryInput input = (InventoryInput) this.input;
+            float fraction = 1 - (cursorPos.y - position.y) / size.y;
+            fraction = Math.clamp(fraction, 0.0F, 1.0F);
+            float newScroll = fraction * getMaxScroll(structureTab.structureButtons);
+            structureTab.moveStructureButtons(newScroll - input.structureScroll);
+            input.structureScroll = newScroll;
+            slider.setOffsetToParent(0.0F, fraction - slider.getSizeToParent().y * 0.5F);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return true;
+        }
+
+        private final StructureTab structureTab;
+    }
+
+    private static class StructureButtonsContainer extends Renderable {
+
+        private StructureButtonsContainer(Vector2f sizeToParent, Vector2f offsetToParent) {
+            super(sizeToParent, offsetToParent);
+        }
+
+        @Override
+        public void hoverOver(Vector2i pixelCoordinate) {
+            for (Renderable renderable : getChildren()) {
+                if (!renderable.isVisible()) continue;
+                renderable.setFocused(renderable.containsPixelCoordinate(pixelCoordinate));
+            }
+        }
+    }
 }

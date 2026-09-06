@@ -37,14 +37,14 @@ public final class Inventory extends UiElement {
         setDoAutoFocusScaling(false);
         setScaleWithGuiSize(false);
 
-        ArrayList<CubeDisplay> cubeDisplays = getCubeDisplays();
+        cubeDisplays = getCubeDisplays();
         OptionToggle placeModeToggle = new OptionToggle(new Vector2f(0.125F, 0.1F), new Vector2f(0.025F, 0.9F), OptionSettings.PLACE_MODE, null, true);
         Toggle offsetToggle = new Toggle(new Vector2f(0.125F, 0.1F), new Vector2f(0.2F, 0.9F), ToggleSettings.OFFSET_FROM_GROUND, ToggleSettings.OFFSET_FROM_GROUND, true);
 
         Vector2f sizeToParent = new Vector2f(1.0F - TabOpenerButton.SIZE / Window.getAspectRatio(), 1.0F);
         Vector2f offsetToParent = new Vector2f(TabOpenerButton.SIZE / Window.getAspectRatio(), 0.0F);
 
-        addRenderable(structureTab = new StructureTab(sizeToParent, offsetToParent));
+        addRenderable(structureTab = new StructureTab(sizeToParent, offsetToParent, input));
         addRenderable(shapesTab = new ShapesTab(sizeToParent, offsetToParent));
         addRenderable(miscellaneousTab = new MiscellaneousTab(sizeToParent, offsetToParent));
         addRenderable(customShapeTab = new CustomShapeTab(sizeToParent, offsetToParent));
@@ -77,7 +77,7 @@ public final class Inventory extends UiElement {
         if (!isVisible()) return;
 
         structureTab.reloadStructureButtons();
-        shapesTab.updateDisplayPositions();
+        ShapesTab.updateDisplayPositions(cubeDisplays, shapesTab.getAspectRatio());
     }
 
     public TabOpenerButton getOpenTabButton() {
@@ -113,6 +113,10 @@ public final class Inventory extends UiElement {
 
     void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         openInventoryTab.handleScroll(pixelCoordinate, yScroll);
+    }
+
+    float getMaxScroll(Vector2i pixelCoordinate) {
+        return openInventoryTab.getMaxScroll(pixelCoordinate);
     }
 
 
@@ -160,6 +164,8 @@ public final class Inventory extends UiElement {
     private final ShapesTab shapesTab;
     private final MiscellaneousTab miscellaneousTab;
     private final CustomShapeTab customShapeTab;
+
+    private final ArrayList<CubeDisplay> cubeDisplays;
 
     private final InventoryInput input;
 

@@ -40,6 +40,11 @@ public final class MiscellaneousTab extends Renderable implements InventoryTab {
 
     }
 
+    @Override
+    public float getMaxScroll(Vector2i pixelCoordinate) {
+        return 0;
+    }
+
     private final StructureDisplay chunkRebuildDisplay;
     private final StructureDisplay structureSelectDisplay;
 }

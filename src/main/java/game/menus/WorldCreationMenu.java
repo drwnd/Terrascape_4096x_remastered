@@ -1,6 +1,7 @@
 package game.menus;
 
 import core.renderables.*;
+import core.rendering_api.MenuInput;
 import core.rendering_api.Window;
 import core.language.CoreUiMessages;
 
@@ -28,7 +29,7 @@ public final class WorldCreationMenu extends UiBackgroundElement {
         TextField seedField = new TextField(sizeToParent, new Vector2f(0.35F, 0.7F), UiMessages.WORLD_SEED);
 
         sizeToParent = new Vector2f(0.25F, 0.1F);
-        UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.85F), getBackButtonClickable());
+        UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.85F), Window::popRenderable);
         TextElement text = new TextElement(new Vector2f(0.05F, 0.5F), CoreUiMessages.BACK);
         backButton.addRenderable(text);
 
@@ -44,16 +45,9 @@ public final class WorldCreationMenu extends UiBackgroundElement {
 
     @Override
     public void setOnTop() {
-        Window.setInput(new WorldCreationMenuInput(this));
+        Window.setInput(new MenuInput<>(this));
     }
 
-    private static Clickable getBackButtonClickable() {
-        return (Vector2i _, int _, int action) -> {
-            if (action != GLFW_PRESS) return ButtonResult.IGNORE;
-            Window.popRenderable();
-            return ButtonResult.SUCCESS;
-        };
-    }
 
     private static Clickable getCreateButtonClickable(TextField nameField, TextField seedField) {
         return (Vector2i _, int _, int action) -> {

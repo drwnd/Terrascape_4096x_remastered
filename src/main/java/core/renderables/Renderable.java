@@ -10,6 +10,8 @@ import org.joml.Vector2i;
 
 import java.util.ArrayList;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class Renderable {
 
     public Renderable(Vector2f sizeToParent, Vector2f offsetToParent) {
@@ -72,6 +74,7 @@ public class Renderable {
     }
 
     public void dragOver(Vector2i pixelCoordinate) {
+        if (selectedDraggable != null) selectedDraggable.dragOver(pixelCoordinate);
         hoverOver(pixelCoordinate);
         for (Renderable renderable : children)
             if (renderable.isVisible() && renderable.containsPixelCoordinate(pixelCoordinate)) renderable.dragOver(pixelCoordinate);
@@ -91,6 +94,20 @@ public class Renderable {
         return position.x <= pixelCoordinate.x && position.x + size.x >= pixelCoordinate.x && position.y <= pixelCoordinate.y && position.y + size.y >= pixelCoordinate.y;
     }
 
+
+    protected final DraggableInfo getOwnDraggableInfo(int action) {
+        if (action == GLFW_HOVERED && selectedDraggable != this) return null;
+        if (action == GLFW_PRESS) selectedDraggable = this;
+        if (action == GLFW_RELEASE)
+            if (selectedDraggable == this) selectedDraggable = null;
+            else return null;
+
+        Vector2f position = getPosition(), size = getSize();
+
+        position = Window.toPixelCoordinate(position, scalesWithGuiSize());
+        size = Window.toPixelSize(size, scalesWithGuiSize());
+        return new DraggableInfo(position, size);
+    }
 
     // Override if needed
     protected void renderSelf(Vector2f position, Vector2f size) {
@@ -216,12 +233,23 @@ public class Renderable {
         else flags &= ~mask;
     }
 
+
+    public static void releaseSelectedDraggable() {
+        selectedDraggable = null;
+    }
+
+
     private final ArrayList<Renderable> children = new ArrayList<>();
     private final Vector2f sizeToParent;
     private final Vector2f offsetToParent;
     private Renderable parent = DummyRenderable.dummy;
     private float scalingFactor = 1.05F;
     private int flags = VISIBILITY_MASK | DO_AUTO_FOCUS_SCALING | SCALES_WITH_GUI_SIZE_MASK | PLAY_FOCUS_SOUNDS_MASK;
+
+    protected static Renderable selectedDraggable;
+
+    protected record DraggableInfo(Vector2f position, Vector2f size) {
+    }
 
     private static final int VISIBILITY_MASK = 0x1;
     private static final int FOCUSSED_MASK = 0x2;

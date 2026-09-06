@@ -5,6 +5,7 @@ import core.rendering_api.Window;
 
 import game.player.interaction.ShapePlaceable;
 
+import game.server.generation.Structure;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -48,7 +49,10 @@ public final class ShapeDisplay extends UiButton {
         shapesTab.getShapePlaceableSettingSliders().addAll(settingElements);
         for (UiBackgroundElement settingElement : settingElements) shapesTab.addRenderable(settingElement);
 
-        addRenderable(new StructureDisplay(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F), placeable.updateBitMap(false).getSmallStructure()));
+        Structure shapeStructure = placeable.updateBitMap(false).getSmallStructure();
+        StructureDisplay structureDisplay = new StructureDisplay(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F), shapeStructure);
+        structureDisplay.setDoAutoFocusScaling(false);
+        addRenderable(structureDisplay);
     }
 
     @Override

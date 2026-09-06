@@ -11,6 +11,7 @@ import game.player.interaction.placeable_shapes.CustomShape;
 import game.server.Game;
 import game.server.generation.Structure;
 
+import game.settings.FloatSettings;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -77,6 +78,16 @@ public final class CustomShapeTab extends Renderable implements InventoryTab {
     }
 
     @Override
+    public float getMaxScroll(Vector2i pixelCoordinate) {
+        if (shapePreview != null && shapePreview.containsPixelCoordinate(pixelCoordinate)) return Float.POSITIVE_INFINITY;
+
+        float itemSize = FloatSettings.INVENTORY_ITEM_SIZE.value();
+        int itemsPerRow = Math.max(1, (int) Math.floor(0.33333334F / itemSize));
+        int rows = (int) Math.ceil((float) AMOUNT_OF_MATERIALS / itemsPerRow);
+        return rows * itemSize * Window.getAspectRatio() * getAspectRatio() - 1;
+    }
+
+    @Override
     public void handleScroll(Vector2i pixelCoordinate, double yScroll) {
         if (shapePreview != null && shapePreview.containsPixelCoordinate(pixelCoordinate)) {
             shapePreview.changeZoom(yScroll > 0 ? 1.05F : 1 / 1.05F);
@@ -84,13 +95,16 @@ public final class CustomShapeTab extends Renderable implements InventoryTab {
         }
 
         InventoryInput input = Game.getPlayer().getInventory().getInput();
-        float newScroll = Math.max((float) (input.materialScroll - yScroll * 0.05), 0.0F);
+        float maxScroll = getMaxScroll(pixelCoordinate);
+        float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (input.materialScroll - yScroll * 0.05), 0.0F, maxScroll);
         moveMaterialButtons(newScroll - input.materialScroll);
         input.materialScroll = newScroll;
     }
 
+
     @Override
     protected void resizeSelfTo(int width, int height) {
+        ShapesTab.updateDisplayPositions(cubeDisplays, getAspectRatio());
         if (shapePreview == null) return;
         shapePreview.setSizeToParent(0.325F, 0.325F * Window.getAspectRatio() * getAspectRatio());
         shapePreview.setOffsetToParent(0.0F, 0.0F);
