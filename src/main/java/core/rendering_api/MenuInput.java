@@ -6,27 +6,34 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class MenuInput<T extends Renderable> extends Input {
 
+    public final ScrollCallback scrollCallback;
+    public final MaxScrollGetter maxScrollGetter;
+    protected T menu;
+
     public MenuInput(T menu) {
         super(menu);
         this.menu = menu;
-        this.scrollCallback = null;
-        this.maxScrollGetter = null;
+        this.maxScrollGetter = () -> Float.POSITIVE_INFINITY;
+        this.scrollCallback = (_) -> {
+        };
     }
 
     public MenuInput(T menu, ScrollCallback scrollCallback, MaxScrollGetter maxScrollGetter) {
         super(menu);
         this.menu = menu;
-        this.scrollCallback = scrollCallback;
-        this.maxScrollGetter = maxScrollGetter;
+        this.maxScrollGetter = maxScrollGetter == null ? () -> Float.POSITIVE_INFINITY : maxScrollGetter;
+        this.scrollCallback = scrollCallback == null ? (_) -> {
+        } : scrollCallback;
     }
-
-    protected T menu;
 
     public float getScroll() {
         return scroll;
     }
 
     public void setScroll(float scroll) {
+        float maxScroll = maxScrollGetter.getMaxScroll();
+        scroll = maxScroll <= 0.0F ? 0.0F : Math.clamp(scroll, 0.0F, maxScroll);
+        scrollCallback.scroll(scroll - this.scroll);
         this.scroll = scroll;
     }
 
@@ -50,9 +57,9 @@ public class MenuInput<T extends Renderable> extends Input {
 
     @Override
     public void scrollCallback(long window, double xScroll, double yScroll) {
-        float maxScroll = maxScrollGetter == null ? Float.POSITIVE_INFINITY : maxScrollGetter.getMaxScroll();
+        float maxScroll = maxScrollGetter.getMaxScroll();
         float newScroll = maxScroll <= 0.0F ? 0.0F : Math.clamp((float) (scroll - yScroll * 0.05), 0.0F, maxScroll);
-        if (scrollCallback != null) scrollCallback.scroll(newScroll - scroll);
+        scrollCallback.scroll(newScroll - scroll);
         scroll = newScroll;
         menu.hoverOver(cursorPos);
     }
@@ -68,8 +75,6 @@ public class MenuInput<T extends Renderable> extends Input {
     }
 
     private float scroll = 0.0F;
-    private final ScrollCallback scrollCallback;
-    private final MaxScrollGetter maxScrollGetter;
 
     public interface ScrollCallback {
         void scroll(float scrolled);

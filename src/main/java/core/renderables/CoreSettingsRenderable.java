@@ -18,13 +18,14 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public CoreSettingsRenderable() {
         super(new Vector2f(1.0F, 1.0F), new Vector2f(0.0F, 0.0F));
         input = new SettingsRenderableInput(this);
+        scroller = new SideScroller(new Vector2f(0.05F, 0.95F), new Vector2f(0.95F, 0.025F), input);
         Vector2f sizeToParent = new Vector2f(0.1F, 0.1F);
 
         UiButton backButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.875F), getBackButtonAction());
         TextElement text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.BACK);
         backButton.addRenderable(text);
 
-        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.725f), getApplyChangesButtonAction());
+        UiButton applyChangesButton = new UiButton(sizeToParent, new Vector2f(0.05F, 0.725F), getApplyChangesButtonAction());
         text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.APPLY_SETTINGS);
         applyChangesButton.addRenderable(text);
 
@@ -35,6 +36,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
         addRenderable(backButton);
         addRenderable(applyChangesButton);
         addRenderable(resetButton);
+        addRenderable(scroller);
     }
 
     public void scrollSettingButtons(float scroll) {
@@ -80,7 +82,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public <T extends Number> void addSlider(NumberSetting<T> setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.3125F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         Slider<T> slider = new Slider<>(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(slider);
@@ -96,7 +98,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addKeySelector(KeySetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.6F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.3125F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, settingName);
         addRenderable(keySelector);
@@ -112,13 +114,13 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addToggle(ToggleSetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.2875F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.3125F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         Toggle toggle = new Toggle(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(toggle);
         toggles.add(toggle);
 
-        offsetToParent = new Vector2f(0.6625F, 1.0F - SETTING_DISTANCE * settingsCount);
+        offsetToParent = new Vector2f(0.625F, 1.0F - SETTING_DISTANCE * settingsCount);
         KeySelector keySelector = new KeySelector(sizeToParent, offsetToParent, setting, CoreUiMessages.KEYBIND);
         addRenderable(keySelector);
         keySelectors.add(keySelector);
@@ -134,18 +136,18 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
     public void addOption(OptionSetting setting, StringGetter settingName) {
         settingsCount++;
         Vector2f sizeToParent = new Vector2f(0.18333334F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.35F, 1.0F - SETTING_DISTANCE * settingsCount);
+        Vector2f offsetToParent = new Vector2f(0.3125F, 1.0F - SETTING_DISTANCE * settingsCount);
 
         OptionToggle option = new OptionToggle(sizeToParent, offsetToParent, setting, settingName, false);
         addRenderable(option);
         options.add(option);
 
-        offsetToParent = new Vector2f(0.35F + sizeToParent.x + 0.025F, 1.0F - SETTING_DISTANCE * settingsCount);
+        offsetToParent = new Vector2f(0.3125F + sizeToParent.x + 0.025F, 1.0F - SETTING_DISTANCE * settingsCount);
         KeySelector nextKeySelector = new KeySelector(sizeToParent, offsetToParent, setting.nextKeySetting(), CoreUiMessages.NEXT);
         addRenderable(nextKeySelector);
         keySelectors.add(nextKeySelector);
 
-        offsetToParent = new Vector2f(0.35F + 2 * sizeToParent.x + 0.05F, 1.0F - SETTING_DISTANCE * settingsCount);
+        offsetToParent = new Vector2f(0.3125F + 2 * sizeToParent.x + 0.05F, 1.0F - SETTING_DISTANCE * settingsCount);
         KeySelector previeousKeySelector = new KeySelector(sizeToParent, offsetToParent, setting.previousKeySetting(), CoreUiMessages.PREVIOUS);
         addRenderable(previeousKeySelector);
         keySelectors.add(previeousKeySelector);
@@ -162,7 +164,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
     protected UiButton createResetButton(int counter) {
         Vector2f sizeToParent = new Vector2f(0.1F, 0.1F);
-        Vector2f offsetToParent = new Vector2f(0.225F, 1.0F - SETTING_DISTANCE * counter);
+        Vector2f offsetToParent = new Vector2f(0.1875F, 1.0F - SETTING_DISTANCE * counter);
         UiButton resetButton = new UiButton(sizeToParent, offsetToParent);
 
         TextElement text = new TextElement(new Vector2f(0.15F, 0.5F), CoreUiMessages.RESET_SETTING);
@@ -178,6 +180,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
         float scroll = input == null ? 0.0F : input.getScroll();
         input = new SettingsRenderableInput(this);
         input.setScroll(scroll);
+        scroller.setInput(input);
         Window.setInput(input);
     }
 
@@ -220,6 +223,7 @@ public class CoreSettingsRenderable extends UiBackgroundElement {
 
     protected int settingsCount = 0;
     protected SettingsRenderableInput input;
+    protected SideScroller scroller;
 
     protected final ArrayList<Slider<? extends Number>> sliders = new ArrayList<>();
     protected final ArrayList<KeySelector> keySelectors = new ArrayList<>();
